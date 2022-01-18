@@ -1,0 +1,22 @@
+{
+  "name": "fenn-club",
+  "version": "1.0.0",
+  "description": "Fenn Macon's Personal Site",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FennMacon/fennclub.git"
+  },
+  "author": "Fenn Macon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FennMacon/fennclub/issues"
+  },
+  "homepage": "https://github.com/FennMacon/fennclub#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
+}
