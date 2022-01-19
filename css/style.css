@@ -31,7 +31,7 @@ a:hover{
     color: var(--hovercolor);
 }
 img {
-    max-width: 1024px;
+    max-width: 50%;
     height: auto;
     display: flex;
     margin-left: auto;
