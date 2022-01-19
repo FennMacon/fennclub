@@ -31,6 +31,7 @@ summary {
     font-size: 30px;
     padding-left: 40px;
     padding-right: 40px;
+    cursor: pointer;
   }
 details[open] summary {
     list-style-image: url(../img/SVG/Down.svg);
