@@ -31,9 +31,9 @@ a:hover{
     color: var(--hovercolor);
 }
 img {
-    max-width: 50%;
+    max-width: 1024px;
     height: auto;
-    display: block;
+    display: flex;
     margin-left: auto;
     margin-right: auto;
     padding-top: 10px;
@@ -96,7 +96,13 @@ details[open] summary::-webkit-details-marker {
 .innerSummary:hover {
     color: var(--hovercolor);
 }
-
+.showimg:hover {
+    color: var(--hovercolor);
+    cursor: pointer;
+}
+.imginit {
+    display: none;
+}
 @media(max-width: 1028px) {
     summary {
         font-size: 30px;

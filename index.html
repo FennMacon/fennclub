@@ -40,8 +40,8 @@
             <p>for tranquility</p>
         </div>
         <div class="detailsContent">
-            <p>I'm Fenn Macon, a musician and digital artist living in East Boston, Massachusetts.</p> 
-            <p>During the day, I am an IT Specialist working towards a dual masters in IT Management and Business Analytics.</p>
+            <p>I'm Fenn Macon, a musician and digital artist living in East Boston, Massachusetts</p> 
+            <p>During the day, I am an IT Specialist working towards a dual masters in IT Management and Business Analytics</p>
         </div>
       </details>
       
@@ -62,75 +62,64 @@
       <details>
         <summary>What other art have I done?</summary>
         <div class="detailsContent">
-            <p>A bunch!</p>
-
-          <details class="innerDetails">
-            <summary class="innerSummary"><p>Music Videos for Flowerpot Records</p></summary>
+            <h4>A bunch!</h4>
+            
+            <h3>Music Videos for Flowerpot Records</h3>
             <p><em>Created using Max/MSP, CoGe, and Adobe Premiere</em></p>
             <li><a href="https://www.youtube.com/watch?v=vrOCFoAH29k">The You Suck Flying Circus - The Avenue</a></li>
             <li><a href="https://www.youtube.com/watch?v=6HADmfWSb3w">The You Suck Flying Circus - Learn To Swim</a></li>
             <li><a href="https://www.youtube.com/watch?v=kGzELnSiOKk">Jack David - Yr Heart Is Breaking</a></li>
-          </details>
-
-          <details class="innerDetails">
-            <summary class="innerSummary">
-            <p>The VIDEOJAMZ series</p></summary>
-            <p><em>Live captures of audio responsive video created with Max/MSP</em></p>
+            
+            <h3>The VIDEOJAMZ series</h3>
+            <p><em>Live captures of video responding to music, created with Max/MSP</em></p>
             <p><em>Download the patch <a href="https://www.dropbox.com/s/7ln0crqxcwjdj2o/video%20setup%20update.maxpat?dl=0">here</a>.</em></p>
             <li><a href="https://vimeo.com/81901545">VIDEOJAMZ #1: Leaftype - Dingus Friends</a></li>
             <li><a href="https://vimeo.com/87136458">VIDEOJAMZ #2: Datamosh</a></li>
             <li><a href="https://vimeo.com/91120251">VIDEOJAMZ #3: Kuh-Lida + a peek behind the scenes</a></li>
             <li><a href="https://vimeo.com/93085292">VIDEOJAMZ #4: Fenn Macon - Worcester</a></li>
             <li><a href="https://vimeo.com/94020153">VIDEOJAMZ #5: Fenn Macon - Since Sixteen</a></li>
-          </details>
-
-          <details class="innerDetails">
-            <summary class="innerSummary">
-            <p>Fenn Macon/Moonish Brute Split Digital Cover</p></summary>
-            <p><em>A collaboration with Louis Roe, I designed the background and Louis drew the little guys.</em></p>
-            <a href="https://beddays.bandcamp.com/album/split"><img src="https://f4.bcbits.com/img/a3015512650_10.jpg"></a>
-          </details>
-
-          <details class="innerDetails">
-            <summary class="innerSummary">
-            <p>Three Variations on a Tartan: An Exploration of Glitch Aesthetics</p></summary>
-            <p><em>Prints of these images were featured in the 2014 Fitchburg Art Museum 79th Regional Exhibition of Art & Craft.</em></p>
-            <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-png-final-jpg1.jpg">
-            <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-jpg-final.jpg">
-            <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-tiff-final.jpg">
-          </details>
-
-          <details class="innerDetails">
-            <summary class="innerSummary">
-            <p>Self Portrait</p></summary>
-            <p><em>Created using Pixel Drifter.</em></p>
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/04/out_artist-picture1.jpg">
-          </details>
-
-          <details class="innerDetails">
-            <summary class="innerSummary">  
-            <p>Other Work</p></summary>
-            <p><em>Created using Pixel Drifter and various notepad based glitch techniques.</em></p>
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg">
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/img_1256_1.png">
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-tiff-3fstfd.jpg">
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-jpg-4.jpg">
-            <img src="https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg">
-            <a href="https://beddays.bandcamp.com/album/status-report"><img src="https://f4.bcbits.com/img/a1435416564_10.jpg"></a>
-          </details>
-          </div>
+            
+            <h3>Glitch Art</h3>
+            <p><em>Click title of piece to toggle image</em></p>
+            <p id="pmb" class="showimg" onclick="togglemb()">Fenn Macon/Moonish Brute Split Digital Cover</p>
+            <p><em>A collaboration with Louis Roe for <a href="https://beddays.bandcamp.com/album/split">our split tape</a>, I designed the background and Louis drew the little guys</em></p>
+            <img id="imgmb" class="imginit" src="https://f4.bcbits.com/img/a3015512650_10.jpg">
+            
+            <p id="ptv" class="showimg" onclick="toggletv()">Three Variations on a Tartan: An Exploration of Glitch Aesthetics</p>
+            <p><em>Prints of these images were featured in the 2014 Fitchburg Art Museum 79th Regional Exhibition of Art & Craft</em></p>
+            <div id="imgtv" class="imginit">
+              <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-jpg-final.jpg">
+              <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-tiff-final.jpg">
+              <img src="https://fennmacon.files.wordpress.com/2015/04/tartan-png-final-jpg1.jpg">
+            </div>
+            
+            <p id="psp" class="showimg" onclick="togglesp()">Self Portrait</p>
+            <p><em>Created using Pixel Drifter</em></p>
+            <img id="imgsp" class="imginit" src="https://fennmaconscrn210.files.wordpress.com/2014/04/out_artist-picture1.jpg">
+            
+            <p id="pow" class="showimg" onclick="toggleow()">Other Work</p>
+            <p><em>Created using Pixel Drifter and various notepad based glitch techniques</em></p>
+            <div id="imgow" class="imginit">
+              <img src="https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg">
+              <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/img_1256_1.png">
+              <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-tiff-3fstfd.jpg">
+              <img src="https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-jpg-4.jpg">
+              <img src="https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg">
+              <img src="https://f4.bcbits.com/img/a1435416564_10.jpg">
+            </div>
+        </div>
       </details>
 
       <details>
         <summary>Have I made other websites?</summary>
         <div class="detailsContent">
             <p>I sure have!</p> 
-            <li><a href="http://edwordscreative.com">Edwords Creative</a>, a portfolio for a freelance copywriter.</li>
-            <li><a href="http://jumpinthejar.org/">Jump in the Jar</a>, a site for a community non-profit.</li>
-            <li><a href="http://boulderscookbook.com/">The Boulders Cookbook</a>, a family recipe site.</li>
-            <li><a href="http://fennmacon.github.io/VEC-Letters/">The VEC Letters</a>, a digital humanities project of folk art and conspiracies.</li>
-            <li><a href="http://fennmacon.github.io/bass-master/">Bass Master</a>, an attempt to teach bass to a friend.</li>
-            <li><a href="http://fennmacon.github.io/sbrbn-advntr/">Suburban Adventure</a>, an online text adventure.</li>
+            <li><a href="http://edwordscreative.com">Edwords Creative</a>, a portfolio for a freelance copywriter</li>
+            <li><a href="http://jumpinthejar.org/">Jump in the Jar</a>, a site for a community non-profit</li>
+            <li><a href="http://boulderscookbook.com/">The Boulders Cookbook</a>, a family recipe site</li>
+            <li><a href="http://fennmacon.github.io/VEC-Letters/">The VEC Letters</a>, a digital humanities project of folk art and conspiracies</li>
+            <li><a href="http://fennmacon.github.io/bass-master/">Bass Master</a>, an attempt to teach bass to a friend</li>
+            <li><a href="http://fennmacon.github.io/sbrbn-advntr/">Suburban Adventure</a>, an online text adventure</li>
         </div>
       </details>
 
