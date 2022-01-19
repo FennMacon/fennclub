@@ -1,18 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;1,100&display=swap');
+
 :root {
     --backcolor: #eeeedf;
     --textcolor: #3a3f66;
     --activecolor: #988A6E;
     --headercolor: #682924;
-    --hovercolor: #9FA3AD;
+    --hovercolor: #5a6d9e;
+    --namefont: 'Roboto Mono', monospace;
+    --detailfont: 'Roboto Mono', monospace;
+    --summaryfont: 'Roboto', sans-serif;
     }
 body {
     background-color: var(--backcolor);
     color: var(--textcolor);
-    font-family: 'Roboto', sans-serif;
     }
 a{
     color: var(--headercolor);
+    font-weight: 700;
+    cursor: pointer;
 }
 a:visited {
     color: var(--headercolor);  
@@ -21,17 +27,28 @@ a:visited {
 a:link {
     text-decoration: none;
   }
-
+a:hover{
+    color: var(--hovercolor);
+}
+img {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+}
 details {
     margin: 1rem;
   }
 summary {
     font-weight: bold;
     list-style-image: url(../img/SVG/Up.svg);
-    font-size: 30px;
+    font-size: 48px;
     padding-left: 40px;
     padding-right: 40px;
     cursor: pointer;
+    font-family: var(--summaryfont);
   }
 details[open] summary {
     list-style-image: url(../img/SVG/Down.svg);
@@ -47,11 +64,15 @@ details[open] summary::-webkit-details-marker {
   }
 .name{
     text-align: center;
-    font-size: 40px;
+    font-size: 60px;
     margin-top: 40px;
     margin-bottom: 40px;
+    font-family: var(--namefont);
+    font-style: italic;
 }
 .haiku{
+    padding-top: 20px;
+    font-size: 20px;
     text-align: center;
     font-style: italic;
 }
@@ -60,4 +81,35 @@ details[open] summary::-webkit-details-marker {
     padding-right: 50px;
     padding-top: 20px;
     padding-bottom: 20px;
+    font-family: var(--detailfont);
+    font-weight: 300;
+}
+@media(max-width: 1028px) {
+    summary {
+        font-size: 30px;
+    }
+}
+@media(max-width: 680px) {
+    summary {
+        font-size: 24px;
+    }
+
+    .haiku {
+        font-size: 18px;
+    }
+}
+@media(max-width: 530px) {
+    summary {
+        font-size: 20px;
+    }
+}
+@media(min-width: 2000px) {
+    details {
+        margin: 3rem;
+    }
+}
+@media(min-width: 1600px) {
+    body {
+    background-image: linear-gradient(to right, var(--backcolor) , var(--headercolor));
+    }
 }
