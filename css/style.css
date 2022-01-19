@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+:root {
+    --backcolor: #eeeedf;
+    --textcolor: #3a3f66;
+    --activecolor: #988A6E;
+    --headercolor: #682924;
+    --hovercolor: #9FA3AD;
+    }
+body {
+    background-color: var(--backcolor);
+    color: var(--textcolor);
+    font-family: 'Roboto', sans-serif;
+    }
+a{
+    color: var(--headercolor);
+}
+a:visited {
+    color: var(--headercolor);  
+    text-decoration: none;
+  }
+a:link {
+    text-decoration: none;
+  }
+
+details {
+    margin: 1rem;
+  }
+summary {
+    font-weight: bold;
+    list-style-image: url(../img/SVG/Up.svg);
+    font-size: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+details[open] summary {
+    list-style-image: url(../img/SVG/Down.svg);
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+summary::-webkit-details-marker {
+    background: url(../img/SVG/Up.svg);
+    color: transparent;
+  }
+details[open] summary::-webkit-details-marker {
+    background: url(../img/SVG/Down.svg);
+  }
+.name{
+    text-align: center;
+    font-size: 40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.haiku{
+    text-align: center;
+    font-style: italic;
+}
+.detailsContent{
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
