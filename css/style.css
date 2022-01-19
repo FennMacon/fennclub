@@ -116,6 +116,9 @@ details[open] summary::-webkit-details-marker {
     .haiku {
         font-size: 18px;
     }
+    img {
+        max-width: 75%;
+    }
 }
 @media(max-width: 530px) {
     summary {
