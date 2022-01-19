@@ -84,6 +84,19 @@ details[open] summary::-webkit-details-marker {
     font-family: var(--detailfont);
     font-weight: 300;
 }
+.innerDetails {
+    padding: 10px;
+
+}
+.innerSummary {
+    font-size: 24px;
+    display: inline;
+    font-weight: 400;
+}
+.innerSummary:hover {
+    color: var(--hovercolor);
+}
+
 @media(max-width: 1028px) {
     summary {
         font-size: 30px;
