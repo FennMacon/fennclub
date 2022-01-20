@@ -66,6 +66,8 @@ function namechange() {
         }
         if (namecount == 42) {
             head.innerHTML = "";
+            head.style.cursor = "default";
+
         }
 }
 

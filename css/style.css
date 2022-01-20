@@ -14,6 +14,7 @@
 body {
     background-color: var(--backcolor);
     color: var(--textcolor);
+    margin-bottom: 100px;
     }
 a{
     color: var(--headercolor);
@@ -36,6 +37,9 @@ img {
     display: flex;
     margin-left: auto;
     margin-right: auto;
+    padding-top: 10px;
+}
+li {
     padding-top: 10px;
 }
 details {
@@ -69,6 +73,14 @@ details[open] summary::-webkit-details-marker {
     margin-bottom: 40px;
     font-family: var(--namefont);
     font-style: italic;
+    height: 70px;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+.name:hover{
+    cursor: pointer;
 }
 .haiku{
     padding-top: 20px;
