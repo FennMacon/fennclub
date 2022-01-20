@@ -45,7 +45,10 @@ li {
 details {
     margin: 1rem;
   }
-summary {
+*:focus{
+    outline: none;
+}
+  summary {
     font-weight: bold;
     list-style-image: url(../img/SVG/Up.svg);
     font-size: 48px;
