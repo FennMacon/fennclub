@@ -49,22 +49,22 @@ function namechange() {
         if (namecount == 20) {
             head.innerHTML = "stop that";
         }
-        if (namecount == 30) {
+        if (namecount == 25) {
             head.innerHTML = "this is just rude";
         }
-        if (namecount == 40) {
+        if (namecount == 30) {
             head.innerHTML = "are you having fun?";
         }
-        if (namecount == 50) {
+        if (namecount == 35) {
             head.innerHTML = "I'm gonna scream";
         }
-        if (namecount == 60) {
+        if (namecount == 40) {
             head.innerHTML = "if you do this again I'm leaving";
         }
-        if (namecount == 61) {
+        if (namecount == 41) {
             head.innerHTML = "wow, bye!";
         }
-        if (namecount == 62) {
+        if (namecount == 42) {
             head.innerHTML = "";
         }
 }
