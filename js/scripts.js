@@ -2,7 +2,8 @@ var mb = document.getElementById("imgmb").style;
 var tv = document.getElementById("imgtv").style;
 var sp = document.getElementById("imgsp").style;
 var ow = document.getElementById("imgow").style;
-var head = document.getElementById("topname");
+const head = document.getElementById("topname");
+let namecount = 0
 
 function togglemb() {
     if (mb.display == "none" || mb.display == "") {
@@ -41,5 +42,30 @@ function namechange() {
     const random = Math.floor(Math.random() * fonts.length);
 
         head.style.fontFamily = fonts[random];
+
+
+
+        ++namecount;
+        if (namecount == 20) {
+            head.innerHTML = "stop that";
+        }
+        if (namecount == 30) {
+            head.innerHTML = "this is just rude";
+        }
+        if (namecount == 40) {
+            head.innerHTML = "are you having fun?";
+        }
+        if (namecount == 50) {
+            head.innerHTML = "I'm gonna scream";
+        }
+        if (namecount == 60) {
+            head.innerHTML = "if you do this again I'm leaving";
+        }
+        if (namecount == 61) {
+            head.innerHTML = "wow, bye!";
+        }
+        if (namecount == 62) {
+            head.innerHTML = "";
+        }
 }
 
