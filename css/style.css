@@ -29,7 +29,7 @@ a:link {
     text-decoration: none;
   }
 a:hover{
-    color: var(--hovercolor);
+    text-shadow: 1px 1px var(--hovercolor);
 }
 img {
     max-width: 50%;
@@ -48,7 +48,14 @@ details {
 *:focus{
     outline: none;
 }
-  summary {
+
+summary::before {
+    content: '';
+    display: inline-block;
+    height: y;
+    width: x;
+    background-image: url();
+  }  summary {
     font-weight: bold;
     list-style-image: url(../img/SVG/Up.svg);
     font-size: 48px;
@@ -117,6 +124,9 @@ details[open] summary::-webkit-details-marker {
 }
 .imginit {
     display: none;
+}
+#fenno:hover {
+    cursor: url(img/fenno.png), auto;
 }
 @media(max-width: 1028px) {
     summary {

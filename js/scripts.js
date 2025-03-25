@@ -1,7 +1,11 @@
 var mb = document.getElementById("imgmb").style;
+//moonish brute
 var tv = document.getElementById("imgtv").style;
+//three variations on a tartan
 var sp = document.getElementById("imgsp").style;
+//self portrait
 var ow = document.getElementById("imgow").style;
+//other works
 const head = document.getElementById("topname");
 let namecount = 0
 
