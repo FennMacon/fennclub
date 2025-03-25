@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Fenn Club</title>
+  <meta name="description" content="Fenn's portfolio showcasing web skills, music, and digital art.">
+  <meta name="author" content="Fenn">
+
+  <meta property="og:title" content="Fenn Club">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.fenn.club/">
+  <meta property="og:description" content="Fenn's internet portfolio featuring creativity and technical skills.">
+  <meta property="og:image" content="image.png">
+
+  <link rel="stylesheet" href="./css/style.css">
+
+  <base target="_blank">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <style>
+    .hidden { display: none; }
+    .visible { display: block; }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <div class="namebox">
+        <div class="name" @click="namechange">Fenn Macon</div>
+      </div>
+    </header>
+
+    <section>
+      <p>
+        Hi, I'm Fenn Macon, a 
+        <a href="#" @click.prevent="showSection('music')">musician</a> and 
+        <a href="#" @click.prevent="showSection('art')">digital artist</a> living in Jamaica Plain, Massachusetts.
+      </p>
+      <p>
+        During the day, I'm a 
+        <a href="#" @click.prevent="showSection('work')">systems engineer</a> with a 
+        <a href="#" @click.prevent="showSection('skills')">master's in IT management and business analytics</a>.
+      </p>
+    </section>
+
+    <section v-if="activeSection">
+      <div v-show="activeSection === 'music'">
+        <h3>Music</h3>
+        <p>I have been part of multiple bands and projects, contributing as a drummer, bassist, and songwriter.</p>
+      </div>
+      <div v-show="activeSection === 'art'">
+        <h3>Digital Art</h3>
+        <p>My digital art includes glitch aesthetics, music videos, and live visuals using tools like Max/MSP and Adobe Premiere.</p>
+      </div>
+      <div v-show="activeSection === 'work'">
+        <h3>Work</h3>
+        <p>I specialize in managing enterprise systems, implementing automation workflows, and solving complex technical problems.</p>
+      </div>
+      <div v-show="activeSection === 'skills'">
+        <h3>Skills</h3>
+        <ul>
+          <li>Web Development: HTML, CSS, JavaScript</li>
+          <li>DevOps Tools: Ansible, Terraform</li>
+          <li>Data Analysis: Python, R, Excel Pivot Tables</li>
+          <li>Automation: UiPath, Flex API integration</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        activeSection: null,
+        nameClickCount: 0,
+      },
+      methods: {
+        showSection(section) {
+          this.activeSection = section;
+        },
+        namechange() {
+          const fonts = ['Roboto', 'Roboto Mono', 'Arial', 'Verdana', 'Helvetica', 'Tahoma', 'Trebuchet MS', 'Times New Roman', 'Georgia', 'Garamond', 'Courier New', 'Brush Script MT', 'Comic Sans'];
+          const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+          const nameElement = document.querySelector('.name');
+          nameElement.style.fontFamily = randomFont;
+          
+          this.nameClickCount++;
+          if (this.nameClickCount === 20) nameElement.textContent = "stop that";
+          if (this.nameClickCount === 25) nameElement.textContent = "this is just rude";
+          if (this.nameClickCount === 30) nameElement.textContent = "are you having fun?";
+          if (this.nameClickCount === 35) nameElement.textContent = "I'm gonna scream";
+          if (this.nameClickCount === 40) nameElement.textContent = "if you do this again I'm leaving";
+          if (this.nameClickCount >= 41) nameElement.textContent = "wow, bye!";
+        },
+      },
+    });
+  </script>
+</body>
+</html>
