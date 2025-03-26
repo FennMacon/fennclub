@@ -23,42 +23,42 @@ const galleryData = {
     music: [
         {
             title: "Opposable",
-            description: "Drums in experimental rock band",
+            description: "Drums",
             url: "https://opposablelovesyou.bandcamp.com/"
         },
         {
             title: "Really Great",
-            description: "Bass in indie rock band",
+            description: "Bass + Vocals",
             url: "https://reallygreat.bandcamp.com/"
         },
         {
             title: "Tuxis Giant",
-            description: "Bass and songwriting in indie rock project",
+            description: "Bass",
             url: "https://tuxisgiant.bandcamp.com/"
         },
         {
             title: "Strong Fenn",
-            description: "Solo project - all instruments",
+            description: "Music + Lyrics",
             url: "https://beddays.bandcamp.com/"
         },
         {
             title: "Total Vacation",
-            description: "Writing and vocals in indie rock project",
+            description: "Writing and Vocals",
             url: "https://totalvacation.bandcamp.com/releases"
         },
         {
             title: "The Baja Blasters",
-            description: "Writing, vocals, and guitar in rock band",
+            description: "Writing, Vocals, and Guitar",
             url: "https://thebajablasters.bandcamp.com/"
         },
         {
             title: "Superjerk",
-            description: "Guitar in punk rock band",
+            description: "Guitar",
             url: "https://superjerk.bandcamp.com/"
         },
         {
             title: "MCtheProfessor.GOV",
-            description: "Guitar, bass, and noise experiments",
+            description: "Guitar, Bass, and Noise",
             url: "https://www.youtube.com/embed/HtFLTJSrdJc?autoplay=0&mute=0&controls=1&loop=1&playlist=HtFLTJSrdJc&modestbranding=1&rel=0&showinfo=0&fs=0"
         }
     ],

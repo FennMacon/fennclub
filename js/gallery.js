@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadGallery('web');
     
     // Add click handlers for gallery type selection
-    const galleryLinks = document.querySelectorAll('#nav-gallery-section a, #nav-contact-section a');
+    const galleryLinks = document.querySelectorAll('#nav-gallery-section a, #nav-contact-section a, .mobile-menu-overlay a');
     galleryLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             if (link.classList.contains('contact-link')) return; // Skip for email link
@@ -151,6 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const galleryType = link.textContent.toLowerCase();
             if (galleryData[galleryType]) {
                 loadGallery(galleryType);
+                // Close mobile menu if it's open
+                if (nav.dataset.toggled === "true") {
+                    handleNavToggle();
+                }
             }
         });
     });
@@ -179,6 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </article>
             `;
             currentGallery = 'landing';
+            // Close mobile menu if it's open
+            if (nav.dataset.toggled === "true") {
+                handleNavToggle();
+            }
         });
     }
 
