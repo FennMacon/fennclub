@@ -1179,4 +1179,8 @@ main > article .yt-link > i {
     nav[data-toggled="true"] ~ .mobile-menu-overlay {
         display: flex !important;
     }
+    
+    body {
+        overflow-y: scroll;
+    }
 }
