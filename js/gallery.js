@@ -51,7 +51,8 @@ const createLandingElement = (data) => {
 };
 
 const loadGallery = (galleryType) => {
-    if (currentGallery === galleryType) return;
+    // Don't return if it's the initial load of 'web'
+    if (currentGallery === galleryType && document.querySelector('main').children.length > 0) return;
     
     currentGallery = galleryType;
     activeIndex = 0;
@@ -75,46 +76,47 @@ const loadGallery = (galleryType) => {
             main.innerHTML += createArticleElement(item, index, status);
         });
         
-        // Initialize iframe loading handlers
-        setTimeout(() => {
-            const iframes = document.querySelectorAll('.article-iframe');
-            iframes.forEach(iframe => {
-                // Handle loading state
-                iframe.addEventListener('load', () => {
-                    iframe.parentElement.classList.add('loaded');
-                });
-
-                // Reset iframe content when slide changes
-                const resetIframe = () => {
-                    const src = iframe.src;
-                    iframe.src = '';
-                    setTimeout(() => {
-                        iframe.src = src;
-                    }, 400); // Match the slide transition time
-                };
-
-                // Find the parent article
-                const article = iframe.closest('article');
-                if (article) {
-                    // Watch for status changes
-                    const observer = new MutationObserver((mutations) => {
-                        mutations.forEach((mutation) => {
-                            if (mutation.attributeName === 'data-status') {
-                                const status = article.dataset.status;
-                                // Reset iframe when slide becomes inactive
-                                if (status === 'before' || status === 'after') {
-                                    resetIframe();
-                                }
-                            }
-                        });
-                    });
-
-                    observer.observe(article, {
-                        attributes: true
-                    });
+        // Initialize iframe loading handlers immediately
+        const iframes = document.querySelectorAll('.article-iframe');
+        iframes.forEach(iframe => {
+            // Handle loading state
+            iframe.addEventListener('load', () => {
+                const articleSection = iframe.closest('.article-image-section');
+                if (articleSection) {
+                    articleSection.classList.add('loaded');
                 }
             });
-        }, 100); // Small delay to ensure DOM is ready
+
+            // Reset iframe when its article becomes inactive
+            const article = iframe.closest('article');
+            if (article) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === 'data-status') {
+                            const status = article.dataset.status;
+                            if (status === 'before' || status === 'after') {
+                                // Store the original URL
+                                const originalSrc = iframe.src;
+                                // Clear and reset the iframe src
+                                iframe.src = '';
+                                requestAnimationFrame(() => {
+                                    iframe.src = originalSrc;
+                                });
+                                // Remove loaded class
+                                const articleSection = iframe.closest('.article-image-section');
+                                if (articleSection) {
+                                    articleSection.classList.remove('loaded');
+                                }
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(article, {
+                    attributes: true
+                });
+            }
+        });
     }
 };
 
