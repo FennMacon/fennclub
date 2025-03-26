@@ -169,8 +169,8 @@ const initializeResumeToggles = () => {
 
 // Event listeners for gallery type selection
 document.addEventListener('DOMContentLoaded', () => {
-    // Load default gallery
-    loadGallery('web');
+    // Initialize with landing page instead of web gallery
+    currentGallery = 'landing';
     
     // Add click handlers for gallery type selection
     const galleryLinks = document.querySelectorAll('#nav-gallery-section a, #nav-contact-section a, .mobile-menu-overlay a');
@@ -194,26 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoSection = document.getElementById('nav-logo-section');
     if (logoSection) {
         logoSection.addEventListener('click', () => {
-            const main = document.querySelector('main');
-            main.innerHTML = `
-                <article data-index="landing" data-status="active" class="landing-page">
-                    <div class="landing-content">
-                        <div class="intro-section">
-                            <h1>Fenn Macon</h1>
-                            <div class="haiku">
-                                <p>I solve tech problems</p>
-                                <p>and prevent future issues</p>
-                                <p>for tranquility</p>
-                            </div>
-                            <div class="intro-text">
-                                <p>Hi, I'm Fenn Macon, a musician and digital artist living in Jamaica Plain, Massachusetts.</p>
-                                <p>During the day, I am a systems engineer with a masters in IT management and business analytics.</p>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            `;
-            currentGallery = 'landing';
+            loadGallery('landing');
             // Close mobile menu if it's open
             if (nav.dataset.toggled === "true") {
                 handleNavToggle();
