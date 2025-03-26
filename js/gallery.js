@@ -74,8 +74,47 @@ const loadGallery = (galleryType) => {
             const status = index === 0 ? 'active' : 'inactive';
             main.innerHTML += createArticleElement(item, index, status);
         });
-        // Reinitialize iframe loading handlers
-        initializeIframeHandlers();
+        
+        // Initialize iframe loading handlers
+        setTimeout(() => {
+            const iframes = document.querySelectorAll('.article-iframe');
+            iframes.forEach(iframe => {
+                // Handle loading state
+                iframe.addEventListener('load', () => {
+                    iframe.parentElement.classList.add('loaded');
+                });
+
+                // Reset iframe content when slide changes
+                const resetIframe = () => {
+                    const src = iframe.src;
+                    iframe.src = '';
+                    setTimeout(() => {
+                        iframe.src = src;
+                    }, 400); // Match the slide transition time
+                };
+
+                // Find the parent article
+                const article = iframe.closest('article');
+                if (article) {
+                    // Watch for status changes
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.attributeName === 'data-status') {
+                                const status = article.dataset.status;
+                                // Reset iframe when slide becomes inactive
+                                if (status === 'before' || status === 'after') {
+                                    resetIframe();
+                                }
+                            }
+                        });
+                    });
+
+                    observer.observe(article, {
+                        attributes: true
+                    });
+                }
+            });
+        }, 100); // Small delay to ensure DOM is ready
     }
 };
 
@@ -110,16 +149,6 @@ const handleRightClick = () => {
     setTimeout(() => {
         nextSlide.dataset.status = "active";
         activeIndex = nextIndex;
-    });
-};
-
-// Initialize iframe loading handlers
-const initializeIframeHandlers = () => {
-    const iframes = document.querySelectorAll('.article-iframe');
-    iframes.forEach(iframe => {
-        iframe.addEventListener('load', () => {
-            iframe.parentElement.classList.add('loaded');
-        });
     });
 };
 
@@ -189,9 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Initialize iframe handlers
-    initializeIframeHandlers();
 });
 
 /* -- Mobile Nav Toggle -- */
@@ -207,45 +233,3 @@ window.matchMedia("(max-width: 800px)").onchange = e => {
     nav.dataset.transitionable = "false";
     nav.dataset.toggled = "false";
 };
-
-// Handle iframe loading and interaction
-document.addEventListener('DOMContentLoaded', () => {
-    const iframes = document.querySelectorAll('.article-iframe');
-    
-    iframes.forEach(iframe => {
-        // Handle loading state
-        iframe.addEventListener('load', () => {
-            iframe.parentElement.classList.add('loaded');
-        });
-
-        // Reset iframe content when slide changes
-        const resetIframe = () => {
-            const src = iframe.src;
-            iframe.src = '';
-            setTimeout(() => {
-                iframe.src = src;
-            }, 400); // Match the slide transition time
-        };
-
-        // Find the parent article
-        const article = iframe.closest('article');
-        if (article) {
-            // Watch for status changes
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.attributeName === 'data-status') {
-                        const status = article.dataset.status;
-                        // Reset iframe when slide becomes inactive
-                        if (status === 'before' || status === 'after') {
-                            resetIframe();
-                        }
-                    }
-                });
-            });
-
-            observer.observe(article, {
-                attributes: true
-            });
-        }
-    });
-});

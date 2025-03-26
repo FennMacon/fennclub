@@ -86,17 +86,17 @@ const galleryData = {
         {
             title: "Edwords Creative",
             description: "Portfolio website for a freelance copywriter",
-            url: "http://edwordscreative.com"
+            url: "https://edwordscreative.com"
         },
         {
             title: "Jump in the Jar",
             description: "Community non-profit website",
-            url: "http://jumpinthejar.org/"
+            url: "https://jumpinthejar.org/"
         },
         {
             title: "The Boulders Cookbook",
             description: "Family recipe website",
-            url: "http://boulderscookbook.com/"
+            url: "https://boulderscookbook.com/"
         }
     ],
     digital: [
