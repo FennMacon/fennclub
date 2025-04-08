@@ -181,7 +181,8 @@ function forceHideCursor() {
 function showDefaultCursor() {
     logoSection.style.cursor = '';
     document.querySelectorAll('.article-nav-button').forEach(arrow => {
-        arrow.style.cursor = '';
+        // Use the dot cursor instead of the default cursor
+        arrow.style.cursor = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'><circle cx='3' cy='3' r='3' fill='%23ffd54f'/></svg>\") 3 3, pointer";
     });
 }
 

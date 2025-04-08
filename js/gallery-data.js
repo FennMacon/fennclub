@@ -13,7 +13,7 @@ const galleryData = {
                     </div>
                     <div class="intro-text">
                         <p>Hi, I'm Fenn Macon, a musician and digital artist living in Jamaica Plain, Massachusetts.</p>
-                        <p>During the day, I am a systems engineer with a masters in IT management and business analytics.</p>
+                        <p>During the day, I am a systems engineer with a masters in IT management.</p>
                     </div>
                 </div>
             `,
@@ -24,37 +24,58 @@ const galleryData = {
         {
             title: "Opposable",
             description: "Drums",
-            url: "https://opposablelovesyou.bandcamp.com/"
+            url: "https://opposablelovesyou.bandcamp.com/",
+            bandcampId: "863328915",
+            bandcampType: "album",
+            backgroundImage: "https://f4.bcbits.com/img/0031038348_10.jpg"
         },
         {
             title: "Really Great",
             description: "Bass + Vocals",
-            url: "https://reallygreat.bandcamp.com/"
+            url: "https://reallygreat.bandcamp.com/",
+            bandcampId: "3175664723",
+            bandcampType: "album",
+            backgroundImage: "https://scontent-bos5-1.xx.fbcdn.net/v/t1.6435-9/53551204_10156221414663857_7336475994712178688_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=cf85f3&_nc_ohc=3Qp8caHRSEcQ7kNvwFEsfdn&_nc_oc=Adk-rlTsIUiyJLQw-TEXd_Rs27UGc888q0FlUSOY4xxsxnAyeSHgdDMKoDxgad-bbtRelBU7lIh-5h_wutUJdGDp&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=C3udap9NRBpM6xL3T58thQ&oh=00_AfHZlXzeDu0jlXbxubiI7SZ9Wf7fJNY1anRQcSm5-9k_vA&oe=681B8AE6"
         },
         {
             title: "Tuxis Giant",
             description: "Bass",
-            url: "https://tuxisgiant.bandcamp.com/"
+            url: "https://tuxisgiant.bandcamp.com/album/the-old-house",
+            bandcampId: "2051483297",
+            bandcampType: "album",
+            backgroundImage: "https://f4.bcbits.com/img/0031107033_10.jpg"
         },
         {
             title: "Strong Fenn",
             description: "Music + Lyrics",
-            url: "https://beddays.bandcamp.com/"
+            url: "https://beddays.bandcamp.com/",
+            bandcampId: "3192731947",
+            bandcampType: "album",
+            backgroundImage: "https://f4.bcbits.com/img/0002500970_10.jpg"
         },
         {
             title: "Total Vacation",
             description: "Writing and Vocals",
-            url: "https://totalvacation.bandcamp.com/releases"
+            url: "https://totalvacation.bandcamp.com/releases",
+            bandcampId: "2250616993",
+            bandcampType: "album",
+            backgroundImage: "/img/tv.jpg"
         },
         {
             title: "The Baja Blasters",
             description: "Writing, Vocals, and Guitar",
-            url: "https://thebajablasters.bandcamp.com/"
+            url: "https://thebajablasters.bandcamp.com/",
+            bandcampId: "2952990615",
+            bandcampType: "album",
+            backgroundImage: "https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/466623275_10227829613505861_6188495729671113241_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=bIK1yTMLdpkQ7kNvwEWJdLV&_nc_oc=Adny2-9neJQfJXOC4_voeLs-a_HD1FEpA3Xae0ItcBwVlRVwGTRbsCDhB2FOe1j7zcplcaACIk5V8CWLlvMVUGen&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=J6NZpHZyS67zeKFaORZFsg&oh=00_AfEFFyp7hIWzBWV75bJYjLmEwZQoMrkoGzKLiGlTIu7GOQ&oe=67F9F6FE"
         },
         {
             title: "Superjerk",
             description: "Guitar",
-            url: "https://superjerk.bandcamp.com/"
+            url: "https://superjerk.bandcamp.com/",
+            bandcampId: "4051202841",
+            bandcampType: "album",
+            backgroundImage: "https://f4.bcbits.com/img/0027299976_10.jpg"
         },
         {
             title: "MCtheProfessor.GOV",
@@ -101,18 +122,18 @@ const galleryData = {
     ],
     digital: [
         {
-            title: "The Avenue",
-            description: "Music video for The You Suck Flying Circus using Max/MSP and Adobe Premiere",
+            title: "FPR: The Avenue",
+            description: "Music video for Flowerpot Records and The You Suck Flying Circus using Max/MSP and Adobe Premiere",
             url: "https://www.youtube.com/embed/vrOCFoAH29k?autoplay=0&mute=0&controls=1&loop=1&playlist=vrOCFoAH29k&modestbranding=1&rel=0&showinfo=0&fs=0"
         },
         {
-            title: "Learn To Swim",
-            description: "Music video for The You Suck Flying Circus",
+            title: "FPR: Learn To Swim",
+            description: "Music video for Flowerpot Records and The You Suck Flying Circus",
             url: "https://www.youtube.com/embed/6HADmfWSb3w?autoplay=0&mute=0&controls=1&loop=1&playlist=6HADmfWSb3w&modestbranding=1&rel=0&showinfo=0&fs=0"
         },
         {
-            title: "Yr Heart Is Breaking",
-            description: "Music video for Jack David",
+            title: "FPR: Yr Heart Is Breaking",
+            description: "Music video for Flowerpot Records and Jack David",
             url: "https://www.youtube.com/embed/kGzELnSiOKk?autoplay=0&mute=0&controls=1&loop=1&playlist=kGzELnSiOKk&modestbranding=1&rel=0&showinfo=0&fs=0"
         },
         {
@@ -141,44 +162,70 @@ const galleryData = {
             url: "https://player.vimeo.com/video/94020153?h=0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
         },
         {
-            title: "Tartan Variations",
-            description: "Three Variations on a Tartan: An Exploration of Glitch Aesthetics",
-            url: "https://fennmacon.files.wordpress.com/2015/04/tartan-jpg-final.jpg"
+            title: "Tartan Variations: JPG",
+            description: "Three Variations on a Tartan: JPG",
+            url: "https://fennmacon.files.wordpress.com/2015/04/tartan-jpg-final.jpg",
+            directImage: true
+        },
+        {
+            title: "Tartan Variations: TIFF",
+            description: "Three Variations on a Tartan: TIFF",
+            url: "https://fennmacon.files.wordpress.com/2015/04/tartan-tiff-final.jpg",
+            directImage: true
+        },
+        {
+            title: "Tartan Variations: PNG",
+            description: "Three Variations on a Tartan: PNG",
+            url: "https://fennmacon.files.wordpress.com/2015/04/tartan-png-final-jpg1.jpg",
+            directImage: true
         },
         {
             title: "Pixel Drifter",
             description: "Self Portrait and glitch art experiments",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/04/out_artist-picture1.jpg"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/04/out_artist-picture1.jpg",
+            directImage: true
         },
         {
             title: "Other Work",
             description: "Created using Pixel Drifter and various notepad based glitch techniques",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg",
+            directImage: true
         },
         {
             title: "Glitch Art Collection",
             description: "A series of glitch art experiments and digital manipulations",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/img_1256_1.png"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/img_1256_1.png",
+            directImage: true
         },
         {
             title: "Tartan Glitch Series",
             description: "Digital manipulation of tartan patterns",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-tiff-3fstfd.jpg"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-tiff-3fstfd.jpg",
+            directImage: true
         },
         {
             title: "Tartan Glitch JPG",
             description: "JPG compression glitch experiments",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-jpg-4.jpg"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-jpg-4.jpg",
+            directImage: true
         },
         {
             title: "Digital Art #4",
             description: "Digital art experiment",
-            url: "https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg"
+            url: "https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg",
+            directImage: true
+        },
+        {
+            title: "Moonish Brute Split Digital Cover",
+            description: "A collaboration with Louis Roe for our split tape, I designed the background and Louis drew the little guys",
+            url: "https://f4.bcbits.com/img/a3015512650_10.jpg",
+            directImage: true
         },
         {
             title: "Album Art",
             description: "Album artwork design",
-            url: "https://f4.bcbits.com/img/a1435416564_10.jpg"
+            url: "https://f4.bcbits.com/img/a1435416564_10.jpg",
+            directImage: true
         }
     ],
     resume: {
@@ -346,5 +393,40 @@ const galleryData = {
                 type: "resume"
             }
         ]
+    },
+    overview: {
+        title: "Overview",
+        items: [{
+            title: "Site Overview",
+            description: `
+                <div class="overview-content">
+                    <h2>Welcome to My Portfolio</h2>
+                    <div class="overview-grid">
+                        <div class="overview-section">
+                            <h3>Music</h3>
+                            <button class="overview-button" data-gallery="music">Explore Music</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Web</h3>
+                            <button class="overview-button" data-gallery="web">Explore Web</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Digital</h3>
+                            <button class="overview-button" data-gallery="digital">Explore Digital</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Resume</h3>
+                            <button class="overview-button" data-gallery="resume">View Resume</button>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Contact</h3>
+                        <p>Email: <a href="mailto:fennmacon@gmail.com">fennmacon@gmail.com</a></p>
+                        <p>LinkedIn: <a href="https://www.linkedin.com/in/fenn-macon" target="_blank">linkedin.com/in/fenn-macon</a></p>
+                    </div>
+                </div>
+            `,
+            type: "overview"
+        }]
     }
 }; 
