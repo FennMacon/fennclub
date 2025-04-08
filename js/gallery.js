@@ -468,12 +468,14 @@ function handleKeyboardNavigation(e) {
 
 // Drag/Swipe functionality for gallery
 let isDragging = false;
+let hasMovedEnough = false; // Track if we've moved enough to consider it a drag
 let startX = 0;
 let startY = 0;
 let currentX = 0;
 let currentY = 0;
 let translateX = 0;
 const dragThreshold = 100; // Minimum drag distance to trigger slide change
+const minimumMovementThreshold = 10; // pixels
 
 function initDragHandlers() {
     const main = document.querySelector('main');
@@ -502,6 +504,7 @@ function handleDragStart(e) {
     }
     
     isDragging = true;
+    hasMovedEnough = false; // Reset the movement flag
     
     // Get starting positions
     if (e.type === 'touchstart') {
@@ -543,6 +546,11 @@ function handleDragMove(e) {
     // Calculate horizontal distance moved
     translateX = currentX - startX;
     
+    // Check if we've moved enough to consider this a drag operation
+    if (Math.abs(translateX) > minimumMovementThreshold) {
+        hasMovedEnough = true;
+    }
+    
     // Get the current active slide
     const activeSlide = document.querySelector('article[data-status="active"]');
     if (activeSlide) {
@@ -567,14 +575,15 @@ function handleDragMove(e) {
 function handleDragEnd(e) {
     if (!isDragging) return;
     
-    // Reset dragging state
-    isDragging = false;
-    
     // Get the current active slide
     const activeSlide = document.querySelector('article[data-status="active"]');
     if (activeSlide) {
         finishDrag(activeSlide, translateX);
     }
+    
+    // Reset flags
+    isDragging = false;
+    hasMovedEnough = false;
 }
 
 // Helper function to finish drag operation
@@ -586,16 +595,22 @@ function finishDrag(activeSlide, translateDistance) {
     activeSlide.style.transform = '';
     activeSlide.classList.remove('dragging');
     
-    // Check if the drag was significant enough to change slides
-    if (Math.abs(translateDistance) > dragThreshold) {
-        if (translateDistance > 0) {
-            // Dragged right, go to previous slide
-            handleLeftClick();
-        } else {
-            // Dragged left, go to next slide
-            handleRightClick();
+    // Only trigger slide change if there was meaningful movement (not just a click)
+    if (hasMovedEnough) {
+        // Check if the drag was significant enough to change slides
+        if (Math.abs(translateDistance) > dragThreshold) {
+            if (translateDistance > 0) {
+                // Dragged right, go to previous slide
+                handleLeftClick();
+            } else {
+                // Dragged left, go to next slide
+                handleRightClick();
+            }
         }
     }
+    
+    // Reset the movement flag
+    hasMovedEnough = false;
 }
 
 // Add event listeners after DOM load
