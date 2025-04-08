@@ -52,6 +52,11 @@ const createArticleElement = (data, index, status) => {
     
     // Special handling for image files
     if (isImage) {
+        // Check if it has an external link
+        const imageClickHandler = data.externalLink ? 
+            `onclick="window.open('${data.externalLink}', '_blank')" style="cursor: pointer;"` : 
+            `onclick="openLightbox(this)"`;
+            
         return `
         <article data-index="${index}" data-status="${status}">
             <div class="article-image-section article-section image-container">
@@ -63,7 +68,7 @@ const createArticleElement = (data, index, status) => {
                         data-title="${data.title}"
                         data-description="${data.description}"
                         loading="lazy"
-                        onclick="openLightbox(this)">
+                        ${imageClickHandler}>
                 </div>
             </div>
             <div class="article-description-section article-section">

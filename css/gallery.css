@@ -1906,3 +1906,36 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
 #nav-logo-section, #nav-logo-section * {
     cursor: none !important;
 }
+
+/* External link images */
+.article-image[style*="cursor: pointer"] {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-image[style*="cursor: pointer"]:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(255, 213, 79, 0.6); /* Glowing effect using the highlight-color */
+}
+
+/* After the image, add a small icon or indicator */
+.image-wrapper {
+    position: relative;
+}
+
+.article-image[style*="cursor: pointer"]::after {
+    content: '🔗';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(14, 21, 43, 0.7);
+    color: var(--backcolor);
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.article-image[style*="cursor: pointer"]:hover::after {
+    opacity: 1;
+}
