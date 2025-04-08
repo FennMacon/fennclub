@@ -59,7 +59,7 @@ const galleryData = {
             url: "https://totalvacation.bandcamp.com/releases",
             bandcampId: "2250616993",
             bandcampType: "album",
-            backgroundImage: "/img/tv.jpg"
+            backgroundImage: "./img/tv.jpg"
         },
         {
             title: "The Baja Blasters",

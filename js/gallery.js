@@ -78,14 +78,16 @@ const createArticleElement = (data, index, status) => {
     return `
     <article data-index="${index}" data-status="${status}">
         <div class="article-image-section article-section">
-            <iframe 
-                class="article-iframe"
-                src="${data.url}"
-                frameborder="0"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
+            <div class="iframe-wrapper">
+                <iframe 
+                    class="article-iframe"
+                    src="${data.url}"
+                    frameborder="0"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
         </div>
         <div class="article-description-section article-section">
             <p>${data.description}</p>
@@ -464,6 +466,138 @@ function handleKeyboardNavigation(e) {
     }
 }
 
+// Drag/Swipe functionality for gallery
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let currentX = 0;
+let currentY = 0;
+let translateX = 0;
+const dragThreshold = 100; // Minimum drag distance to trigger slide change
+
+function initDragHandlers() {
+    const main = document.querySelector('main');
+    
+    // Mouse events
+    main.addEventListener('mousedown', handleDragStart);
+    document.addEventListener('mousemove', handleDragMove);
+    document.addEventListener('mouseup', handleDragEnd);
+    
+    // Touch events
+    main.addEventListener('touchstart', handleDragStart, { passive: true });
+    document.addEventListener('touchmove', handleDragMove, { passive: false });
+    document.addEventListener('touchend', handleDragEnd);
+}
+
+function handleDragStart(e) {
+    // Skip if we're in a special gallery or in lightbox
+    if (currentGallery === 'resume' || currentGallery === 'landing' || currentGallery === 'overview' ||
+        (lightbox && lightbox.classList.contains('active'))) {
+        return;
+    }
+    
+    // Skip if user is clicking on a button or link
+    if (e.target.closest('button') || e.target.closest('a') || e.target.closest('iframe')) {
+        return;
+    }
+    
+    isDragging = true;
+    
+    // Get starting positions
+    if (e.type === 'touchstart') {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    } else {
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+    
+    currentX = startX;
+    currentY = startY;
+    
+    // Get the current active slide
+    const activeSlide = document.querySelector('article[data-status="active"]');
+    if (activeSlide) {
+        // Add a class for drag effect styles
+        activeSlide.classList.add('dragging');
+    }
+}
+
+function handleDragMove(e) {
+    if (!isDragging) return;
+    
+    // Prevent default to avoid page scrolling during drag on touch devices
+    if (e.type === 'touchmove') {
+        e.preventDefault();
+    }
+    
+    // Update current position
+    if (e.type === 'touchmove') {
+        currentX = e.touches[0].clientX;
+        currentY = e.touches[0].clientY;
+    } else {
+        currentX = e.clientX;
+        currentY = e.clientY;
+    }
+    
+    // Calculate horizontal distance moved
+    translateX = currentX - startX;
+    
+    // Get the current active slide
+    const activeSlide = document.querySelector('article[data-status="active"]');
+    if (activeSlide) {
+        // Apply a transform to follow the cursor (limited effect)
+        const translateAmount = translateX * 0.2; // Dampen the effect
+        activeSlide.style.transform = `translateX(${translateAmount}px)`;
+        
+        // Check if mouse is over an iframe - if so, end the drag early
+        if (e.type === 'mousemove') {
+            const elementUnderPointer = document.elementFromPoint(currentX, currentY);
+            if (elementUnderPointer && (
+                elementUnderPointer.tagName === 'IFRAME' || 
+                elementUnderPointer.closest('iframe')
+            )) {
+                // Handle as if the drag ended
+                finishDrag(activeSlide, translateX);
+            }
+        }
+    }
+}
+
+function handleDragEnd(e) {
+    if (!isDragging) return;
+    
+    // Reset dragging state
+    isDragging = false;
+    
+    // Get the current active slide
+    const activeSlide = document.querySelector('article[data-status="active"]');
+    if (activeSlide) {
+        finishDrag(activeSlide, translateX);
+    }
+}
+
+// Helper function to finish drag operation
+function finishDrag(activeSlide, translateDistance) {
+    // Reset dragging state
+    isDragging = false;
+    
+    // Reset transform
+    activeSlide.style.transform = '';
+    activeSlide.classList.remove('dragging');
+    
+    // Check if the drag was significant enough to change slides
+    if (Math.abs(translateDistance) > dragThreshold) {
+        if (translateDistance > 0) {
+            // Dragged right, go to previous slide
+            handleLeftClick();
+        } else {
+            // Dragged left, go to next slide
+            handleRightClick();
+        }
+    }
+}
+
 // Add event listeners after DOM load
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize with landing page instead of web gallery
@@ -471,6 +605,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize lightbox elements
     initLightbox();
+    
+    // Initialize drag handlers
+    initDragHandlers();
     
     // Add keyboard navigation listener
     document.addEventListener('keydown', handleKeyboardNavigation);
