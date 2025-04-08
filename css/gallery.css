@@ -1606,6 +1606,7 @@ main > article .yt-link > i {
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
+    z-index: 1;
 }
 
 /* Create a consistent background gradient */
@@ -1655,9 +1656,14 @@ main > article .yt-link > i {
     width: 100%;
     height: 100%;
     border: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.article-image-section.loaded .bandcamp-iframe {
+    opacity: 1;
 }
 
 @media (max-width: 500px) {

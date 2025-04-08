@@ -243,15 +243,46 @@ const loadGallery = (galleryType) => {
                             if (status === 'before' || status === 'after') {
                                 // Store the original URL
                                 const originalSrc = iframe.src;
-                                // Clear and reset the iframe src
-                                iframe.src = '';
-                                requestAnimationFrame(() => {
-                                    iframe.src = originalSrc;
-                                });
-                                // Remove loaded class
-                                const articleSection = iframe.closest('.article-image-section');
-                                if (articleSection) {
-                                    articleSection.classList.remove('loaded');
+                                
+                                // For Bandcamp iframes, handle differently to prevent disappearing issue
+                                if (iframe.classList.contains('bandcamp-iframe')) {
+                                    // Just remove the loaded class, but don't reset src on mobile
+                                    const articleSection = iframe.closest('.article-image-section');
+                                    if (articleSection) {
+                                        articleSection.classList.remove('loaded');
+                                    }
+                                } else {
+                                    // For regular iframes, reset src as before
+                                    iframe.src = '';
+                                    requestAnimationFrame(() => {
+                                        iframe.src = originalSrc;
+                                    });
+                                    
+                                    // Remove loaded class
+                                    const articleSection = iframe.closest('.article-image-section');
+                                    if (articleSection) {
+                                        articleSection.classList.remove('loaded');
+                                    }
+                                }
+                            } else if (status === 'active' || status === 'becoming-active-from-before' || status === 'becoming-active-from-after') {
+                                // When becoming active again, ensure iframe is visible and reloaded if needed
+                                if (iframe.classList.contains('bandcamp-iframe')) {
+                                    // Ensure Bandcamp iframe has content
+                                    if (!iframe.src || iframe.src === 'about:blank') {
+                                        const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
+                                        if (originalSrc) {
+                                            iframe.src = originalSrc;
+                                        }
+                                    }
+                                    
+                                    // Force the article section to be marked as loaded
+                                    const articleSection = iframe.closest('.article-image-section');
+                                    if (articleSection) {
+                                        // Short delay to ensure visibility after animation
+                                        setTimeout(() => {
+                                            articleSection.classList.add('loaded');
+                                        }, 50);
+                                    }
                                 }
                             }
                         }
@@ -261,6 +292,11 @@ const loadGallery = (galleryType) => {
                 observer.observe(article, {
                     attributes: true
                 });
+                
+                // Store original src for Bandcamp iframes for easy recovery
+                if (iframe.classList.contains('bandcamp-iframe')) {
+                    iframe.setAttribute('data-original-src', iframe.src);
+                }
             }
         });
         
