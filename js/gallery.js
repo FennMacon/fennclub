@@ -485,10 +485,11 @@ function initDragHandlers() {
     document.addEventListener('mousemove', handleDragMove);
     document.addEventListener('mouseup', handleDragEnd);
     
-    // Touch events
+    // Touch events - use passive: true when possible for better performance
     main.addEventListener('touchstart', handleDragStart, { passive: true });
+    // Only touchmove needs passive: false to conditionally prevent default
     document.addEventListener('touchmove', handleDragMove, { passive: false });
-    document.addEventListener('touchend', handleDragEnd);
+    document.addEventListener('touchend', handleDragEnd, { passive: true });
 }
 
 function handleDragStart(e) {
@@ -529,11 +530,6 @@ function handleDragStart(e) {
 function handleDragMove(e) {
     if (!isDragging) return;
     
-    // Prevent default to avoid page scrolling during drag on touch devices
-    if (e.type === 'touchmove') {
-        e.preventDefault();
-    }
-    
     // Update current position
     if (e.type === 'touchmove') {
         currentX = e.touches[0].clientX;
@@ -543,30 +539,44 @@ function handleDragMove(e) {
         currentY = e.clientY;
     }
     
-    // Calculate horizontal distance moved
+    // Calculate distances moved
+    const deltaX = Math.abs(currentX - startX);
+    const deltaY = Math.abs(currentY - startY);
     translateX = currentX - startX;
     
-    // Check if we've moved enough to consider this a drag operation
+    // Determine if movement is primarily horizontal
+    const isHorizontalDrag = deltaX > deltaY;
+    
+    // Only prevent default on touch devices when clearly dragging horizontally
+    // This allows vertical scrolling when needed
+    if (e.type === 'touchmove' && isHorizontalDrag && deltaX > minimumMovementThreshold) {
+        e.preventDefault();
+    }
+    
+    // Check if we've moved enough horizontally to consider this a drag operation
     if (Math.abs(translateX) > minimumMovementThreshold) {
         hasMovedEnough = true;
     }
     
-    // Get the current active slide
-    const activeSlide = document.querySelector('article[data-status="active"]');
-    if (activeSlide) {
-        // Apply a transform to follow the cursor (limited effect)
-        const translateAmount = translateX * 0.2; // Dampen the effect
-        activeSlide.style.transform = `translateX(${translateAmount}px)`;
-        
-        // Check if mouse is over an iframe - if so, end the drag early
-        if (e.type === 'mousemove') {
-            const elementUnderPointer = document.elementFromPoint(currentX, currentY);
-            if (elementUnderPointer && (
-                elementUnderPointer.tagName === 'IFRAME' || 
-                elementUnderPointer.closest('iframe')
-            )) {
-                // Handle as if the drag ended
-                finishDrag(activeSlide, translateX);
+    // Only apply transform effect if primarily moving horizontally
+    if (isHorizontalDrag) {
+        // Get the current active slide
+        const activeSlide = document.querySelector('article[data-status="active"]');
+        if (activeSlide) {
+            // Apply a transform to follow the cursor (limited effect)
+            const translateAmount = translateX * 0.2; // Dampen the effect
+            activeSlide.style.transform = `translateX(${translateAmount}px)`;
+            
+            // Check if mouse is over an iframe - if so, end the drag early
+            if (e.type === 'mousemove') {
+                const elementUnderPointer = document.elementFromPoint(currentX, currentY);
+                if (elementUnderPointer && (
+                    elementUnderPointer.tagName === 'IFRAME' || 
+                    elementUnderPointer.closest('iframe')
+                )) {
+                    // Handle as if the drag ended
+                    finishDrag(activeSlide, translateX);
+                }
             }
         }
     }
@@ -575,10 +585,22 @@ function handleDragMove(e) {
 function handleDragEnd(e) {
     if (!isDragging) return;
     
+    // Calculate overall drag direction
+    const deltaX = Math.abs(currentX - startX);
+    const deltaY = Math.abs(currentY - startY);
+    const isHorizontalDrag = deltaX > deltaY;
+    
     // Get the current active slide
     const activeSlide = document.querySelector('article[data-status="active"]');
     if (activeSlide) {
-        finishDrag(activeSlide, translateX);
+        // Only finish the drag if it was a horizontal movement
+        if (isHorizontalDrag) {
+            finishDrag(activeSlide, translateX);
+        } else {
+            // Just reset the transform without triggering a slide change
+            activeSlide.style.transform = '';
+            activeSlide.classList.remove('dragging');
+        }
     }
     
     // Reset flags
