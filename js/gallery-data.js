@@ -108,7 +108,7 @@ const galleryData = {
         {
             title: "Edwords Creative",
             description: "Portfolio website for a freelance copywriter",
-            url: "http://edwordscreative.com"
+            url: "https://fennmacon.github.io/edwords/"
         },
         {
             title: "Jump in the Jar",
@@ -118,7 +118,7 @@ const galleryData = {
         {
             title: "The Boulders Cookbook",
             description: "Family recipe website",
-            url: "http://boulderscookbook.com/"
+            url: "https://fennmacon.github.io/boulders-cookbook/"
         }
     ],
     digital: [
