@@ -3,6 +3,12 @@
 let activeIndex = 0;
 let currentGallery = 'web'; // default gallery
 
+// Helper function to detect mobile devices
+function isMobileDevice() {
+    return (window.innerWidth <= 800) || 
+           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 const createArticleElement = (data, index, status) => {
     // Special handling for music gallery with Bandcamp embeds
     if (currentGallery === 'music' && data.bandcampId) {
@@ -179,6 +185,28 @@ const createOverviewElement = (data) => {
     `;
 };
 
+// Setup Intersection Observer for monitoring iframe visibility
+let iframeObserver;
+
+function setupIframeObserver() {
+    if (!iframeObserver && isMobileDevice()) {
+        iframeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const iframe = entry.target;
+                    const articleSection = iframe.closest('.article-image-section');
+                    
+                    // If the iframe is visible but not loaded, force refresh it
+                    if (articleSection && !articleSection.classList.contains('loaded')) {
+                        forceRefreshIframe(iframe);
+                    }
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when at least 10% of the iframe is visible
+    }
+    return iframeObserver;
+}
+
 const loadGallery = (galleryType) => {
     // Don't return if it's the initial load of 'web'
     if (currentGallery === galleryType && document.querySelector('main').children.length > 0) return;
@@ -240,49 +268,43 @@ const loadGallery = (galleryType) => {
                     mutations.forEach((mutation) => {
                         if (mutation.attributeName === 'data-status') {
                             const status = article.dataset.status;
+                            // Store original src for all iframes for easy recovery if not already set
+                            if (!iframe.getAttribute('data-original-src') && iframe.src) {
+                                iframe.setAttribute('data-original-src', iframe.src);
+                            }
+                            
                             if (status === 'before' || status === 'after') {
-                                // Store the original URL
-                                const originalSrc = iframe.src;
+                                // For all iframe types, keep track of loading state but don't reload on mobile
+                                const articleSection = iframe.closest('.article-image-section');
+                                if (articleSection) {
+                                    articleSection.classList.remove('loaded');
+                                }
                                 
-                                // For Bandcamp iframes, handle differently to prevent disappearing issue
-                                if (iframe.classList.contains('bandcamp-iframe')) {
-                                    // Just remove the loaded class, but don't reset src on mobile
-                                    const articleSection = iframe.closest('.article-image-section');
-                                    if (articleSection) {
-                                        articleSection.classList.remove('loaded');
-                                    }
-                                } else {
-                                    // For regular iframes, reset src as before
+                                // Only clear src on desktop - on mobile this can cause loading issues
+                                if (!isMobileDevice()) {
+                                    const originalSrc = iframe.src;
                                     iframe.src = '';
                                     requestAnimationFrame(() => {
                                         iframe.src = originalSrc;
                                     });
-                                    
-                                    // Remove loaded class
-                                    const articleSection = iframe.closest('.article-image-section');
-                                    if (articleSection) {
-                                        articleSection.classList.remove('loaded');
-                                    }
                                 }
                             } else if (status === 'active' || status === 'becoming-active-from-before' || status === 'becoming-active-from-after') {
                                 // When becoming active again, ensure iframe is visible and reloaded if needed
-                                if (iframe.classList.contains('bandcamp-iframe')) {
-                                    // Ensure Bandcamp iframe has content
-                                    if (!iframe.src || iframe.src === 'about:blank') {
-                                        const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
-                                        if (originalSrc) {
-                                            iframe.src = originalSrc;
-                                        }
+                                // Ensure iframe has content
+                                if (!iframe.src || iframe.src === 'about:blank') {
+                                    const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
+                                    if (originalSrc) {
+                                        iframe.src = originalSrc;
                                     }
-                                    
-                                    // Force the article section to be marked as loaded
-                                    const articleSection = iframe.closest('.article-image-section');
-                                    if (articleSection) {
-                                        // Short delay to ensure visibility after animation
-                                        setTimeout(() => {
-                                            articleSection.classList.add('loaded');
-                                        }, 50);
-                                    }
+                                }
+                                
+                                // Force the article section to be marked as loaded
+                                const articleSection = iframe.closest('.article-image-section');
+                                if (articleSection) {
+                                    // Short delay to ensure visibility after animation
+                                    setTimeout(() => {
+                                        articleSection.classList.add('loaded');
+                                    }, 50);
                                 }
                             }
                         }
@@ -293,10 +315,16 @@ const loadGallery = (galleryType) => {
                     attributes: true
                 });
                 
-                // Store original src for Bandcamp iframes for easy recovery
-                if (iframe.classList.contains('bandcamp-iframe')) {
+                // Store original src for all iframes for easy recovery
+                if (iframe.src) {
                     iframe.setAttribute('data-original-src', iframe.src);
                 }
+            }
+            
+            // Add to intersection observer on mobile
+            const observer = setupIframeObserver();
+            if (observer) {
+                observer.observe(iframe);
             }
         });
         
@@ -322,6 +350,36 @@ const loadGallery = (galleryType) => {
     }
 };
 
+// Helper function to force refresh an iframe
+function forceRefreshIframe(iframe) {
+    if (!iframe) return;
+    
+    // Store the original source
+    const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
+    if (!originalSrc) return;
+    
+    // On mobile, just ensure the src is set correctly
+    if (isMobileDevice()) {
+        if (!iframe.src || iframe.src === 'about:blank') {
+            iframe.src = originalSrc;
+        }
+        
+        // Mark as loaded after a short delay
+        const articleSection = iframe.closest('.article-image-section');
+        if (articleSection) {
+            setTimeout(() => {
+                articleSection.classList.add('loaded');
+            }, 100);
+        }
+    } else {
+        // On desktop, perform a full refresh
+        iframe.src = '';
+        setTimeout(() => {
+            iframe.src = originalSrc;
+        }, 50);
+    }
+}
+
 const handleLeftClick = () => {
     const galleryItems = galleryData[currentGallery];
     const nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : galleryItems.length - 1;
@@ -332,6 +390,14 @@ const handleLeftClick = () => {
     currentSlide.dataset.status = "after";
     
     nextSlide.dataset.status = "becoming-active-from-before";
+    
+    // Check if the next slide has iframes that need refreshing
+    const iframes = nextSlide.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        if (iframe.getAttribute('data-original-src')) {
+            forceRefreshIframe(iframe);
+        }
+    });
     
     setTimeout(() => {
         nextSlide.dataset.status = "active";
@@ -349,6 +415,14 @@ const handleRightClick = () => {
     currentSlide.dataset.status = "before";
     
     nextSlide.dataset.status = "becoming-active-from-after";
+    
+    // Check if the next slide has iframes that need refreshing
+    const iframes = nextSlide.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        if (iframe.getAttribute('data-original-src')) {
+            forceRefreshIframe(iframe);
+        }
+    });
     
     setTimeout(() => {
         nextSlide.dataset.status = "active";
@@ -421,6 +495,14 @@ const initializeOverviewButtons = () => {
                                 const slideIndex = parseInt(slide.dataset.index);
                                 if (slideIndex === index) {
                                     slide.dataset.status = "active";
+                                    
+                                    // Force refresh any iframes in this slide
+                                    const iframes = slide.querySelectorAll('iframe');
+                                    iframes.forEach(iframe => {
+                                        if (iframe.src || iframe.getAttribute('data-original-src')) {
+                                            forceRefreshIframe(iframe);
+                                        }
+                                    });
                                 } else if (slideIndex < index) {
                                     slide.dataset.status = "before";
                                 } else {
@@ -684,6 +766,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add keyboard navigation listener
     document.addEventListener('keydown', handleKeyboardNavigation);
+    
+    // Setup Intersection Observer for iframes on mobile to load when visible
+    if (isMobileDevice()) {
+        const observer = setupIframeObserver();
+        if (observer) {
+            // Observe all iframes
+            document.querySelectorAll('.article-iframe, .bandcamp-iframe').forEach(iframe => {
+                observer.observe(iframe);
+            });
+        }
+    }
     
     // Add click handlers for gallery type selection
     const galleryLinks = document.querySelectorAll('#nav-gallery-section a, #nav-contact-section a, .mobile-menu-overlay a');
