@@ -80,7 +80,8 @@ const galleryData = {
         {
             title: "MCtheProfessor.GOV",
             description: "Guitar, Bass, and Noise",
-            url: "https://www.youtube.com/embed/HtFLTJSrdJc?autoplay=0&mute=0&controls=1&loop=1&playlist=HtFLTJSrdJc&modestbranding=1&rel=0&showinfo=0&fs=0"
+            url: "https://www.youtube.com/embed/HtFLTJSrdJc?autoplay=0&mute=0&controls=1&loop=1&playlist=HtFLTJSrdJc&modestbranding=1&rel=0&showinfo=0&fs=0",
+            backgroundImage: "https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/472000097_10162278154675395_487823853183993413_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BwBtyaoRFnkQ7kNvwFbGIVw&_nc_oc=AdnYK9uvqBjcornULCxV6TDK5vU9Es74w5mPivnBZiTgN3lPXSr6U_Wef3A3YA3rvneBx2yu6c_T10KtZ1-vHHsp&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=abE6qEPKR2w4dcJyM1nugQ&oh=00_AfEijxWpe2j7jQ9hDCWGANsKWc3ALQTd9Irp7w0JyJXUSw&oe=67FB270D"
         }
     ],
     web: [
