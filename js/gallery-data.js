@@ -319,7 +319,7 @@ const galleryData = {
                         <div class="resume-section">
                             <h3>Experience</h3>
                             <div class="resume-item">
-                                <h4>Associate Systems Engineer</h4>
+                                <h4>Systems Engineer</h4>
                                 <p>Enel X, Boston, MA | Jul 2022 - Present</p>
                                 <ul>
                                     <li>Automated key processes using UiPath, Excel, Python, and REST APIs</li>
