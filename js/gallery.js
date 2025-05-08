@@ -209,55 +209,34 @@ const createLandingElement = (data) => {
 };
 
 const createOverviewElement = (data) => {
-    // Generate section contents dynamically from galleryData
-    const musicItems = galleryData.music.map(item => `
-        <div class="overview-item" data-url="${item.url}" data-gallery="music" data-index="${galleryData.music.indexOf(item)}">
-            <a href="#" class="overview-link">${item.title}</a>
+    const { welcomeTitle, sections, contact } = data;
+
+    // Build gallery sections
+    const sectionsHTML = sections.map(section => `
+        <div class="overview-section">
+            <h3>${section.title}</h3>
+            <button class="overview-button" data-gallery="${section.galleryKey}">${section.buttonText}</button>
         </div>
     `).join('');
-    
-    const webItems = galleryData.web.map(item => `
-        <div class="overview-item" data-url="${item.url}" data-gallery="web" data-index="${galleryData.web.indexOf(item)}">
-            <a href="#" class="overview-link">${item.title}</a>
+
+    // Build contact info
+    const contactHTML = `
+        <div class="contact-info">
+            <h3>${contact.title}</h3>
+            <p>Email: <a href="mailto:${contact.email}">${contact.email}</a></p>
+            <p>LinkedIn: <a href="${contact.linkedin}" target="_blank">${contact.linkedin.replace('https://', '')}</a></p>
         </div>
-    `).join('');
-    
-    const digitalItems = galleryData.digital.map(item => `
-        <div class="overview-item" data-url="${item.url}" data-gallery="digital" data-index="${galleryData.digital.indexOf(item)}">
-            <a href="#" class="overview-link">${item.title}</a>
-        </div>
-    `).join('');
+    `;
 
     return `
     <article class="overview-article" data-status="active">
         <div class="article-content-section article-section">
             <div class="overview-content">
-                <h2>Fenn Macon</h2>
+                <h2>${welcomeTitle}</h2>
                 <div class="overview-grid">
-                    <div class="overview-section">
-                        <h3><a href="#" class="section-link" data-gallery="music">Music</a></h3>
-                        <div class="overview-items">
-                            ${musicItems}
-                        </div>
-                    </div>
-                    <div class="overview-section">
-                        <h3><a href="#" class="section-link" data-gallery="web">Web</a></h3>
-                        <div class="overview-items">
-                            ${webItems}
-                        </div>
-                    </div>
-                    <div class="overview-section">
-                        <h3><a href="#" class="section-link" data-gallery="digital">Digital</a></h3>
-                        <div class="overview-items">
-                            ${digitalItems}
-                        </div>
-                    </div>
+                    ${sectionsHTML}
                 </div>
-                <div class="contact-info">
-                    <a href="mailto:fennmacon@gmail.com">Email</a>
-                    <a href="https://www.linkedin.com/in/fenn-macon" target="_blank">LinkedIn</a>
-                    <a href="#" class="section-link" data-gallery="resume">Resume</a>
-                </div>
+                ${contactHTML}
             </div>
         </div>
     </article>
@@ -305,7 +284,8 @@ const loadGallery = (galleryType) => {
         // Create resume, landing, or overview article
         const data = galleryType === 'resume' ? galleryData.resume.data : 
                      galleryType === 'landing' ? galleryData.landing.items[0] : 
-                     galleryData.overview.items[0]; 
+                     galleryType === 'overview' ? galleryData.overview.data : 
+                     null; // Default case, although should not happen for these types
                      
         let content = '';
         
