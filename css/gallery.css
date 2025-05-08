@@ -404,26 +404,17 @@ main > article > .article-image-section {
     justify-content: center;
 }
 
-/* Simplify the loading state */
-.article-image-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: none;
-    z-index: 3;
-    opacity: 1;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-}
-
-.article-image-section.loaded::before {
+/* Base styles for gallery content before loading */
+.article-iframe,
+.bandcamp-iframe,
+.article-image {
     opacity: 0;
+    filter: blur(8px);
+    transform: scale(1.03);
+    transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
 }
 
-/* Add iframe transitions */
+/* Specific overrides */
 .article-iframe {
     position: relative;
     width: 100%;
@@ -432,19 +423,40 @@ main > article > .article-image-section {
     background-color: transparent;
     cursor: auto !important;
     pointer-events: auto !important;
-    opacity: 0;
-    filter: blur(10px);
-    transform: scale(1.02);
-    transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
     border-radius: 0;
     box-shadow: none;
+    /* Base transitions apply */
 }
 
-.article-image-section.loaded .article-iframe {
+.bandcamp-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    position: relative;
+    z-index: 3;
+    /* Base transitions apply */
+}
+
+.article-image {
+    display: block; /* Ensure image behaves like a block */
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+    /* Base transitions apply */
+}
+
+/* Styles when content is loaded */
+.article-image-section.loaded .article-iframe,
+.article-image-section.loaded .bandcamp-iframe,
+.article-image-section.loaded .article-image {
     opacity: 1;
     filter: blur(0);
     transform: scale(1);
 }
+
+/* Remove redundant transitions previously defined */
+/* (The base styles now handle these) */
 
 /* Add iframe container styles similar to image container */
 .article-image-section {
@@ -1658,12 +1670,13 @@ main > article .yt-link > i {
     border: 0;
     position: relative;
     z-index: 3;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    /* Inherits transition from base styles */
 }
 
 .article-image-section.loaded .bandcamp-iframe {
     opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
 }
 
 @media (max-width: 500px) {
@@ -1714,6 +1727,7 @@ main > article .yt-link > i {
     max-height: 80vh;
     object-fit: contain;
     border-radius: 4px;
+    /* Inherits transition from base styles */
 }
 
 @media (max-width: 800px) {

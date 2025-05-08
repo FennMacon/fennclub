@@ -209,34 +209,55 @@ const createLandingElement = (data) => {
 };
 
 const createOverviewElement = (data) => {
-    const { welcomeTitle, sections, contact } = data;
-
-    // Build gallery sections
-    const sectionsHTML = sections.map(section => `
-        <div class="overview-section">
-            <h3>${section.title}</h3>
-            <button class="overview-button" data-gallery="${section.galleryKey}">${section.buttonText}</button>
+    // Generate section contents dynamically from galleryData
+    const musicItems = galleryData.music.map(item => `
+        <div class="overview-item" data-url="${item.url}" data-gallery="music" data-index="${galleryData.music.indexOf(item)}">
+            <a href="#" class="overview-link">${item.title}</a>
         </div>
     `).join('');
-
-    // Build contact info
-    const contactHTML = `
-        <div class="contact-info">
-            <h3>${contact.title}</h3>
-            <p>Email: <a href="mailto:${contact.email}">${contact.email}</a></p>
-            <p>LinkedIn: <a href="${contact.linkedin}" target="_blank">${contact.linkedin.replace('https://', '')}</a></p>
+    
+    const webItems = galleryData.web.map(item => `
+        <div class="overview-item" data-url="${item.url}" data-gallery="web" data-index="${galleryData.web.indexOf(item)}">
+            <a href="#" class="overview-link">${item.title}</a>
         </div>
-    `;
+    `).join('');
+    
+    const digitalItems = galleryData.digital.map(item => `
+        <div class="overview-item" data-url="${item.url}" data-gallery="digital" data-index="${galleryData.digital.indexOf(item)}">
+            <a href="#" class="overview-link">${item.title}</a>
+        </div>
+    `).join('');
 
     return `
     <article class="overview-article" data-status="active">
         <div class="article-content-section article-section">
             <div class="overview-content">
-                <h2>${welcomeTitle}</h2>
+                <h2>Fenn Macon</h2>
                 <div class="overview-grid">
-                    ${sectionsHTML}
+                    <div class="overview-section">
+                        <h3><a href="#" class="section-link" data-gallery="music">Music</a></h3>
+                        <div class="overview-items">
+                            ${musicItems}
+                        </div>
+                    </div>
+                    <div class="overview-section">
+                        <h3><a href="#" class="section-link" data-gallery="web">Web</a></h3>
+                        <div class="overview-items">
+                            ${webItems}
+                        </div>
+                    </div>
+                    <div class="overview-section">
+                        <h3><a href="#" class="section-link" data-gallery="digital">Digital</a></h3>
+                        <div class="overview-items">
+                            ${digitalItems}
+                        </div>
+                    </div>
                 </div>
-                ${contactHTML}
+                <div class="contact-info">
+                    <a href="mailto:fennmacon@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/fenn-macon" target="_blank">LinkedIn</a>
+                    <a href="#" class="section-link" data-gallery="resume">Resume</a>
+                </div>
             </div>
         </div>
     </article>
@@ -254,9 +275,16 @@ function setupIframeObserver() {
                     const iframe = entry.target;
                     const articleSection = iframe.closest('.article-image-section');
                     
-                    // If the iframe is visible but not loaded, force refresh it
+                    // If the iframe is visible but not loaded, ensure src is set and mark loaded
                     if (articleSection && !articleSection.classList.contains('loaded')) {
-                        forceRefreshIframe(iframe);
+                        const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
+                        if (!iframe.src || iframe.src === 'about:blank') {
+                            if (originalSrc) iframe.src = originalSrc;
+                        }
+                        // Add loaded class after slight delay to allow rendering
+                        setTimeout(() => {
+                            articleSection.classList.add('loaded');
+                        }, 100);
                     }
                 }
             });
@@ -284,8 +312,7 @@ const loadGallery = (galleryType) => {
         // Create resume, landing, or overview article
         const data = galleryType === 'resume' ? galleryData.resume.data : 
                      galleryType === 'landing' ? galleryData.landing.items[0] : 
-                     galleryType === 'overview' ? galleryData.overview.data : 
-                     null; // Default case, although should not happen for these types
+                     galleryData.overview.items[0]; 
                      
         let content = '';
         
@@ -360,13 +387,15 @@ const loadGallery = (galleryType) => {
                                     }
                                 }
                                 
-                                // Force the article section to be marked as loaded
+                                // Re-add loaded class reliably after a short delay
                                 const articleSection = iframe.closest('.article-image-section');
                                 if (articleSection) {
-                                    // Short delay to ensure visibility after animation
                                     setTimeout(() => {
-                                        articleSection.classList.add('loaded');
-                                    }, 50);
+                                        // Double check if still active before adding loaded class
+                                        if (article.dataset.status === 'active' || article.dataset.status.startsWith('becoming-active')) {
+                                            articleSection.classList.add('loaded');
+                                        }
+                                    }, 100); // Slightly longer delay to ensure content starts loading
                                 }
                             }
                         }
@@ -416,30 +445,38 @@ const loadGallery = (galleryType) => {
 function forceRefreshIframe(iframe) {
     if (!iframe) return;
     
-    // Store the original source
-    const originalSrc = iframe.getAttribute('data-original-src') || iframe.src;
+    // Store the original source if not already stored
+    if (!iframe.getAttribute('data-original-src') && iframe.src) {
+        iframe.setAttribute('data-original-src', iframe.src);
+    }
+    const originalSrc = iframe.getAttribute('data-original-src');
     if (!originalSrc) return;
     
-    // On mobile, just ensure the src is set correctly
-    if (isMobileDevice()) {
-        if (!iframe.src || iframe.src === 'about:blank') {
-            iframe.src = originalSrc;
-        }
-        
-        // Mark as loaded after a short delay
-        const articleSection = iframe.closest('.article-image-section');
-        if (articleSection) {
-            setTimeout(() => {
-                articleSection.classList.add('loaded');
-            }, 100);
-        }
-    } else {
-        // On desktop, perform a full refresh
-        iframe.src = '';
-        setTimeout(() => {
-            iframe.src = originalSrc;
-        }, 50);
+    const articleSection = iframe.closest('.article-image-section');
+    
+    // Ensure loading state is reset visually
+    if (articleSection) {
+        articleSection.classList.remove('loaded');
     }
+    
+    // Use a short delay before attempting to load/reload
+    // This allows CSS to reset the visual state first
+    setTimeout(() => {
+        if (isMobileDevice()) {
+            // On mobile, prioritize just setting the src if it's missing
+            if (!iframe.src || iframe.src === 'about:blank') {
+                iframe.src = originalSrc;
+            }
+            // The 'load' event listener or IntersectionObserver should handle adding 'loaded'
+        } else {
+            // On desktop, perform a full refresh
+            iframe.src = ''; // Clear first
+            setTimeout(() => {
+                iframe.src = originalSrc; // Then set back
+                // The 'load' event listener should handle adding 'loaded'
+            }, 20); // Minimal delay after clearing
+        }
+    }, 50); // Delay to allow visual reset
 }
 
 const handleLeftClick = () => {
