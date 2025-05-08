@@ -389,26 +389,43 @@ const galleryData = {
                     points: [
                         "Provided technical assistance to faculty and staff, including installations and repairs"
                     ]
-                }
-            ]
+            }
+        ]
         }
     },
     overview: {
         title: "Overview",
-        type: "overview",
-        data: {
-            welcomeTitle: "Welcome to My Portfolio",
-            sections: [
-                { title: "Music", galleryKey: "music", buttonText: "Explore Music" },
-                { title: "Web", galleryKey: "web", buttonText: "Explore Web" },
-                { title: "Digital", galleryKey: "digital", buttonText: "Explore Digital" },
-                { title: "Resume", galleryKey: "resume", buttonText: "View Resume" }
-            ],
-            contact: {
-                title: "Contact",
-                email: "fennmacon@gmail.com",
-                linkedin: "https://www.linkedin.com/in/fenn-macon"
-            }
-        }
+        items: [{
+            title: "Site Overview",
+            description: `
+                <div class="overview-content">
+                    <h2>Welcome to My Portfolio</h2>
+                    <div class="overview-grid">
+                        <div class="overview-section">
+                            <h3>Music</h3>
+                            <button class="overview-button" data-gallery="music">Explore Music</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Web</h3>
+                            <button class="overview-button" data-gallery="web">Explore Web</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Digital</h3>
+                            <button class="overview-button" data-gallery="digital">Explore Digital</button>
+                        </div>
+                        <div class="overview-section">
+                            <h3>Resume</h3>
+                            <button class="overview-button" data-gallery="resume">View Resume</button>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Contact</h3>
+                        <p>Email: <a href="mailto:fennmacon@gmail.com">fennmacon@gmail.com</a></p>
+                        <p>LinkedIn: <a href="https://www.linkedin.com/in/fenn-macon" target="_blank">linkedin.com/in/fenn-macon</a></p>
+                    </div>
+                </div>
+            `,
+            type: "overview"
+        }]
     }
 }; 
