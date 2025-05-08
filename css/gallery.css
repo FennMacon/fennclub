@@ -732,6 +732,11 @@ main > article > .article-nav-section > .article-nav-button:nth-child(2) {
         line-height: 1.4;
         margin: 0;
     }
+
+    .resume-section h3 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 }
 
 /* -- YT link / Source link styles -- */
@@ -920,6 +925,7 @@ main > article .yt-link > i {
     align-items: center;
     justify-content: space-between;
     transition: color 0.3s ease;
+    line-height: 1.3;
 }
 
 .resume-section h3:hover {
@@ -942,33 +948,34 @@ main > article .yt-link > i {
 
 .resume-section h4 {
     font-size: 1.6rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
     color: var(--backcolor);
+    line-height: 1.3;
 }
 
 .resume-item {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .resume-item p {
     color: rgba(238, 238, 223, 0.8);
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
 .resume-section ul {
     list-style-type: none;
     padding-left: 0;
-    margin: 1rem 0;
+    margin: 0.5rem 0 1rem 0;
 }
 
 .resume-section ul li {
     color: rgba(238, 238, 223, 0.8);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     position: relative;
-    padding-left: 2rem;
-    font-size: 1.2rem;
+    padding-left: 1.8rem;
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
@@ -976,7 +983,9 @@ main > article .yt-link > i {
     content: "•";
     position: absolute;
     left: 0.5rem;
+    top: 0;
     color: var(--headercolor);
+    font-size: 1.2em;
 }
 
 .resume-section a {
@@ -992,132 +1001,6 @@ main > article .yt-link > i {
     text-decoration: none;
     animation: hover-res-animation 0.5s ease;
 }
-
-.resume-article {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: 1fr;
-    background-color: var(--background-color);
-}
-
-.resume-article::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to right, rgba(238, 238, 223, 0.1), rgba(104, 41, 36, 0.543));
-    pointer-events: none;
-    z-index: 0;
-}
-
-.resume-article .article-content-section {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 4rem;
-    overflow-y: auto;
-    position: relative;
-    z-index: 1;
-}
-
-.resume-content {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    color: var(--backcolor);
-    position: relative;
-    z-index: 1;
-}
-
-.resume-section {
-    margin-bottom: 3rem;
-    text-align: left;
-}
-
-.resume-section h3 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: var(--backcolor);
-    border-bottom: 1px solid rgba(238, 238, 223, 0.2);
-    padding-bottom: 0.8rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: color 0.3s ease;
-}
-
-.resume-section h3:hover {
-    color: var(--highlight-color);
-}
-
-.resume-section h3::after {
-    content: '▼';
-    font-size: 1rem;
-    transition: transform 0.3s ease;
-}
-
-.resume-section.collapsed h3::after {
-    transform: rotate(-90deg);
-}
-
-.resume-section.collapsed > *:not(h3) {
-    display: none;
-}
-
-.resume-section h4 {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    color: var(--backcolor);
-}
-
-.resume-item {
-    margin-bottom: 2rem;
-}
-
-.resume-item p {
-    color: rgba(238, 238, 223, 0.8);
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    line-height: 1.6;
-}
-
-.resume-section ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 1rem 0;
-}
-
-.resume-section ul li {
-    color: rgba(238, 238, 223, 0.8);
-    margin-bottom: 1rem;
-    position: relative;
-    padding-left: 2rem;
-    font-size: 1.2rem;
-    line-height: 1.6;
-}
-
-.resume-section ul li::before {
-    content: "•";
-    position: absolute;
-    left: 0.5rem;
-    color: var(--headercolor);
-}
-
-.resume-section a {
-    color: var(--hovercolor);
-    text-decoration: none;
-
-}
-
 
 /* Customize scrollbar for resume */
 .resume-article .article-content-section::-webkit-scrollbar {
@@ -1938,4 +1821,18 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
 
 .article-image[style*="cursor: pointer"]:hover::after {
     opacity: 1;
+}
+
+/* Add specific mobile padding for h3 click targets */
+@media(max-width: 800px) {
+    .resume-section h3 {
+        padding: 1rem 0.5rem;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .resume-item p,
+    .resume-section ul li {
+        font-size: 1rem;
+    }
 }
