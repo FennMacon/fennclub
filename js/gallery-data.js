@@ -235,169 +235,163 @@ const galleryData = {
     ],
     resume: {
         title: "Resume",
-        items: [
-            {
-                title: "Fenn Macon",
-                description: `
-                    <div class="resume-content">
-                        <div class="resume-section">
-                            <h3>Contact Information</h3>
-                            <p>226 South Street, Apartment 1, Jamaica Plain, Massachusetts, 02130</p>
-                            <p>Phone: 978-886-7128 | Email: <a href="mailto:fennmacon@gmail.com">fennmacon@gmail.com</a></p>
-                            <p><a href="https://www.linkedin.com/in/fenn-macon" target="_blank">LinkedIn</a> | <a href="https://fenn.club" target="_blank">Personal Website</a></p>
-                        </div>
-
-                        <div class="resume-section">
-                            <h3>Objective</h3>
-                            <p>Multi-Faceted Technology Specialist with over 10 years in IT support and infrastructure operations, specializing in Active Directory, Windows Server environments, device management, and Python automation. Skilled in supporting and optimizing all levels of IT systems to maximize productivity and minimize disruptions. Proven ability to enhance system performance, ensure service reliability, and contribute to a culture of continuous improvement.</p>
-                        </div>
-
-                        <div class="resume-section">
-                            <h3>Education</h3>
-                            <div class="resume-item">
-                                <h4>Master of Science in IT Management</h4>
-                                <p>University of Massachusetts Boston, Boston, MA (2023)</p>
-                                <p>Certification in Business Analytics</p>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Bachelor of Arts in Music Technology</h4>
-                                <p>Clark University, Worcester, MA (2017)</p>
-                            </div>
-                        </div>
-
-                        <div class="resume-section">
-                            <h3>Skills</h3>
-                            <div class="resume-item">
-                                <h4>Programming & System Development</h4>
-                                <ul>
-                                    <li>Python (Data Mining, API Querying, Data Analysis), R (Statistical Computing, Data Visualization)</li>
-                                    <li>Bash Scripting, PowerShell, Salesforce API</li>
-                                    <li>Object-oriented programming, systems analysis, and design</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Web Design</h4>
-                                <ul>
-                                    <li>HTML, CSS, JavaScript (jQuery, Bootstrap, three.js, Angular, node.js), Flask</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Database Management & Analysis</h4>
-                                <ul>
-                                    <li>SQL, Data Warehousing, data mining, predictive analytics</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Business Intelligence & Data Communication</h4>
-                                <ul>
-                                    <li>Microsoft Excel (Advanced), Power BI, Tableau</li>
-                                    <li>Enterprise business intelligence tools, business data communications</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Systems Administration</h4>
-                                <ul>
-                                    <li>AWS, Microsoft Azure, Salesforce, Microsoft Active Directory, Office365 Administration</li>
-                                    <li>Terraform, Ansible, Docker, Kubernetes</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Project & Operations Management</h4>
-                                <ul>
-                                    <li>Project management principles, operations management, organizational analysis, team collaboration</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Strategic Management & Decision Making</h4>
-                                <ul>
-                                    <li>Managerial decision-making techniques, computer information systems strategy</li>
-                                    <li>Statistical analysis for informed managerial decisions</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="resume-section">
-                            <h3>Experience</h3>
-                            <div class="resume-item">
-                                <h4>Systems Engineer</h4>
-                                <p>Enel X, Boston, MA | Jul 2022 - Present</p>
-                                <ul>
-                                    <li>Automated key processes using UiPath, Excel, Python, and REST APIs</li>
-                                    <li>Utilized PuTTY and WinSCP for remote troubleshooting in Linux-based environments</li>
-                                    <li>Developed Salesforce dashboards and automated tasks with AutoHotKey and Python</li>
-                                    <li>Maintained internal tools in AWS EC2</li>
-                                    <li>Migrated over 10,000 devices to a new IoT system</li>
-                                    <li>Led a strategic project for the Japan office, leveraging Python and Excel to deliver 7GW of energy to the grid across 19 days of market dispatches and ensure the continued viability of operations, saving the cost of six full-time employees annually</li>
-                                    <li>Designed and implemented data-driven solutions that enhanced operational efficiency and minimized disruptions</li>
-                                    <li>Collaborated with cross-functional teams to develop analytics-driven recommendations for long-term improvements in system performance</li>
-                                    <li>Utilized advanced automation techniques to streamline workflows, contributing to significant operational savings and enhancing system reliability</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Senior Information Technology Specialist</h4>
-                                <p>Enel X, Boston, MA | Oct 2021 - Jul 2022</p>
-                                <ul>
-                                    <li>Administered Windows Server (2016-2019) and Microsoft 365 environments, ensuring efficient patching, maintenance, and system security</li>
-                                    <li>Enhanced endpoint management using SCCM, facilitating software packaging and deployment across 2000+ users</li>
-                                    <li>Implemented process improvements for system reliability, collaborating with cross-functional teams to address and resolve software, hardware, and operational issues</li>
-                                    <li>Researched and evaluated emerging technologies to identify solutions for optimizing IT operations</li>
-                                    <li>Maintained Intune-based endpoint management processes, including app deployment, remote troubleshooting, and policy updates for 2,000+ devices</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Senior IT Help Desk</h4>
-                                <p>CBT Architects, Boston, MA | Dec 2019 - Sep 2021</p>
-                                <ul>
-                                    <li>Managed Active Directory configurations and SCCM/MECM for endpoint system updates, supporting the firm's infrastructure and minimizing downtime</li>
-                                    <li>Configured and supported Citrix Virtual Apps, ensuring reliable access for end-users and secure remote work capabilities</li>
-                                    <li>Developed PowerShell scripts to automate routine maintenance and reporting tasks, enhancing efficiency across the IT department</li>
-                                    <li>Deployed Intune to transition the firm from a manual to a streamlined MDM platform, cutting new-device setup times by 40%</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Desktop Systems Specialist II</h4>
-                                <p>Avid, Burlington, MA | Sep 2018 - Dec 2019</p>
-                                <ul>
-                                    <li>Resolved advanced Tier II service requests, ensuring high user satisfaction</li>
-                                    <li>Configured and maintained end-user hardware and network devices</li>
-                                    <li>Managed software compliance across multiple platforms</li>
-                                    <li>Developed and maintained robust PowerShell scripts to automate administrative tasks and streamline Windows Server operations, reducing manual intervention and increasing efficiency</li>
-                                    <li>Created custom PowerShell functions and modules for task automation, system monitoring, and reporting, enhancing system performance and reliability</li>
-                                    <li>Designed PowerShell scripts to manage Active Directory, including user provisioning, Group Policy adjustments, and system configuration, ensuring consistency and security across environments</li>
-                                    <li>Managed mobile devices across multiple regions using Microsoft Intune, implementing robust security policies and ensuring compliance with corporate standards</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Help Desk Technician</h4>
-                                <p>AP Staffing, Boston, MA | Nov 2016 - Sep 2018</p>
-                                <ul>
-                                    <li>Implemented and optimized the ZenDesk ticketing system, reducing response times</li>
-                                    <li>Managed asset inventory and bolstered security with Cisco Umbrella OpenDNS</li>
-                                    <li>Spearheaded the Microsoft Intune rollout for enhanced device management</li>
-                                    <li>Oversaw data migration to AWS, ensuring service improvement and data security</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>Help Desk Coordinator II</h4>
-                                <p>Bentley University, Waltham, MA | Mar 2016 - Jun 2016</p>
-                                <ul>
-                                    <li>Prioritized and resolved user inquiries to ensure customer satisfaction</li>
-                                    <li>Managed incident resolution and supported user needs</li>
-                                </ul>
-                            </div>
-                            <div class="resume-item">
-                                <h4>IT Technician</h4>
-                                <p>Clark University, Worcester, MA | Jan 2012 - May 2015</p>
-                                <ul>
-                                    <li>Provided technical assistance to faculty and staff, including installations and repairs</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                `,
-                type: "resume"
-            }
-        ]
+        type: "resume",
+        data: {
+            contact: {
+                address: "226 South Street, Apartment 1, Jamaica Plain, Massachusetts, 02130",
+                phone: "978-886-7128",
+                email: "fennmacon@gmail.com",
+                linkedin: "https://www.linkedin.com/in/fenn-macon",
+                website: "https://fenn.club"
+            },
+            objective: "Multi-Faceted Technology Specialist with over 10 years in IT support and infrastructure operations, specializing in Active Directory, Windows Server environments, device management, and Python automation. Skilled in supporting and optimizing all levels of IT systems to maximize productivity and minimize disruptions. Proven ability to enhance system performance, ensure service reliability, and contribute to a culture of continuous improvement.",
+            education: [
+                {
+                    degree: "Master of Science in IT Management",
+                    institution: "University of Massachusetts Boston, Boston, MA",
+                    year: "2023",
+                    details: "Certification in Business Analytics"
+                },
+                {
+                    degree: "Bachelor of Arts in Music Technology",
+                    institution: "Clark University, Worcester, MA",
+                    year: "2017",
+                    details: null
+                }
+            ],
+            skills: [
+                {
+                    category: "Programming & System Development",
+                    points: [
+                        "Python (Data Mining, API Querying, Data Analysis), R (Statistical Computing, Data Visualization)",
+                        "Bash Scripting, PowerShell, Salesforce API",
+                        "Object-oriented programming, systems analysis, and design"
+                    ]
+                },
+                {
+                    category: "Web Design",
+                    points: [
+                        "HTML, CSS, JavaScript (jQuery, Bootstrap, three.js, Angular, node.js), Flask"
+                    ]
+                },
+                {
+                    category: "Database Management & Analysis",
+                    points: [
+                        "SQL, Data Warehousing, data mining, predictive analytics"
+                    ]
+                },
+                {
+                    category: "Business Intelligence & Data Communication",
+                    points: [
+                        "Microsoft Excel (Advanced), Power BI, Tableau",
+                        "Enterprise business intelligence tools, business data communications"
+                    ]
+                },
+                {
+                    category: "Systems Administration",
+                    points: [
+                        "AWS, Microsoft Azure, Salesforce, Microsoft Active Directory, Office365 Administration",
+                        "Terraform, Ansible, Docker, Kubernetes"
+                    ]
+                },
+                {
+                    category: "Project & Operations Management",
+                    points: [
+                        "Project management principles, operations management, organizational analysis, team collaboration"
+                    ]
+                },
+                {
+                    category: "Strategic Management & Decision Making",
+                    points: [
+                        "Managerial decision-making techniques, computer information systems strategy",
+                        "Statistical analysis for informed managerial decisions"
+                    ]
+                }
+            ],
+            experience: [
+                {
+                    title: "Systems Engineer",
+                    company: "Enel X, Boston, MA",
+                    period: "Jul 2022 - Present",
+                    points: [
+                        "Automated key processes using UiPath, Excel, Python, and REST APIs",
+                        "Utilized PuTTY and WinSCP for remote troubleshooting in Linux-based environments",
+                        "Developed Salesforce dashboards and automated tasks with AutoHotKey and Python",
+                        "Maintained internal tools in AWS EC2",
+                        "Migrated over 10,000 devices to a new IoT system",
+                        "Led a strategic project for the Japan office, leveraging Python and Excel to deliver 7GW of energy to the grid across 19 days of market dispatches and ensure the continued viability of operations, saving the cost of six full-time employees annually",
+                        "Designed and implemented data-driven solutions that enhanced operational efficiency and minimized disruptions",
+                        "Collaborated with cross-functional teams to develop analytics-driven recommendations for long-term improvements in system performance",
+                        "Utilized advanced automation techniques to streamline workflows, contributing to significant operational savings and enhancing system reliability"
+                    ]
+                },
+                {
+                    title: "Senior Information Technology Specialist",
+                    company: "Enel X, Boston, MA",
+                    period: "Oct 2021 - Jul 2022",
+                    points: [
+                        "Administered Windows Server (2016-2019) and Microsoft 365 environments, ensuring efficient patching, maintenance, and system security",
+                        "Enhanced endpoint management using SCCM, facilitating software packaging and deployment across 2000+ users",
+                        "Implemented process improvements for system reliability, collaborating with cross-functional teams to address and resolve software, hardware, and operational issues",
+                        "Researched and evaluated emerging technologies to identify solutions for optimizing IT operations",
+                        "Maintained Intune-based endpoint management processes, including app deployment, remote troubleshooting, and policy updates for 2,000+ devices"
+                    ]
+                },
+                {
+                    title: "Senior IT Help Desk",
+                    company: "CBT Architects, Boston, MA",
+                    period: "Dec 2019 - Sep 2021",
+                    points: [
+                        "Managed Active Directory configurations and SCCM/MECM for endpoint system updates, supporting the firm's infrastructure and minimizing downtime",
+                        "Configured and supported Citrix Virtual Apps, ensuring reliable access for end-users and secure remote work capabilities",
+                        "Developed PowerShell scripts to automate routine maintenance and reporting tasks, enhancing efficiency across the IT department",
+                        "Deployed Intune to transition the firm from a manual to a streamlined MDM platform, cutting new-device setup times by 40%"
+                    ]
+                },
+                {
+                    title: "Desktop Systems Specialist II",
+                    company: "Avid, Burlington, MA",
+                    period: "Sep 2018 - Dec 2019",
+                    points: [
+                        "Resolved advanced Tier II service requests, ensuring high user satisfaction",
+                        "Configured and maintained end-user hardware and network devices",
+                        "Managed software compliance across multiple platforms",
+                        "Developed and maintained robust PowerShell scripts to automate administrative tasks and streamline Windows Server operations, reducing manual intervention and increasing efficiency",
+                        "Created custom PowerShell functions and modules for task automation, system monitoring, and reporting, enhancing system performance and reliability",
+                        "Designed PowerShell scripts to manage Active Directory, including user provisioning, Group Policy adjustments, and system configuration, ensuring consistency and security across environments",
+                        "Managed mobile devices across multiple regions using Microsoft Intune, implementing robust security policies and ensuring compliance with corporate standards"
+                    ]
+                },
+                {
+                    title: "Help Desk Technician",
+                    company: "AP Staffing, Boston, MA",
+                    period: "Nov 2016 - Sep 2018",
+                    points: [
+                        "Implemented and optimized the ZenDesk ticketing system, reducing response times",
+                        "Managed asset inventory and bolstered security with Cisco Umbrella OpenDNS",
+                        "Spearheaded the Microsoft Intune rollout for enhanced device management",
+                        "Oversaw data migration to AWS, ensuring service improvement and data security"
+                    ]
+                },
+                {
+                    title: "Help Desk Coordinator II",
+                    company: "Bentley University, Waltham, MA",
+                    period: "Mar 2016 - Jun 2016",
+                    points: [
+                        "Prioritized and resolved user inquiries to ensure customer satisfaction",
+                        "Managed incident resolution and supported user needs"
+                    ]
+                },
+                {
+                    title: "IT Technician",
+                    company: "Clark University, Worcester, MA",
+                    period: "Jan 2012 - May 2015",
+                    points: [
+                        "Provided technical assistance to faculty and staff, including installations and repairs"
+                    ]
+                }
+            ]
+        }
     },
     overview: {
         title: "Overview",

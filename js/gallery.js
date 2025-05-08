@@ -115,10 +115,84 @@ const createArticleElement = (data, index, status) => {
 };
 
 const createResumeElement = (data) => {
+    const { contact, objective, education, skills, experience } = data;
+
+    // Helper to create list items
+    const createListItems = (items) => items.map(item => `<li>${item}</li>`).join('');
+
+    // Build contact section
+    const contactHTML = `
+        <div class="resume-section">
+            <h3>Contact Information</h3>
+            <p>${contact.address}</p>
+            <p>Phone: ${contact.phone} | Email: <a href="mailto:${contact.email}">${contact.email}</a></p>
+            <p><a href="${contact.linkedin}" target="_blank">LinkedIn</a> | <a href="${contact.website}" target="_blank">Personal Website</a></p>
+        </div>
+    `;
+
+    // Build objective section
+    const objectiveHTML = `
+        <div class="resume-section">
+            <h3>Objective</h3>
+            <p>${objective}</p>
+        </div>
+    `;
+
+    // Build education section
+    const educationHTML = `
+        <div class="resume-section">
+            <h3>Education</h3>
+            ${education.map(edu => `
+                <div class="resume-item">
+                    <h4>${edu.degree}</h4>
+                    <p>${edu.institution} (${edu.year})</p>
+                    ${edu.details ? `<p>${edu.details}</p>` : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Build skills section
+    const skillsHTML = `
+        <div class="resume-section">
+            <h3>Skills</h3>
+            ${skills.map(skill => `
+                <div class="resume-item">
+                    <h4>${skill.category}</h4>
+                    <ul>
+                        ${createListItems(skill.points)}
+                    </ul>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Build experience section
+    const experienceHTML = `
+        <div class="resume-section">
+            <h3>Experience</h3>
+            ${experience.map(exp => `
+                <div class="resume-item">
+                    <h4>${exp.title}</h4>
+                    <p>${exp.company} | ${exp.period}</p>
+                    <ul>
+                        ${createListItems(exp.points)}
+                    </ul>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
     return `
     <article class="resume-article" data-status="active">
         <div class="article-content-section article-section">
-            ${data.description}
+            <div class="resume-content">
+                ${contactHTML}
+                ${objectiveHTML}
+                ${educationHTML}
+                ${skillsHTML}
+                ${experienceHTML}
+            </div>
         </div>
     </article>
     `;
@@ -229,7 +303,10 @@ const loadGallery = (galleryType) => {
     
     if (galleryType === 'resume' || galleryType === 'landing' || galleryType === 'overview') {
         // Create resume, landing, or overview article
-        const data = galleryData[galleryType].items[0];
+        const data = galleryType === 'resume' ? galleryData.resume.data : 
+                     galleryType === 'landing' ? galleryData.landing.items[0] : 
+                     galleryData.overview.items[0]; 
+                     
         let content = '';
         
         if (galleryType === 'resume') {
