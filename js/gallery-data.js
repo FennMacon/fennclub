@@ -326,6 +326,17 @@ const galleryData = {
                         "Developed robust PowerShell scripts and custom functions for automation, monitoring, and reporting",
                         "Managed mobile devices globally using Microsoft Intune; implemented security policies"
                     ]
+                },
+                {
+                    title: "Help Desk Technician",
+                    company: "AP Staffing, Boston, MA",
+                    period: "Nov 2016 - Sep 2018",
+                    points: [
+                        "Implemented ZenDesk ticketing system optimization, reducing response times organization-wide",
+                        "Managed asset inventory and enhanced security infrastructure with Cisco Umbrella OpenDNS",
+                        "Led Microsoft Intune rollout for centralized device management and policy enforcement",
+                        "Oversaw AWS data migration project, ensuring service continuity and enhanced data security"
+                    ]
                 }
             ],
             projects: [
