@@ -1974,6 +1974,35 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
     color: var(--backcolor);
 }
 
+/* Simple collapsible sections */
+.section-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(238, 238, 223, 0.1);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-header:hover {
+    color: var(--highlight-color);
+}
+
+.toggle-indicator {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-left: 1rem;
+}
+
+.resume-section.collapsed .section-content {
+    display: none;
+}
+
+.section-content {
+    margin-top: 1rem;
+}
+
 .coursework {
     font-style: italic;
     color: var(--backcolor);
