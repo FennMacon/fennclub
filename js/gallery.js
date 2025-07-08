@@ -124,7 +124,7 @@ const createResumeElement = (data) => {
     const contactHTML = `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Contact Information <span class="toggle-indicator">−</span>
+                Contact Information
             </h3>
             <div class="section-content">
                 <p>${contact.address}</p>
@@ -138,7 +138,7 @@ const createResumeElement = (data) => {
     const objectiveHTML = `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Profile <span class="toggle-indicator">−</span>
+                Profile
             </h3>
             <div class="section-content">
                 <p>${objective}</p>
@@ -150,7 +150,7 @@ const createResumeElement = (data) => {
     const projectsHTML = projects ? `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Key Projects <span class="toggle-indicator">−</span>
+                Key Projects
             </h3>
             <div class="section-content">
                 <div class="projects-grid">
@@ -170,7 +170,7 @@ const createResumeElement = (data) => {
     const skillsHTML = `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Technical Skills <span class="toggle-indicator">−</span>
+                Technical Skills
             </h3>
             <div class="section-content">
                 ${skills.map(skill => `
@@ -189,7 +189,7 @@ const createResumeElement = (data) => {
     const experienceHTML = `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Experience <span class="toggle-indicator">−</span>
+                Experience
             </h3>
             <div class="section-content">
                 ${experience.map(exp => `
@@ -209,7 +209,7 @@ const createResumeElement = (data) => {
     const educationHTML = `
         <div class="resume-section">
             <h3 class="section-header" onclick="toggleSection(this)">
-                Education <span class="toggle-indicator">−</span>
+                Education
             </h3>
             <div class="section-content">
                 ${education.map(edu => `
@@ -217,7 +217,6 @@ const createResumeElement = (data) => {
                         <h4>${edu.degree}</h4>
                         <p>${edu.institution} (${edu.year})</p>
                         ${edu.details ? `<p><strong>${edu.details}</strong></p>` : ''}
-                        ${edu.coursework ? `<p class="coursework">${edu.coursework}</p>` : ''}
                     </div>
                 `).join('')}
             </div>
@@ -969,15 +968,12 @@ window.matchMedia("(max-width: 800px)").onchange = e => {
 function toggleSection(header) {
     const section = header.closest('.resume-section');
     const content = section.querySelector('.section-content');
-    const indicator = header.querySelector('.toggle-indicator');
     
     if (section.classList.contains('collapsed')) {
         section.classList.remove('collapsed');
         content.style.display = 'block';
-        indicator.textContent = '−';
     } else {
         section.classList.add('collapsed');
         content.style.display = 'none';
-        indicator.textContent = '+';
     }
 }
