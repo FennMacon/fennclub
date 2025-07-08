@@ -142,7 +142,7 @@ const galleryData = {
             url: "https://www.youtube.com/embed/kGzELnSiOKk?autoplay=0&mute=0&controls=1&loop=1&playlist=kGzELnSiOKk&modestbranding=1&rel=0&showinfo=0&fs=0"
         },
         {
-            title: "VIDEOJAMZ #1",
+            title: "VIDEOJAMZ #1: Leaftype",
             description: "Leaftype - Dingus Friends. Live video performance with Max/MSP",
             url: "https://player.vimeo.com/video/81901545?h=0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
         },
@@ -238,19 +238,20 @@ const galleryData = {
         type: "resume",
         data: {
             contact: {
-                address: "226 South Street, Apartment 1, Jamaica Plain, Massachusetts, 02130",
+                address: "Jamaica Plain, Massachusetts",
                 phone: "978-886-7128",
                 email: "fennmacon@gmail.com",
                 linkedin: "https://www.linkedin.com/in/fenn-macon",
                 website: "https://fenn.club"
             },
-            objective: "Multi-Faceted Technology Specialist with over 10 years in IT support and infrastructure operations, specializing in Active Directory, Windows Server environments, device management, and Python automation. Skilled in supporting and optimizing all levels of IT systems to maximize productivity and minimize disruptions. Proven ability to enhance system performance, ensure service reliability, and contribute to a culture of continuous improvement.",
+            objective: "Experienced Systems Engineer with a background in IT support, data engineering, systems administration, DevOps, and the energy sector. Skilled in managing and automating complex cloud environments (Azure, AWS) with infrastructure automation (Python, PowerShell, Terraform, Ansible) and large-scale deployments. Seeking to leverage cloud and operational excellence for impactful results.",
             education: [
                 {
                     degree: "Master of Science in IT Management",
                     institution: "University of Massachusetts Boston, Boston, MA",
                     year: "2023",
-                    details: "Certification in Business Analytics"
+                    details: "Certification in Business Analytics",
+                    coursework: "Relevant Coursework: Info Storage Mgmt, Systems Analysis & Design, Project Mgmt, Business Data Comms"
                 },
                 {
                     degree: "Bachelor of Arts in Music Technology",
@@ -261,50 +262,27 @@ const galleryData = {
             ],
             skills: [
                 {
-                    category: "Programming & System Development",
+                    category: "Cloud/DevOps",
                     points: [
-                        "Python (Data Mining, API Querying, Data Analysis), R (Statistical Computing, Data Visualization)",
-                        "Bash Scripting, PowerShell, Salesforce API",
-                        "Object-oriented programming, systems analysis, and design"
-                    ]
-                },
-                {
-                    category: "Web Design",
-                    points: [
-                        "HTML, CSS, JavaScript (jQuery, Bootstrap, three.js, Angular, node.js), Flask"
-                    ]
-                },
-                {
-                    category: "Database Management & Analysis",
-                    points: [
-                        "SQL, Data Warehousing, data mining, predictive analytics"
-                    ]
-                },
-                {
-                    category: "Business Intelligence & Data Communication",
-                    points: [
-                        "Microsoft Excel (Advanced), Power BI, Tableau",
-                        "Enterprise business intelligence tools, business data communications"
+                        "Microsoft Azure, AWS, Terraform, Ansible, Docker, Kubernetes, IaC"
                     ]
                 },
                 {
                     category: "Systems Administration",
                     points: [
-                        "AWS, Microsoft Azure, Salesforce, Microsoft Active Directory, Office365 Administration",
-                        "Terraform, Ansible, Docker, Kubernetes"
+                        "Active Directory, Windows Server, Office365, Linux, SCCM/MECM, Intune"
                     ]
                 },
                 {
-                    category: "Project & Operations Management",
+                    category: "Automation/Programming",
                     points: [
-                        "Project management principles, operations management, organizational analysis, team collaboration"
+                        "Python (Automation, APIs, Data), PowerShell, Bash Scripting, REST APIs, UiPath"
                     ]
                 },
                 {
-                    category: "Strategic Management & Decision Making",
+                    category: "Database/Web",
                     points: [
-                        "Managerial decision-making techniques, computer information systems strategy",
-                        "Statistical analysis for informed managerial decisions"
+                        "SQL, Data Warehousing/Mining; HTML, CSS, JavaScript, Node.js, Flask"
                     ]
                 }
             ],
@@ -314,15 +292,10 @@ const galleryData = {
                     company: "Enel X, Boston, MA",
                     period: "Jul 2022 - Present",
                     points: [
-                        "Automated key processes using UiPath, Excel, Python, and REST APIs",
-                        "Utilized PuTTY and WinSCP for remote troubleshooting in Linux-based environments",
-                        "Developed Salesforce dashboards and automated tasks with AutoHotKey and Python",
-                        "Maintained internal tools in AWS EC2",
-                        "Migrated over 10,000 devices to a new IoT system",
-                        "Led a strategic project for the Japan office, leveraging Python and Excel to deliver 7GW of energy to the grid across 19 days of market dispatches and ensure the continued viability of operations, saving the cost of six full-time employees annually",
-                        "Designed and implemented data-driven solutions that enhanced operational efficiency and minimized disruptions",
-                        "Collaborated with cross-functional teams to develop analytics-driven recommendations for long-term improvements in system performance",
-                        "Utilized advanced automation techniques to streamline workflows, contributing to significant operational savings and enhancing system reliability"
+                        "Managed/maintained applications on AWS EC2; utilized Linux (PuTTY/WinSCP)",
+                        "Automated key operational processes (Python, REST APIs, UiPath, Excel), enhancing efficiency",
+                        "Migrated 10,000+ devices to new IoT system; developed Salesforce dashboards/automations",
+                        "Designed data-driven automations for infrastructure workflows & reliability"
                     ]
                 },
                 {
@@ -330,11 +303,9 @@ const galleryData = {
                     company: "Enel X, Boston, MA",
                     period: "Oct 2021 - Jul 2022",
                     points: [
-                        "Administered Windows Server (2016-2019) and Microsoft 365 environments, ensuring efficient patching, maintenance, and system security",
-                        "Enhanced endpoint management using SCCM, facilitating software packaging and deployment across 2000+ users",
-                        "Implemented process improvements for system reliability, collaborating with cross-functional teams to address and resolve software, hardware, and operational issues",
-                        "Researched and evaluated emerging technologies to identify solutions for optimizing IT operations",
-                        "Maintained Intune-based endpoint management processes, including app deployment, remote troubleshooting, and policy updates for 2,000+ devices"
+                        "Administered Windows Server (2016-2019), M365 environments; managed patching and security",
+                        "Enhanced endpoint management (SCCM) for 2000+ users (software deployment, patching)",
+                        "Maintained Intune endpoint management (app deployment, policies) for 2000+ devices"
                     ]
                 },
                 {
@@ -342,10 +313,9 @@ const galleryData = {
                     company: "CBT Architects, Boston, MA",
                     period: "Dec 2019 - Sep 2021",
                     points: [
-                        "Managed Active Directory configurations and SCCM/MECM for endpoint system updates, supporting the firm's infrastructure and minimizing downtime",
-                        "Configured and supported Citrix Virtual Apps, ensuring reliable access for end-users and secure remote work capabilities",
-                        "Developed PowerShell scripts to automate routine maintenance and reporting tasks, enhancing efficiency across the IT department",
-                        "Deployed Intune to transition the firm from a manual to a streamlined MDM platform, cutting new-device setup times by 40%"
+                        "Managed Active Directory and SCCM/MECM for endpoint updates and configuration",
+                        "Developed PowerShell scripts for task automation; supported Citrix Virtual Apps",
+                        "Deployed Intune, streamlining MDM and cutting device setup time by 40%"
                     ]
                 },
                 {
@@ -353,78 +323,30 @@ const galleryData = {
                     company: "Avid, Burlington, MA",
                     period: "Sep 2018 - Dec 2019",
                     points: [
-                        "Resolved advanced Tier II service requests, ensuring high user satisfaction",
-                        "Configured and maintained end-user hardware and network devices",
-                        "Managed software compliance across multiple platforms",
-                        "Developed and maintained robust PowerShell scripts to automate administrative tasks and streamline Windows Server operations, reducing manual intervention and increasing efficiency",
-                        "Created custom PowerShell functions and modules for task automation, system monitoring, and reporting, enhancing system performance and reliability",
-                        "Designed PowerShell scripts to manage Active Directory, including user provisioning, Group Policy adjustments, and system configuration, ensuring consistency and security across environments",
-                        "Managed mobile devices across multiple regions using Microsoft Intune, implementing robust security policies and ensuring compliance with corporate standards"
+                        "Developed robust PowerShell scripts and custom functions for automation, monitoring, and reporting",
+                        "Managed mobile devices globally using Microsoft Intune; implemented security policies"
                     ]
+                }
+            ],
+            projects: [
+                {
+                    title: "Japan DR Automation",
+                    company: "Enel X",
+                    description: "Bolstered Japan's grid stability during peak demand, delivering 7GW energy via VPP over 19 days. Co-owned project end-to-end (3-person team): developed Python automation for complex energy data processing (Excel interval data, form generation, Outlook integration), deployed with a Flask front-end on AWS EC2. Saved equivalent of 6 FTEs annually."
                 },
                 {
-                    title: "Help Desk Technician",
-                    company: "AP Staffing, Boston, MA",
-                    period: "Nov 2016 - Sep 2018",
-                    points: [
-                        "Implemented and optimized the ZenDesk ticketing system, reducing response times",
-                        "Managed asset inventory and bolstered security with Cisco Umbrella OpenDNS",
-                        "Spearheaded the Microsoft Intune rollout for enhanced device management",
-                        "Oversaw data migration to AWS, ensuring service improvement and data security"
-                    ]
-                },
-                {
-                    title: "Help Desk Coordinator II",
-                    company: "Bentley University, Waltham, MA",
-                    period: "Mar 2016 - Jun 2016",
-                    points: [
-                        "Prioritized and resolved user inquiries to ensure customer satisfaction",
-                        "Managed incident resolution and supported user needs"
-                    ]
-                },
-                {
-                    title: "IT Technician",
-                    company: "Clark University, Worcester, MA",
-                    period: "Jan 2012 - May 2015",
-                    points: [
-                        "Provided technical assistance to faculty and staff, including installations and repairs"
-                    ]
-            }
-        ]
+                    title: "Onboarding Automation",
+                    company: "Avid",
+                    description: "Developed PowerShell automation linking Workday, ServiceNow, and Active Directory to streamline new hire provisioning. Enabled HR to trigger automated user creation and AD provisioning via Workday entry, bridging HR/IT systems."
+                }
+            ]
         }
     },
     overview: {
         title: "Overview",
         items: [{
             title: "Site Overview",
-            description: `
-                <div class="overview-content">
-                    <h2>Welcome to My Portfolio</h2>
-                    <div class="overview-grid">
-                        <div class="overview-section">
-                            <h3>Music</h3>
-                            <button class="overview-button" data-gallery="music">Explore Music</button>
-                        </div>
-                        <div class="overview-section">
-                            <h3>Web</h3>
-                            <button class="overview-button" data-gallery="web">Explore Web</button>
-                        </div>
-                        <div class="overview-section">
-                            <h3>Digital</h3>
-                            <button class="overview-button" data-gallery="digital">Explore Digital</button>
-                        </div>
-                        <div class="overview-section">
-                            <h3>Resume</h3>
-                            <button class="overview-button" data-gallery="resume">View Resume</button>
-                        </div>
-                    </div>
-                    <div class="contact-info">
-                        <h3>Contact</h3>
-                        <p>Email: <a href="mailto:fennmacon@gmail.com">fennmacon@gmail.com</a></p>
-                        <p>LinkedIn: <a href="https://www.linkedin.com/in/fenn-macon" target="_blank">linkedin.com/in/fenn-macon</a></p>
-                    </div>
-                </div>
-            `,
+            description: ``,
             type: "overview"
         }]
     }
