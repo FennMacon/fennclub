@@ -115,83 +115,157 @@ const createArticleElement = (data, index, status) => {
 };
 
 const createResumeElement = (data) => {
-    const { contact, objective, education, skills, experience } = data;
+    const { contact, objective, education, skills, experience, projects } = data;
 
     // Helper to create list items
     const createListItems = (items) => items.map(item => `<li>${item}</li>`).join('');
 
     // Build contact section
     const contactHTML = `
-        <div class="resume-section">
-            <h3>Contact Information</h3>
-            <p>${contact.address}</p>
-            <p>Phone: ${contact.phone} | Email: <a href="mailto:${contact.email}">${contact.email}</a></p>
-            <p><a href="${contact.linkedin}" target="_blank">LinkedIn</a> | <a href="${contact.website}" target="_blank">Personal Website</a></p>
+        <div class="resume-section" id="contact-section">
+            <h3 class="section-header" data-section="contact">
+                <span class="section-icon">📧</span>
+                Contact Information
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                <p>${contact.address}</p>
+                <p>Phone: ${contact.phone} | Email: <a href="mailto:${contact.email}">${contact.email}</a></p>
+                <p><a href="${contact.linkedin}" target="_blank">LinkedIn</a> | <a href="${contact.website}" target="_blank">Personal Website</a></p>
+            </div>
         </div>
     `;
 
     // Build objective section
     const objectiveHTML = `
-        <div class="resume-section">
-            <h3>Objective</h3>
-            <p>${objective}</p>
+        <div class="resume-section" id="objective-section">
+            <h3 class="section-header" data-section="objective">
+                <span class="section-icon">🎯</span>
+                Profile
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                <p>${objective}</p>
+            </div>
+        </div>
+    `;
+
+    // Build key projects section (featured prominently)
+    const projectsHTML = projects ? `
+        <div class="resume-section featured-section" id="projects-section">
+            <h3 class="section-header" data-section="projects">
+                <span class="section-icon">🚀</span>
+                Key Projects
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                <div class="projects-grid">
+                    ${projects.map(project => `
+                        <div class="project-card">
+                            <h4 class="project-title">${project.title}</h4>
+                            <span class="project-company">${project.company}</span>
+                            <p class="project-description">${project.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    ` : '';
+
+    // Build skills section with interactive tags
+    const skillsHTML = `
+        <div class="resume-section" id="skills-section">
+            <h3 class="section-header" data-section="skills">
+                <span class="section-icon">⚡</span>
+                Technical Skills
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                <div class="skills-grid">
+                    ${skills.map(skill => `
+                        <div class="skill-category">
+                            <h4 class="skill-category-title">${skill.category}</h4>
+                            <div class="skill-tags">
+                                ${skill.points.map(point => {
+                                    // Split by commas and create individual tags
+                                    return point.split(',').map(tag => 
+                                        `<span class="skill-tag">${tag.trim()}</span>`
+                                    ).join('');
+                                }).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Build experience section with timeline
+    const experienceHTML = `
+        <div class="resume-section" id="experience-section">
+            <h3 class="section-header" data-section="experience">
+                <span class="section-icon">💼</span>
+                Experience
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                <div class="experience-timeline">
+                    ${experience.map((exp, index) => `
+                        <div class="experience-item ${index === 0 ? 'current' : ''}">
+                            <div class="timeline-marker"></div>
+                            <div class="experience-content">
+                                <h4 class="experience-title">${exp.title}</h4>
+                                <p class="experience-company">${exp.company} | ${exp.period}</p>
+                                <ul class="experience-points">
+                                    ${createListItems(exp.points)}
+                                </ul>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
         </div>
     `;
 
     // Build education section
     const educationHTML = `
-        <div class="resume-section">
-            <h3>Education</h3>
-            ${education.map(edu => `
-                <div class="resume-item">
-                    <h4>${edu.degree}</h4>
-                    <p>${edu.institution} (${edu.year})</p>
-                    ${edu.details ? `<p>${edu.details}</p>` : ''}
-                </div>
-            `).join('')}
-        </div>
-    `;
-
-    // Build skills section
-    const skillsHTML = `
-        <div class="resume-section">
-            <h3>Skills</h3>
-            ${skills.map(skill => `
-                <div class="resume-item">
-                    <h4>${skill.category}</h4>
-                    <ul>
-                        ${createListItems(skill.points)}
-                    </ul>
-                </div>
-            `).join('')}
-        </div>
-    `;
-
-    // Build experience section
-    const experienceHTML = `
-        <div class="resume-section">
-            <h3>Experience</h3>
-            ${experience.map(exp => `
-                <div class="resume-item">
-                    <h4>${exp.title}</h4>
-                    <p>${exp.company} | ${exp.period}</p>
-                    <ul>
-                        ${createListItems(exp.points)}
-                    </ul>
-                </div>
-            `).join('')}
+        <div class="resume-section" id="education-section">
+            <h3 class="section-header" data-section="education">
+                <span class="section-icon">🎓</span>
+                Education
+                <span class="section-toggle">-</span>
+            </h3>
+            <div class="section-content">
+                ${education.map(edu => `
+                    <div class="education-item">
+                        <h4>${edu.degree}</h4>
+                        <p>${edu.institution} (${edu.year})</p>
+                        ${edu.details ? `<p><strong>${edu.details}</strong></p>` : ''}
+                        ${edu.coursework ? `<p class="coursework">${edu.coursework}</p>` : ''}
+                    </div>
+                `).join('')}
+            </div>
         </div>
     `;
 
     return `
     <article class="resume-article" data-status="active">
+        <div class="resume-header">
+            <h1>Fenn Macon</h1>
+            <p class="resume-subtitle">Technology Specialist / Systems Engineer</p>
+            <div class="resume-controls">
+                <button class="resume-btn" onclick="toggleAllSections()">Expand All</button>
+                <button class="resume-btn" onclick="printResume()">Print Version</button>
+            </div>
+        </div>
         <div class="article-content-section article-section">
             <div class="resume-content">
                 ${contactHTML}
                 ${objectiveHTML}
-                ${educationHTML}
+                ${projectsHTML}
                 ${skillsHTML}
                 ${experienceHTML}
+                ${educationHTML}
             </div>
         </div>
     </article>
@@ -320,7 +394,7 @@ const loadGallery = (galleryType) => {
         main.innerHTML = content;
         
         if (galleryType === 'resume') {
-            initializeResumeToggles();
+            initializeResumeInteractivity();
         } else if (galleryType === 'overview') {
             initializeOverviewButtons();
         }
@@ -922,3 +996,154 @@ window.matchMedia("(max-width: 800px)").onchange = e => {
     nav.dataset.transitionable = "false";
     nav.dataset.toggled = "false";
 };
+
+/* -- Interactive Resume Functions -- */
+
+// Initialize resume interactivity when resume is loaded
+function initializeResumeInteractivity() {
+    // Add click handlers for section headers
+    const sectionHeaders = document.querySelectorAll('.section-header');
+    sectionHeaders.forEach(header => {
+        header.addEventListener('click', toggleSection);
+        header.style.cursor = 'pointer';
+    });
+    
+    // Add hover effects to skill tags
+    const skillTags = document.querySelectorAll('.skill-tag');
+    skillTags.forEach(tag => {
+        tag.addEventListener('mouseenter', highlightRelatedSkills);
+        tag.addEventListener('mouseleave', removeHighlights);
+    });
+    
+    // Add animations to timeline items
+    observeTimelineItems();
+}
+
+// Toggle individual resume sections
+function toggleSection(e) {
+    const header = e.currentTarget;
+    const section = header.closest('.resume-section');
+    const content = section.querySelector('.section-content');
+    const toggle = header.querySelector('.section-toggle');
+    
+    if (section.classList.contains('collapsed')) {
+        // Expand section
+        section.classList.remove('collapsed');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        toggle.textContent = '-';
+        setTimeout(() => {
+            content.style.maxHeight = 'none';
+        }, 300);
+    } else {
+        // Collapse section
+        content.style.maxHeight = content.scrollHeight + 'px';
+        setTimeout(() => {
+            section.classList.add('collapsed');
+            content.style.maxHeight = '0';
+            toggle.textContent = '+';
+        }, 10);
+    }
+}
+
+// Toggle all sections
+function toggleAllSections() {
+    const button = event.target;
+    const allSections = document.querySelectorAll('.resume-section');
+    const collapsedSections = document.querySelectorAll('.resume-section.collapsed');
+    
+    if (collapsedSections.length > 0) {
+        // Expand all
+        allSections.forEach(section => {
+            if (section.classList.contains('collapsed')) {
+                const header = section.querySelector('.section-header');
+                header.click();
+            }
+        });
+        button.textContent = 'Collapse All';
+    } else {
+        // Collapse all
+        allSections.forEach(section => {
+            if (!section.classList.contains('collapsed')) {
+                const header = section.querySelector('.section-header');
+                header.click();
+            }
+        });
+        button.textContent = 'Expand All';
+    }
+}
+
+// Highlight related skills
+function highlightRelatedSkills(e) {
+    const clickedTag = e.target;
+    const skillText = clickedTag.textContent.toLowerCase();
+    
+    // Find related skills (simple matching for common terms)
+    const allTags = document.querySelectorAll('.skill-tag');
+    allTags.forEach(tag => {
+        const tagText = tag.textContent.toLowerCase();
+        if (tagText.includes(skillText) || skillText.includes(tagText)) {
+            tag.classList.add('highlighted');
+        }
+    });
+}
+
+// Remove skill highlights
+function removeHighlights() {
+    const highlightedTags = document.querySelectorAll('.skill-tag.highlighted');
+    highlightedTags.forEach(tag => {
+        tag.classList.remove('highlighted');
+    });
+}
+
+// Animate timeline items as they come into view
+function observeTimelineItems() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    const timelineItems = document.querySelectorAll('.experience-item');
+    timelineItems.forEach(item => {
+        observer.observe(item);
+    });
+}
+
+// Print-friendly version
+function printResume() {
+    // Expand all sections before printing
+    const collapsedSections = document.querySelectorAll('.resume-section.collapsed');
+    collapsedSections.forEach(section => {
+        const header = section.querySelector('.section-header');
+        header.click();
+    });
+    
+    // Add print class to body
+    document.body.classList.add('print-mode');
+    
+    setTimeout(() => {
+        window.print();
+        
+        // Remove print class after printing
+        setTimeout(() => {
+            document.body.classList.remove('print-mode');
+        }, 100);
+    }, 300);
+}
+
+// Filter resume content (future enhancement)
+function filterResumeContent(searchTerm) {
+    const sections = document.querySelectorAll('.resume-section');
+    const normalizedSearch = searchTerm.toLowerCase();
+    
+    sections.forEach(section => {
+        const content = section.textContent.toLowerCase();
+        if (content.includes(normalizedSearch) || searchTerm === '') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+}
