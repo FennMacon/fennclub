@@ -1940,110 +1940,7 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
     opacity: 1;
 }
 
-/* -- Interactive Resume Styles -- */
-
-.resume-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding: 2rem 0;
-    border-bottom: 2px solid rgba(238, 238, 223, 0.2);
-}
-
-.resume-header h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    color: var(--highlight-color);
-    text-shadow: 0 0 20px rgba(255, 213, 79, 0.3);
-}
-
-.resume-subtitle {
-    font-size: 1.2rem;
-    color: var(--backcolor);
-    opacity: 0.8;
-    margin-bottom: 1.5rem;
-}
-
-.resume-controls {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.resume-btn {
-    background: linear-gradient(135deg, var(--headercolor), rgba(104, 41, 36, 0.8));
-    color: var(--backcolor);
-    border: 1px solid var(--highlight-color);
-    padding: 0.8rem 1.5rem;
-    border-radius: 25px;
-    cursor: pointer;
-    font-family: "Rubik", sans-serif;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.resume-btn:hover {
-    background: linear-gradient(135deg, var(--highlight-color), var(--hovercolor));
-    color: var(--background-color);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 213, 79, 0.3);
-}
-
-/* Section Headers with Icons */
-.section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(238, 238, 223, 0.1);
-    margin-bottom: 1rem;
-}
-
-.section-header:hover {
-    color: var(--highlight-color);
-    transform: translateX(5px);
-}
-
-.section-icon {
-    font-size: 1.2rem;
-    margin-right: 0.8rem;
-}
-
-.section-toggle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.resume-section.collapsed .section-toggle {
-    transform: rotate(45deg);
-}
-
-/* Section Content Animation */
-.section-content {
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-}
-
-.resume-section.collapsed .section-content {
-    max-height: 0 !important;
-    margin: 0;
-    padding: 0;
-}
-
-/* Featured Projects Section */
-.featured-section {
-    background: linear-gradient(135deg, rgba(255, 213, 79, 0.05), rgba(104, 41, 36, 0.05));
-    border: 1px solid rgba(255, 213, 79, 0.2);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin: 2rem 0;
-}
-
+/* Simple Projects Section Styling */
 .projects-grid {
     display: grid;
     gap: 1.5rem;
@@ -2051,40 +1948,16 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
 }
 
 .project-card {
-    background: rgba(238, 238, 223, 0.05);
+    background: rgba(238, 238, 223, 0.03);
     border: 1px solid rgba(238, 238, 223, 0.1);
     border-radius: 8px;
     padding: 1.5rem;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.project-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--highlight-color), var(--hovercolor));
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.project-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 213, 79, 0.1);
-    border-color: var(--highlight-color);
-}
-
-.project-card:hover::before {
-    transform: scaleX(1);
+    margin-bottom: 1rem;
 }
 
 .project-title {
     color: var(--highlight-color);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     margin-bottom: 0.5rem;
 }
 
@@ -2099,173 +1972,6 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
 .project-description {
     line-height: 1.6;
     color: var(--backcolor);
-    opacity: 0.9;
-}
-
-/* Interactive Skills Section */
-.skills-grid {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.skill-category {
-    background: rgba(238, 238, 223, 0.03);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(238, 238, 223, 0.1);
-}
-
-.skill-category-title {
-    color: var(--highlight-color);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    text-align: center;
-}
-
-.skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.skill-tag {
-    background: linear-gradient(135deg, var(--headercolor), rgba(104, 41, 36, 0.8));
-    color: var(--backcolor);
-    padding: 0.4rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    border: 1px solid rgba(238, 238, 223, 0.2);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.skill-tag:hover {
-    background: linear-gradient(135deg, var(--highlight-color), var(--hovercolor));
-    color: var(--background-color);
-    transform: scale(1.05);
-    box-shadow: 0 3px 10px rgba(255, 213, 79, 0.3);
-}
-
-.skill-tag.highlighted {
-    background: linear-gradient(135deg, var(--highlight-color), var(--hovercolor));
-    color: var(--background-color);
-    box-shadow: 0 0 15px rgba(255, 213, 79, 0.5);
-    animation: pulse-highlight 2s infinite;
-}
-
-@keyframes pulse-highlight {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-/* Experience Timeline */
-.experience-timeline {
-    position: relative;
-    padding-left: 2rem;
-}
-
-.experience-timeline::before {
-    content: '';
-    position: absolute;
-    left: 1rem;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--highlight-color), var(--headercolor));
-}
-
-.experience-item {
-    position: relative;
-    margin-bottom: 2rem;
-    opacity: 0;
-    transform: translateX(-20px);
-    transition: all 0.6s ease;
-}
-
-.experience-item.animated {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.experience-item.current {
-    background: rgba(255, 213, 79, 0.05);
-    border-radius: 8px;
-    padding: 1rem;
-    border: 1px solid rgba(255, 213, 79, 0.2);
-}
-
-.timeline-marker {
-    position: absolute;
-    left: -2.5rem;
-    top: 0.5rem;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--highlight-color);
-    border: 3px solid var(--background-color);
-    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
-}
-
-.experience-item.current .timeline-marker {
-    width: 16px;
-    height: 16px;
-    left: -2.7rem;
-    animation: pulse-marker 2s infinite;
-}
-
-@keyframes pulse-marker {
-    0%, 100% { 
-        box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
-        transform: scale(1);
-    }
-    50% { 
-        box-shadow: 0 0 20px rgba(255, 213, 79, 0.8);
-        transform: scale(1.1);
-    }
-}
-
-.experience-title {
-    color: var(--highlight-color);
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
-
-.experience-company {
-    color: var(--hovercolor);
-    font-weight: 500;
-    margin-bottom: 1rem;
-}
-
-.experience-points {
-    margin-left: 1rem;
-}
-
-.experience-points li {
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
-}
-
-/* Education Section */
-.education-item {
-    background: rgba(238, 238, 223, 0.03);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(238, 238, 223, 0.1);
-    transition: all 0.3s ease;
-}
-
-.education-item:hover {
-    background: rgba(255, 213, 79, 0.05);
-    border-color: var(--highlight-color);
-    transform: translateX(5px);
-}
-
-.education-item h4 {
-    color: var(--highlight-color);
-    margin-bottom: 0.5rem;
 }
 
 .coursework {
@@ -2275,68 +1981,8 @@ button, a, iframe, .article-nav-button, #nav-logo-section, #nav-logo-section * {
     font-size: 0.9rem;
 }
 
-/* Print Styles */
-@media print {
-    .print-mode {
-        background: white !important;
-        color: black !important;
-    }
-    
-    .print-mode * {
-        color: black !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        border-color: #ccc !important;
-    }
-    
-    .resume-controls,
-    .section-toggle,
-    nav {
-        display: none !important;
-    }
-    
-    .resume-section {
-        page-break-inside: avoid;
-        margin-bottom: 1rem;
-    }
-    
-    .section-content {
-        max-height: none !important;
-    }
-}
-
-/* Mobile Responsiveness */
 @media (max-width: 800px) {
-    .resume-header h1 {
-        font-size: 2rem;
-    }
-    
-    .resume-controls {
-        flex-direction: column;
-        align-items: center;
-    }
-    
     .projects-grid {
         grid-template-columns: 1fr;
-    }
-    
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .experience-timeline {
-        padding-left: 1.5rem;
-    }
-    
-    .experience-timeline::before {
-        left: 0.75rem;
-    }
-    
-    .timeline-marker {
-        left: -2rem;
-    }
-    
-    .experience-item.current .timeline-marker {
-        left: -2.2rem;
     }
 }
