@@ -1,0 +1,59 @@
+/* Badlands - Dramatic Erosion Palette */
+/* Inspired by eroded landscapes, prairie grasses, and stark contrasts */
+
+:root {
+  /* Erosion Reds */
+  --badlands-red: #b22222;
+  --rust-canyon: #cd853f;
+  --clay-orange: #d2691e;
+  --sunset-rust: #ff6347;
+  
+  /* Prairie Golds */
+  --prairie-gold: #daa520;
+  --wheat-field: #f5deb3;
+  --buffalo-grass: #bdb76b;
+  --dry-earth: #d2b48c;
+  
+  /* Weathered Rock */
+  --stone-grey: #a9a9a9;
+  --weathered-brown: #8b4513;
+  --dust-beige: #f5f5dc;
+  --shadow-black: #2f2f2f;
+  
+  /* Big Sky */
+  --sky-blue: #87ceeb;
+  --storm-grey: #778899;
+  --cloud-white: #f8f8ff;
+  --horizon-purple: #9370db;
+  
+  /* Desert Life */
+  --sage-brush: #9acd32;
+  --cactus-green: #32cd32;
+  --tumbleweed: #deb887;
+  --desert-bloom: #ff69b4;
+}
+
+/* Badlands Color Families */
+.erosion-colors {
+  --primary: var(--badlands-red);
+  --secondary: var(--rust-canyon);
+  --accent: var(--clay-orange);
+}
+
+.prairie-tones {
+  --primary: var(--prairie-gold);
+  --secondary: var(--buffalo-grass);
+  --accent: var(--dry-earth);
+}
+
+.weathered-stone {
+  --primary: var(--weathered-brown);
+  --secondary: var(--stone-grey);
+  --accent: var(--dust-beige);
+}
+
+.big-sky-country {
+  --primary: var(--sky-blue);
+  --secondary: var(--storm-grey);
+  --accent: var(--horizon-purple);
+} 

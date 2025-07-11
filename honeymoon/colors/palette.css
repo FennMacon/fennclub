@@ -1,0 +1,29 @@
+/* Grand Tetons Wildflower Color Palette */
+:root {
+  --wildflower-1: #84846c;
+  --wildflower-2: #041119;
+  --wildflower-3: #05121a;
+  --wildflower-4: #8d9073;
+  --wildflower-5: #888c73;
+  --wildflower-6: #848870;
+  --wildflower-7: #7e8066;
+  --wildflower-8: #878a6f;
+}
+
+/* Color utility classes */
+.bg-wildflower-1 { background-color: var(--wildflower-1); }
+.text-wildflower-1 { color: var(--wildflower-1); }
+.bg-wildflower-2 { background-color: var(--wildflower-2); }
+.text-wildflower-2 { color: var(--wildflower-2); }
+.bg-wildflower-3 { background-color: var(--wildflower-3); }
+.text-wildflower-3 { color: var(--wildflower-3); }
+.bg-wildflower-4 { background-color: var(--wildflower-4); }
+.text-wildflower-4 { color: var(--wildflower-4); }
+.bg-wildflower-5 { background-color: var(--wildflower-5); }
+.text-wildflower-5 { color: var(--wildflower-5); }
+.bg-wildflower-6 { background-color: var(--wildflower-6); }
+.text-wildflower-6 { color: var(--wildflower-6); }
+.bg-wildflower-7 { background-color: var(--wildflower-7); }
+.text-wildflower-7 { color: var(--wildflower-7); }
+.bg-wildflower-8 { background-color: var(--wildflower-8); }
+.text-wildflower-8 { color: var(--wildflower-8); }

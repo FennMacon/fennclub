@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Honeymoon Journey - Day by Day</title>
+    
+    <!-- Import all palette CSS files -->
+    <link rel="stylesheet" href="sepia-wildflower-palette.css">
+    <link rel="stylesheet" href="palettes/mackinac-island-palette.css">
+    <link rel="stylesheet" href="palettes/pictured-rocks-palette.css">
+    <link rel="stylesheet" href="palettes/badlands-palette.css">
+    <link rel="stylesheet" href="palettes/devils-tower-palette.css">
+    <link rel="stylesheet" href="palettes/glacier-palette.css">
+    <link rel="stylesheet" href="palettes/yellowstone-palette.css">
+    <link rel="stylesheet" href="palettes/arches-palette.css">
+    <link rel="stylesheet" href="palettes/salt-flats-palette.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #9b59b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: #ccc;
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .journey-path {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .path-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: relative;
+        }
+
+        .path-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 15px;
+            height: 2px;
+            background: #ffd700;
+            transform: translateY(-50%);
+        }
+
+        .path-marker:last-child::after {
+            display: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .container.compact {
+            /* Height will be set dynamically via JavaScript */
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .day-grid:not(.horizontal) {
+            margin-bottom: 120px; /* Add space for fixed horizontal container */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .day-grid.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        .day-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            color: #333;
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 1;
+            background: linear-gradient(45deg, var(--border-initial-end), var(--border-initial-start));
+            box-sizing: border-box;
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            padding: 4px;
+        }
+
+        .day-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 11;
+            opacity: 1;
+            background: linear-gradient(45deg, var(--border-gradient-start), var(--border-gradient-end));
+            box-sizing: border-box;
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            padding: 4px;
+            clip-path: circle(0% at 50% 50%);
+        }
+
+        .day-header {
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--border-color-1, white);
+            border-left: 4px solid var(--border-color-1, white);
+            border-right: 4px solid var(--border-color-1, white);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .day-date {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .day-location {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .day-activity {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-style: italic;
+            z-index: 2;
+            position: relative;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            height: 120px;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .action-btn {
+            position: relative;
+            cursor: pointer;
+            overflow: visible;
+            box-sizing: border-box;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 
+                -1px -1px 0 #2c2c2c,
+                1px -1px 0 #2c2c2c,
+                -1px 1px 0 #2c2c2c,
+                1px 1px 0 #2c2c2c,
+                0 -1px 0 #2c2c2c,
+                0 1px 0 #2c2c2c,
+                -1px 0 0 #2c2c2c,
+                1px 0 0 #2c2c2c;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            transition: transform 0.2s ease;
+        }
+
+        .action-btn:hover .action-icon {
+            transform: scale(1.15);
+        }
+
+        .day-description {
+            padding: 1.5rem;
+            line-height: 1.6;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .content-display {
+            min-height: 400px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: none;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .content-display.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-display h2 {
+            color: #ffd700;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .content-display .content-body {
+            color: white;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .horizontal-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: transparent;
+            padding: 1rem;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+
+        .horizontal-container.show {
+            transform: translateY(0);
+        }
+
+        .horizontal-scroll-wrapper {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .day-grid.horizontal {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            gap: 1.5rem;
+            scroll-behavior: smooth;
+            padding: 0 3rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .day-grid.horizontal:active {
+            cursor: grabbing;
+        }
+
+        .day-grid.horizontal.dragging {
+            cursor: grabbing;
+            scroll-behavior: auto;
+        }
+
+        .day-grid.horizontal * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .day-grid.horizontal::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .day-grid.horizontal::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .day-grid.horizontal::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .day-grid.horizontal .day-card {
+            min-width: 280px;
+            max-width: 280px;
+            flex-shrink: 0;
+            min-height: 200px;
+            max-height: 200px;
+        }
+
+        .day-grid.horizontal .day-description {
+            display: none;
+        }
+
+        .day-grid.horizontal .action-buttons {
+            height: 80px;
+        }
+
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .horizontal-container.show .scroll-arrow {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .scroll-arrow.left {
+            left: -1rem;
+        }
+
+        .scroll-arrow.right {
+            right: -1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Our Honeymoon Journey</h1>
+        <p>20 days • A lifetime of memories</p>
+            
+        <div class="journey-path" id="journeyPath">
+            <!-- Path markers will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-display" id="contentDisplay">
+            <button class="close-btn" onclick="closeContentDisplay()">×</button>
+            <div id="displayContent">
+                <!-- Dynamic content will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="day-grid" id="dayGrid">
+            <!-- Day cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Horizontal scroll container -->
+    <div class="horizontal-container" id="horizontalContainer">
+        <div class="horizontal-scroll-wrapper">
+            <button class="scroll-arrow left" onclick="scrollHorizontal('left')">‹</button>
+            <div class="day-grid horizontal" id="horizontalGrid">
+                <!-- Cards will be cloned here -->
+            </div>
+            <button class="scroll-arrow right" onclick="scrollHorizontal('right')">›</button>
+        </div>
+    </div>
+
+    <script>
+        // Complete journey data with flowing color transitions
+        const journeyData = [
+            { date: "Wed 6/18", location: "Chicago", activity: "Fly to Chicago - Adventure begins!", type: "travel", palette: "day1-chicago-start" },
+            { date: "Thu 6/19", location: "St. Ignace", activity: "Rent car, drive to Upper Peninsula (6.5hr)", type: "travel", palette: "day2-toward-mackinac" },
+            { date: "Fri 6/20", location: "Mackinac Island", activity: "Island day trip & Victorian charm", type: "location", palette: "day3-mackinac-pure" },
+            { date: "Sat 6/21", location: "Pictured Rocks", activity: "Kayaking adventure & sandstone cliffs", type: "location", palette: "day4-mackinac-to-pictured" },
+            { date: "Sun 6/22", location: "Drive to SD", activity: "Epic 13-14hr drive, overnight in Kadoka", type: "travel", palette: "day5-pictured-to-prairie" },
+            { date: "Mon 6/23", location: "Badlands", activity: "National Park exploration & camping", type: "location", palette: "day6-prairie-to-badlands" },
+            { date: "Tue 6/24", location: "Badlands", activity: "More Badlands, drive to Devil's Tower", type: "location", palette: "day7-badlands-to-devils" },
+            { date: "Wed 6/25", location: "Devil's Tower", activity: "Visit tower, drive to Glacier (12hr)", type: "location", palette: "day8-devils-to-glacier" },
+            { date: "Thu 6/26", location: "Glacier National Park", activity: "Park exploration & camping", type: "location", palette: "day9-glacier-pure" },
+            { date: "Fri 6/27", location: "Glacier National Park", activity: "More park adventures & camping", type: "location", palette: "day10-glacier-to-yellowstone" },
+            { date: "Sat 6/28", location: "Yellowstone", activity: "Drive to Yellowstone & Old Faithful Inn", type: "location", palette: "day11-yellowstone-arrival" },
+            { date: "Sun 6/29", location: "Yellowstone", activity: "Park exploration (staying at inn)", type: "location", palette: "day12-yellowstone-pure" },
+            { date: "Mon 6/30", location: "Grand Teton", activity: "Morning Yellowstone, drive to Tetons", type: "location", palette: "day13-yellowstone-to-tetons" },
+            { date: "Tue 7/1", location: "Grand Teton", activity: "River rafting & wildflower photos!", type: "location", palette: "day14-tetons-pure" },
+            { date: "Wed 7/2", location: "Drive to Moab", activity: "Drive to Moab via Dinosaur Monument", type: "travel", palette: "day15-tetons-to-arches" },
+            { date: "Thu 7/3", location: "Arches", activity: "Arches National Park & camping", type: "location", palette: "day16-arches-arrival" },
+            { date: "Fri 7/4", location: "Arches", activity: "Arches National Park & camping", type: "location", palette: "day17-arches-pure" },
+            { date: "Sat 7/5", location: "Salt Flats", activity: "Salt Flats exploration & drive to SLC", type: "location", palette: "day18-arches-to-salt" },
+            { date: "Sun 7/6", location: "Salt Lake City", activity: "SLC exploration & prep for home", type: "location", palette: "day19-salt-flats-pure" },
+            { date: "Mon 7/7", location: "Home", activity: "Fly home - Journey complete!", type: "travel", palette: "day20-journey-reflection" }
+        ];
+
+        // Flowing color journey across all 20 days
+        const paletteStyles = {
+            'day1-chicago-start': {
+                headerGradient: 'linear-gradient(135deg, #2F4F4F, #708090)',
+                borderColors: ['#2c2c2c', '#4682b4', '#778899'],
+                descBorders: ['#2F4F4F', '#708090', '#2F4F4F'],
+                actionColors: ['#2F4F4F', '#708090', '#778899', '#4682b4'],
+                textColor: 'white'
+            },
+            'day2-toward-mackinac': {
+                headerGradient: 'linear-gradient(135deg, #708090, #87ceeb)',
+                borderColors: ['#2c2c2c', '#b0e0e6', '#e6f3ff'],
+                descBorders: ['#708090', '#87ceeb', '#708090'],
+                actionColors: ['#708090', '#87ceeb', '#e6f3ff', '#b0e0e6'],
+                textColor: '#333'
+            },
+            'day3-mackinac-pure': {
+                headerGradient: 'linear-gradient(135deg, #87ceeb, #f8bbd9)',
+                borderColors: ['#2c2c2c', '#7dd3c0', '#fefefe'],
+                descBorders: ['#87ceeb', '#f8bbd9', '#87ceeb'],
+                actionColors: ['#87ceeb', '#f8bbd9', '#fefefe', '#7dd3c0'],
+                textColor: '#333'
+            },
+            'day4-mackinac-to-pictured': {
+                headerGradient: 'linear-gradient(135deg, #f8bbd9, #f4a460)',
+                borderColors: ['#2c2c2c', '#7dd3c0', '#cd5c5c'],
+                descBorders: ['#f8bbd9', '#f4a460', '#f8bbd9'],
+                actionColors: ['#f8bbd9', '#f4a460', '#cd5c5c', '#7dd3c0'],
+                textColor: '#333'
+            },
+            'day5-pictured-to-prairie': {
+                headerGradient: 'linear-gradient(135deg, #f4a460, #9acd32)',
+                borderColors: ['#2c2c2c', '#48a999', '#daa520'],
+                descBorders: ['#f4a460', '#9acd32', '#f4a460'],
+                actionColors: ['#f4a460', '#9acd32', '#daa520', '#48a999'],
+                textColor: '#333'
+            },
+            'day6-prairie-to-badlands': {
+                headerGradient: 'linear-gradient(135deg, #9acd32, #daa520)',
+                borderColors: ['#2c2c2c', '#8b4513', '#87ceeb'],
+                descBorders: ['#9acd32', '#daa520', '#9acd32'],
+                actionColors: ['#9acd32', '#daa520', '#87ceeb', '#8b4513'],
+                textColor: '#333'
+            },
+            'day7-badlands-to-devils': {
+                headerGradient: 'linear-gradient(135deg, #daa520, #b22222)',
+                borderColors: ['#2c2c2c', '#663399', '#ff8c00'],
+                descBorders: ['#daa520', '#b22222', '#daa520'],
+                actionColors: ['#daa520', '#b22222', '#ff8c00', '#663399'],
+                textColor: 'white'
+            },
+            'day8-devils-to-glacier': {
+                headerGradient: 'linear-gradient(135deg, #663399, #4682b4)',
+                borderColors: ['#2c2c2c', '#228b22', '#708090'],
+                descBorders: ['#663399', '#4682b4', '#663399'],
+                actionColors: ['#663399', '#4682b4', '#708090', '#228b22'],
+                textColor: 'white'
+            },
+            'day9-glacier-pure': {
+                headerGradient: 'linear-gradient(135deg, #4682b4, #228b22)',
+                borderColors: ['#2c2c2c', '#ff6347', '#708090'],
+                descBorders: ['#4682b4', '#228b22', '#4682b4'],
+                actionColors: ['#4682b4', '#228b22', '#708090', '#ff6347'],
+                textColor: 'white'
+            },
+            'day10-glacier-to-yellowstone': {
+                headerGradient: 'linear-gradient(135deg, #228b22, #008B8B)',
+                borderColors: ['#2c2c2c', '#B8860B', '#DC143C'],
+                descBorders: ['#228b22', '#008B8B', '#228b22'],
+                actionColors: ['#228b22', '#008B8B', '#DC143C', '#B8860B'],
+                textColor: 'white'
+            },
+            'day11-yellowstone-arrival': {
+                headerGradient: 'linear-gradient(135deg, #008B8B, #B8860B)',
+                borderColors: ['#2c2c2c', '#DC143C', '#1E90FF'],
+                descBorders: ['#008B8B', '#B8860B', '#008B8B'],
+                actionColors: ['#008B8B', '#B8860B', '#1E90FF', '#DC143C'],
+                textColor: 'white'
+            },
+            'day12-yellowstone-pure': {
+                headerGradient: 'linear-gradient(135deg, #1E90FF, #DC143C)',
+                borderColors: ['#2c2c2c', '#B8860B', '#008B8B'],
+                descBorders: ['#1E90FF', '#DC143C', '#1E90FF'],
+                actionColors: ['#1E90FF', '#DC143C', '#008B8B', '#B8860B'],
+                textColor: 'white'
+            },
+            'day13-yellowstone-to-tetons': {
+                headerGradient: 'linear-gradient(135deg, #DC143C, var(--faded-lupine))',
+                borderColors: ['#2c2c2c', 'var(--vintage-poppy)', 'var(--sepia-parchment)'],
+                descBorders: ['#DC143C', 'var(--faded-lupine)', '#DC143C'],
+                actionColors: ['#DC143C', 'var(--faded-lupine)', 'var(--sepia-parchment)', 'var(--vintage-poppy)'],
+                textColor: 'white'
+            },
+            'day14-tetons-pure': {
+                headerGradient: 'linear-gradient(135deg, var(--faded-lupine), var(--vintage-poppy))',
+                borderColors: ['#2c2c2c', 'var(--sepia-parchment)', 'var(--sun-bleached-yellow)'],
+                descBorders: ['var(--faded-lupine)', 'var(--vintage-poppy)', 'var(--faded-lupine)'],
+                actionColors: ['var(--faded-lupine)', 'var(--vintage-poppy)', 'var(--sun-bleached-yellow)', 'var(--sepia-parchment)'],
+                textColor: '#333'
+            },
+            'day15-tetons-to-arches': {
+                headerGradient: 'linear-gradient(135deg, var(--vintage-poppy), #cd5c5c)',
+                borderColors: ['#2c2c2c', '#ff8c00', 'var(--sun-bleached-yellow)'],
+                descBorders: ['var(--vintage-poppy)', '#cd5c5c', 'var(--vintage-poppy)'],
+                actionColors: ['var(--vintage-poppy)', '#cd5c5c', 'var(--sun-bleached-yellow)', '#ff8c00'],
+                textColor: '#333'
+            },
+            'day16-arches-arrival': {
+                headerGradient: 'linear-gradient(135deg, #cd5c5c, #ff8c00)',
+                borderColors: ['#2c2c2c', '#8b008b', '#9acd32'],
+                descBorders: ['#cd5c5c', '#ff8c00', '#cd5c5c'],
+                actionColors: ['#cd5c5c', '#ff8c00', '#9acd32', '#8b008b'],
+                textColor: '#333'
+            },
+            'day17-arches-pure': {
+                headerGradient: 'linear-gradient(135deg, #ff8c00, #8b008b)',
+                borderColors: ['#2c2c2c', '#9acd32', '#cd5c5c'],
+                descBorders: ['#ff8c00', '#8b008b', '#ff8c00'],
+                actionColors: ['#ff8c00', '#8b008b', '#cd5c5c', '#9acd32'],
+                textColor: 'white'
+            },
+            'day18-arches-to-salt': {
+                headerGradient: 'linear-gradient(135deg, #8b008b, #c0c0c0)',
+                borderColors: ['#2c2c2c', '#ffffff', '#ffb6c1'],
+                descBorders: ['#8b008b', '#c0c0c0', '#8b008b'],
+                actionColors: ['#8b008b', '#c0c0c0', '#ffb6c1', '#ffffff'],
+                textColor: 'white'
+            },
+            'day19-salt-flats-pure': {
+                headerGradient: 'linear-gradient(135deg, #ffffff, #87ceeb)',
+                borderColors: ['white', '#ffb6c1', '#c0c0c0'],
+                descBorders: ['#ffffff', '#87ceeb', '#ffffff'],
+                actionColors: ['#ffffff', '#87ceeb', '#c0c0c0', '#ffb6c1'],
+                textColor: '#2c2c2c'
+            },
+            'day20-journey-reflection': {
+                headerGradient: 'linear-gradient(135deg, #87ceeb, #ffd700)',
+                borderColors: ['#2c2c2c', '#f8bbd9', 'var(--vintage-poppy)'],
+                descBorders: ['#87ceeb', '#ffd700', '#87ceeb'],
+                actionColors: ['#87ceeb', '#ffd700', 'var(--vintage-poppy)', '#f8bbd9'],
+                textColor: '#333'
+            }
+        };
+
+        function generateJourneyPath() {
+            const pathContainer = document.getElementById('journeyPath');
+            journeyData.forEach((day, index) => {
+                const marker = document.createElement('div');
+                marker.className = 'path-marker';
+                
+                if (day.palette && paletteStyles[day.palette]) {
+                    const colors = paletteStyles[day.palette].actionColors;
+                    marker.style.background = colors[0];
+                    // Always keep white border for visibility and consistency
+                    marker.style.borderColor = 'white';
+                }
+                
+                pathContainer.appendChild(marker);
+            });
+        }
+
+        function generateDayCards() {
+            const container = document.getElementById('dayGrid');
+            
+            journeyData.forEach((day, index) => {
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                
+                // Apply palette styling
+                const style = paletteStyles[day.palette];
+                card.setAttribute('data-palette', day.palette);
+                
+                // Create CSS variables for this card
+                card.style.setProperty('--header-gradient', style.headerGradient);
+                card.style.setProperty('--border-color-1', style.borderColors[0]);
+                card.style.setProperty('--border-color-2', style.borderColors[1]);
+                card.style.setProperty('--border-color-3', style.borderColors[2]);
+                card.style.setProperty('--desc-border-left', style.descBorders[0]);
+                card.style.setProperty('--desc-border-right', style.descBorders[1]);
+                card.style.setProperty('--desc-border-bottom', style.descBorders[2]);
+                card.style.setProperty('--text-color', style.textColor);
+                card.style.setProperty('--border-initial-start', style.actionColors[0]);
+                card.style.setProperty('--border-initial-end', style.actionColors[1]);
+                card.style.setProperty('--border-gradient-start', style.actionColors[2]);
+                card.style.setProperty('--border-gradient-end', style.actionColors[3]);
+                
+                card.innerHTML = `
+                    <div class="day-header" style="background: var(--header-gradient); color: var(--text-color);">
+                        <div class="day-date">${day.date}</div>
+                        <div class="day-location">${day.location}</div>
+                        <div class="day-activity">${day.activity}</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="showJournal(${index})" style="background: ${paletteStyles[day.palette].actionColors[0]};">
+                            <div class="action-icon">📖</div>
+                        </button>
+                        <button class="action-btn" onclick="showMap(${index})" style="background: ${paletteStyles[day.palette].actionColors[1]};">
+                            <div class="action-icon">🗺️</div>
+                        </button>
+                        <button class="action-btn" onclick="showPhotos(${index})" style="background: ${paletteStyles[day.palette].actionColors[2]};">
+                            <div class="action-icon">📸</div>
+                        </button>
+                        <button class="action-btn" onclick="showAlbum(${index})" style="background: ${paletteStyles[day.palette].actionColors[3]};">
+                            <div class="action-icon">💿</div>
+                        </button>
+    </div>
+                    <div class="day-description" style="border-left: 4px solid var(--desc-border-left, #ccc); border-right: 4px solid var(--desc-border-right, #ccc); border-bottom: 4px solid var(--desc-border-bottom, #ccc);">
+                        ${getDescriptionForDay(index)}
+  </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function getDescriptionForDay(index) {
+            const descriptions = [
+                "Flight arrival in Chicago, marking the start of our cross-country honeymoon adventure.",
+                "Car rental pickup and 6.5-hour drive north to Michigan's Upper Peninsula.",
+                "Day trip to Mackinac Island featuring Victorian architecture and horse-drawn carriage tours.",
+                "Kayaking excursion along Pictured Rocks National Lakeshore's multicolored sandstone cliffs.",
+                "Long-distance travel day: 13-14 hour drive from Michigan to South Dakota with overnight stop in Kadoka.",
+                "Badlands National Park exploration with camping setup and initial trail hiking.",
+                "Additional Badlands exploration followed by drive to Devils Tower National Monument.",
+                "Devils Tower visit and extensive 12-hour drive to Glacier National Park in Montana.",
+                "First full day in Glacier National Park with backcountry camping and trail exploration.",
+                "Continued Glacier National Park activities including hiking and scenic photography.",
+                "Travel day to Yellowstone National Park with check-in at Old Faithful Inn.",
+                "Yellowstone exploration featuring geysers, hot springs, and wildlife viewing while staying at the historic inn.",
+                "Morning Yellowstone activities followed by drive south to Grand Teton National Park.",
+                "River rafting on the Snake River and wildflower photography session in Teton meadows.",
+                "Drive from Wyoming to Utah via Dinosaur National Monument with stop in Moab.",
+                "First day exploring Arches National Park with camping setup for multi-day stay.",
+                "July 4th celebration while continuing Arches National Park exploration and camping.",
+                "Bonneville Salt Flats exploration and drive to Salt Lake City for accommodation.",
+                "Salt Lake City sightseeing and trip preparation before departure.",
+                "Return flight home, concluding the 20-day cross-country journey."
+            ];
+            return descriptions[index] || "A day filled with adventure and discovery.";
+        }
+
+        // Content data storage
+        let honeymoonContent = null;
+
+        // Load content from JSON file
+        async function loadContent() {
+            try {
+                const response = await fetch('honeymoon-content.json');
+                if (response.ok) {
+                    honeymoonContent = await response.json();
+                } else {
+                    console.warn('Content file not found, using fallback content');
+                }
+            } catch (error) {
+                console.warn('Error loading content file:', error);
+            }
+        }
+
+        // Get content for a specific day and type
+        function getContentForDay(dayIndex, contentType) {
+            if (honeymoonContent && honeymoonContent.days && honeymoonContent.days[dayIndex]) {
+                return honeymoonContent.days[dayIndex][contentType];
+            }
+            return null;
+        }
+
+        // Action button functions
+        function showJournal(index) {
+            const day = journeyData[index];
+            const journalContent = getContentForDay(index, 'journal');
+            
+            let content;
+            if (journalContent) {
+                // Use real content from JSON
+                const contentText = journalContent.content.replace(/\n/g, '</p><p>');
+                content = `
+                    <h2>📖 ${journalContent.title} - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <p>${contentText}</p>
+                    </div>
+                `;
+            } else {
+                // Fallback placeholder content
+                content = `
+                    <h2>📖 Journal Entry - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <p>Today was an incredible day filled with ${day.activity.toLowerCase()}. The beauty of ${day.location} left us speechless. Every moment felt like a dream come true as we explored this amazing place together.</p>
+                        <br>
+                        <p><em>Add your journal content to honeymoon-content.json to see your real memories here!</em></p>
+                    </div>
+                `;
+            }
+            showContentDisplay(content, index);
+        }
+
+        function showMap(index) {
+            const day = journeyData[index];
+            const mapContent = getContentForDay(index, 'map');
+            
+            let content;
+            if (mapContent) {
+                // Use real content from JSON
+                const highlightsList = mapContent.highlights.map(h => `<li>${h}</li>`).join('');
+                content = `
+                    <h2>🗺️ ${mapContent.title} - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <div style="background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 10px;">
+                            <p style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🗺️</p>
+                            <p><strong>Location:</strong> ${mapContent.description}</p>
+                            <p><strong>Coordinates:</strong> ${mapContent.coordinates}</p>
+                            <br>
+                            <p><strong>Route Highlights:</strong></p>
+                            <ul style="margin-left: 1rem;">${highlightsList}</ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Fallback placeholder content
+                content = `
+                    <h2>🗺️ Map View - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <div style="background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 10px; text-align: center;">
+                            <p style="font-size: 3rem; margin-bottom: 1rem;">🗺️</p>
+                            <p><strong>Interactive Map Placeholder</strong></p>
+                            <p><em>Add your map content to honeymoon-content.json to see route details here!</em></p>
+                        </div>
+                    </div>
+                `;
+            }
+            showContentDisplay(content, index);
+        }
+
+        function showPhotos(index) {
+            const day = journeyData[index];
+            const photoContent = getContentForDay(index, 'photos');
+            
+            let content;
+            if (photoContent) {
+                // Use real content from JSON
+                const highlightCards = photoContent.highlights.map(h => `
+                    <div style="background: rgba(255,255,255,0.2); padding: 1.5rem; border-radius: 10px; text-align: center;">
+                        <p style="font-size: 2rem;">📷</p>
+                        <p>${h}</p>
+                    </div>
+                `).join('');
+                
+                content = `
+                    <h2>📸 ${photoContent.title} - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <p>${photoContent.description}</p>
+                        <br>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            ${highlightCards}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Fallback placeholder content
+                content = `
+                    <h2>📸 Photo Gallery - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 10px; text-align: center;">
+                                <p style="font-size: 2rem;">📷</p>
+                                <p>Your photos here</p>
+                            </div>
+                        </div>
+                        <br>
+                        <p><em>Add your photo descriptions to honeymoon-content.json to see your real memories here!</em></p>
+                    </div>
+                `;
+            }
+            showContentDisplay(content, index);
+        }
+
+        function showAlbum(index) {
+            const day = journeyData[index];
+            const albumContent = getContentForDay(index, 'album');
+            
+            let content;
+            if (albumContent) {
+                // Use real content from JSON
+                content = `
+                    <h2>💿 ${albumContent.title} - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <div style="background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 10px; text-align: center; margin-bottom: 2rem;">
+                            <p style="font-size: 4rem; margin-bottom: 1rem;">💿</p>
+                            <p><strong>${albumContent.title}</strong></p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Fallback placeholder content
+                const dayNumber = index + 1;
+                const albumType = day.type === 'travel' ? 'Journey' : 'Destination';
+                content = `
+                    <h2>💿 Album of the Day - ${day.date}</h2>
+                    <div class="content-body">
+                        <h3>${day.location}</h3>
+                        <p><em>"${day.activity}"</em></p>
+                        <br>
+                        <div style="background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 10px; text-align: center; margin-bottom: 2rem;">
+                            <p style="font-size: 4rem; margin-bottom: 1rem;">💿</p>
+                            <p><strong>Day ${dayNumber} ${albumType} Mix</strong></p>
+                            <p style="margin-top: 1rem; font-style: italic;">"Soundtrack to ${day.location}"</p>
+                        </div>
+                        <p><em>Add your album tracks to honeymoon-content.json to see your real playlist here!</em></p>
+                    </div>
+                `;
+            }
+            showContentDisplay(content, index);
+        }
+
+        function showContentDisplay(content, dayIndex) {
+            const contentDisplay = document.getElementById('contentDisplay');
+            const displayContent = document.getElementById('displayContent');
+            const horizontalContainer = document.getElementById('horizontalContainer');
+            const horizontalGrid = document.getElementById('horizontalGrid');
+            const dayGrid = document.getElementById('dayGrid');
+            const container = document.querySelector('.container');
+            
+            // Update content
+            displayContent.innerHTML = content;
+            
+            // Show content display with animation
+            contentDisplay.classList.add('show');
+            
+            // Hide main day grid and make container compact
+            dayGrid.classList.add('hidden');
+            container.classList.add('compact');
+            
+            // Calculate and set dynamic container height after everything is rendered
+            setTimeout(() => {
+                calculateCompactHeight();
+            }, 200); // Small delay to ensure content and horizontal container are rendered
+            
+            // Clone cards to horizontal container
+            cloneCardsToHorizontal();
+            
+            // Check if we're transitioning into horizontal view for the first time
+            const isFirstTransition = !horizontalContainer.classList.contains('show');
+            
+            // Show horizontal container
+            horizontalContainer.classList.add('show');
+            
+            // Only scroll on first transition to horizontal view
+            if (isFirstTransition) {
+                setTimeout(() => {
+                    const containerTop = container.offsetTop;
+                    window.scrollTo({
+                        top: containerTop,
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            }
+            
+            // Scroll to the selected day card in horizontal view
+            setTimeout(() => {
+                const horizontalCards = horizontalGrid.querySelectorAll('.day-card');
+                if (horizontalCards[dayIndex]) {
+                    horizontalCards[dayIndex].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                        inline: 'center'
+                    });
+                }
+            }, 600);
+        }
+
+        function closeContentDisplay() {
+            const contentDisplay = document.getElementById('contentDisplay');
+            const horizontalContainer = document.getElementById('horizontalContainer');
+            const dayGrid = document.getElementById('dayGrid');
+            const container = document.querySelector('.container');
+            
+            // Hide content display
+            contentDisplay.classList.remove('show');
+            
+            // Hide horizontal container
+            horizontalContainer.classList.remove('show');
+            
+            // Show main day grid again and restore full container
+            dayGrid.classList.remove('hidden');
+            container.classList.remove('compact');
+            
+            // Reset container and body height
+            container.style.minHeight = '';
+            document.body.style.minHeight = '';
+        }
+
+        function calculateCompactHeight() {
+            const contentDisplay = document.getElementById('contentDisplay');
+            const horizontalContainer = document.getElementById('horizontalContainer');
+            const container = document.querySelector('.container');
+            const header = document.querySelector('.header');
+            
+            if (contentDisplay && horizontalContainer && container) {
+                // Get the actual height of the content display
+                const contentHeight = contentDisplay.offsetHeight;
+                
+                // Get the height of the horizontal container
+                const horizontalHeight = horizontalContainer.offsetHeight;
+                
+                // Get header height
+                const headerHeight = header ? header.offsetHeight : 0;
+                
+                // Calculate total needed height:
+                // header + content + horizontal container + some padding
+                const totalHeight = headerHeight + contentHeight + horizontalHeight + 60; // 60px extra padding
+                
+                // Set the container min-height to ensure proper sizing
+                container.style.minHeight = `calc(100vh - ${headerHeight}px)`;
+                
+                // But also ensure the body has the right height for the content
+                document.body.style.minHeight = `${totalHeight}px`;
+            }
+        }
+
+        function cloneCardsToHorizontal() {
+            const dayGrid = document.getElementById('dayGrid');
+            const horizontalGrid = document.getElementById('horizontalGrid');
+            
+            // Clear existing cards
+            horizontalGrid.innerHTML = '';
+            
+            // Clone all cards
+            const cards = dayGrid.querySelectorAll('.day-card');
+            cards.forEach(card => {
+                const clone = card.cloneNode(true);
+                horizontalGrid.appendChild(clone);
+            });
+        }
+
+        function scrollHorizontal(direction) {
+            const horizontalGrid = document.getElementById('horizontalGrid');
+            const scrollAmount = 300;
+            
+            if (direction === 'left') {
+                horizontalGrid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                horizontalGrid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // Add drag scrolling functionality with momentum
+        function initializeDragScroll() {
+            const horizontalGrid = document.getElementById('horizontalGrid');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let hasMoved = false;
+            let velocity = 0;
+            let lastX = 0;
+            let lastTime = 0;
+            let mouseDownTime = 0;
+            let totalDragDistance = 0;
+
+            // Prevent text selection globally when dragging
+            const preventSelection = (e) => {
+                if (isDown) {
+                    e.preventDefault();
+                    return false;
+                }
+            };
+
+            // Momentum scrolling function
+            const applyMomentum = () => {
+                if (Math.abs(velocity) < 0.5) return;
+                
+                const friction = 0.95;
+                velocity *= friction;
+                horizontalGrid.scrollLeft -= velocity;
+                
+                requestAnimationFrame(applyMomentum);
+            };
+
+            horizontalGrid.addEventListener('mousedown', (e) => {
+                // Don't interfere with button clicks
+                if (e.target.closest('.action-btn') || e.target.closest('button')) {
+                    return;
+                }
+                
+                isDown = true;
+                hasMoved = false;
+                velocity = 0;
+                totalDragDistance = 0;
+                startX = e.pageX - horizontalGrid.offsetLeft;
+                scrollLeft = horizontalGrid.scrollLeft;
+                lastX = e.pageX;
+                lastTime = Date.now();
+                mouseDownTime = Date.now();
+                
+                horizontalGrid.classList.add('dragging');
+                
+                // Prevent text selection during drag
+                document.addEventListener('selectstart', preventSelection);
+                document.addEventListener('dragstart', preventSelection);
+            });
+
+            const stopDragging = () => {
+                const timeElapsed = Date.now() - mouseDownTime;
+                
+                // Only apply momentum if it was actually a drag (more than 300ms or 15+ pixels)
+                if (isDown && hasMoved && Math.abs(velocity) > 1) {
+                    applyMomentum();
+                }
+                
+                isDown = false;
+                horizontalGrid.classList.remove('dragging');
+                
+                // Re-enable text selection
+                document.removeEventListener('selectstart', preventSelection);
+                document.removeEventListener('dragstart', preventSelection);
+                
+                // Reset for next interaction
+                setTimeout(() => {
+                    hasMoved = false;
+                    totalDragDistance = 0;
+                }, 50);
+            };
+
+            horizontalGrid.addEventListener('mouseleave', stopDragging);
+            horizontalGrid.addEventListener('mouseup', stopDragging);
+
+            // Global mouse up to handle dragging outside the container
+            document.addEventListener('mouseup', () => {
+                if (isDown) {
+                    stopDragging();
+                }
+            });
+
+            horizontalGrid.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                
+                e.preventDefault();
+                
+                const currentTime = Date.now();
+                const currentX = e.pageX;
+                const deltaTime = currentTime - lastTime;
+                const deltaX = currentX - lastX;
+                
+                if (deltaTime > 0) {
+                    velocity = deltaX / deltaTime * 10; // Scale velocity
+                }
+                
+                const x = e.pageX - horizontalGrid.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                const currentDragDistance = Math.abs(walk);
+                totalDragDistance = Math.max(totalDragDistance, currentDragDistance);
+                
+                // More generous thresholds: 15 pixels OR 300ms of movement
+                const timeElapsed = currentTime - mouseDownTime;
+                if (totalDragDistance > 15 || timeElapsed > 300) {
+                    hasMoved = true;
+                }
+                
+                horizontalGrid.scrollLeft = scrollLeft - walk;
+                
+                lastX = currentX;
+                lastTime = currentTime;
+            });
+
+            // Only prevent clicks if it was clearly a drag
+            horizontalGrid.addEventListener('click', (e) => {
+                const timeElapsed = Date.now() - mouseDownTime;
+                
+                // Only block clicks if significant drag occurred
+                if (hasMoved && (totalDragDistance > 15 || timeElapsed > 300)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+
+            // Touch events for mobile
+            horizontalGrid.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.action-btn') || e.target.closest('button')) {
+                    return;
+                }
+                
+                isDown = true;
+                hasMoved = false;
+                velocity = 0;
+                totalDragDistance = 0;
+                startX = e.touches[0].pageX - horizontalGrid.offsetLeft;
+                scrollLeft = horizontalGrid.scrollLeft;
+                lastX = e.touches[0].pageX;
+                lastTime = Date.now();
+                mouseDownTime = Date.now();
+                
+                horizontalGrid.classList.add('dragging');
+            });
+
+            horizontalGrid.addEventListener('touchmove', (e) => {
+                if (!isDown) return;
+                
+                e.preventDefault();
+                
+                const currentTime = Date.now();
+                const currentX = e.touches[0].pageX;
+                const deltaTime = currentTime - lastTime;
+                const deltaX = currentX - lastX;
+                
+                if (deltaTime > 0) {
+                    velocity = deltaX / deltaTime * 10;
+                }
+                
+                const x = e.touches[0].pageX - horizontalGrid.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                const currentDragDistance = Math.abs(walk);
+                totalDragDistance = Math.max(totalDragDistance, currentDragDistance);
+                
+                const timeElapsed = currentTime - mouseDownTime;
+                if (totalDragDistance > 15 || timeElapsed > 300) {
+                    hasMoved = true;
+                }
+                
+                horizontalGrid.scrollLeft = scrollLeft - walk;
+                
+                lastX = currentX;
+                lastTime = currentTime;
+            });
+
+            horizontalGrid.addEventListener('touchend', (e) => {
+                const timeElapsed = Date.now() - mouseDownTime;
+                
+                if (isDown && hasMoved && Math.abs(velocity) > 1) {
+                    applyMomentum();
+                }
+                
+                isDown = false;
+                horizontalGrid.classList.remove('dragging');
+                
+                // Prevent clicks on cards when clearly dragging on mobile
+                if (hasMoved && (totalDragDistance > 15 || timeElapsed > 300)) {
+                    e.preventDefault();
+                }
+                
+                // Reset for next interaction
+                setTimeout(() => {
+                    hasMoved = false;
+                    totalDragDistance = 0;
+                }, 50);
+            });
+        }
+
+        // Initialize the page
+        async function initializePage() {
+            await loadContent();
+            generateJourneyPath();
+            generateDayCards();
+            initializeDragScroll();
+        }
+        
+        // Start initialization when page loads
+        initializePage();
+
+        // Recalculate height on window resize if in compact mode
+        window.addEventListener('resize', () => {
+            const container = document.querySelector('.container');
+            if (container && container.classList.contains('compact')) {
+                setTimeout(calculateCompactHeight, 100);
+            }
+        });
+
+        // Sophisticated border animation based on mouse entry point
+        document.querySelectorAll('.day-card').forEach(card => {
+            let animationStyle = null;
+            let currentStartPoint = null;
+            
+            card.addEventListener('mouseenter', function(e) {
+                // Remove any existing animation
+                if (animationStyle) {
+                    document.head.removeChild(animationStyle);
+                }
+                
+                const rect = card.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                // Calculate which edge the mouse entered from
+                const fromTop = mouseY;
+                const fromBottom = rect.height - mouseY;
+                const fromLeft = mouseX;
+                const fromRight = rect.width - mouseX;
+                
+                const minDistance = Math.min(fromTop, fromBottom, fromLeft, fromRight);
+                
+                let startPoint, direction;
+                if (minDistance === fromTop) {
+                    startPoint = `${(mouseX / rect.width) * 100}% 0%`;
+                    direction = 'from-top';
+                } else if (minDistance === fromBottom) {
+                    startPoint = `${(mouseX / rect.width) * 100}% 100%`;
+                    direction = 'from-bottom';
+                } else if (minDistance === fromLeft) {
+                    startPoint = `0% ${(mouseY / rect.height) * 100}%`;
+                    direction = 'from-left';
+                } else {
+                    startPoint = `100% ${(mouseY / rect.height) * 100}%`;
+                    direction = 'from-right';
+                }
+                
+                // Store the start point for the fade-back animation
+                currentStartPoint = startPoint;
+                
+                // Create unique animation for this entry point
+                const animationId = `borderSweep_${Date.now()}`;
+                const cardId = `hoverCard_${Date.now()}`;
+                card.setAttribute('data-hover-id', cardId);
+                
+                animationStyle = document.createElement('style');
+                animationStyle.textContent = `
+                    @keyframes ${animationId} {
+                        0% {
+                            clip-path: circle(0% at ${startPoint});
+                        }
+                        10% {
+                            clip-path: circle(5% at ${startPoint});
+                        }
+                        20% {
+                            clip-path: circle(12% at ${startPoint});
+                        }
+                        30% {
+                            clip-path: circle(22% at ${startPoint});
+                        }
+                        40% {
+                            clip-path: circle(35% at ${startPoint});
+                        }
+                        50% {
+                            clip-path: circle(50% at ${startPoint});
+                        }
+                        60% {
+                            clip-path: circle(65% at ${startPoint});
+                        }
+                        70% {
+                            clip-path: circle(80% at ${startPoint});
+                        }
+                        80% {
+                            clip-path: circle(95% at ${startPoint});
+                        }
+                        90% {
+                            clip-path: circle(115% at ${startPoint});
+                        }
+                        100% {
+                            clip-path: circle(150% at ${startPoint});
+                        }
+                    }
+                    
+                    .day-card[data-hover-id="${cardId}"]::after {
+                        animation: ${animationId} 0.15s linear forwards;
+                    }
+                `;
+                document.head.appendChild(animationStyle);
+            });
+            
+            card.addEventListener('mouseleave', function(e) {
+                if (animationStyle) {
+                    // Calculate where the mouse is exiting
+                    const rect = card.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    // Calculate which edge the mouse is exiting from
+                    const fromTop = mouseY;
+                    const fromBottom = rect.height - mouseY;
+                    const fromLeft = mouseX;
+                    const fromRight = rect.width - mouseX;
+                    
+                    const minDistance = Math.min(fromTop, fromBottom, fromLeft, fromRight);
+                    
+                    let exitPoint;
+                    if (minDistance === fromTop) {
+                        exitPoint = `${(mouseX / rect.width) * 100}% 0%`;
+                    } else if (minDistance === fromBottom) {
+                        exitPoint = `${(mouseX / rect.width) * 100}% 100%`;
+                    } else if (minDistance === fromLeft) {
+                        exitPoint = `0% ${(mouseY / rect.height) * 100}%`;
+                    } else {
+                        exitPoint = `100% ${(mouseY / rect.height) * 100}%`;
+                    }
+                    
+                    // Create reverse animation towards the exit point
+                    const fadeBackId = `borderFadeBack_${Date.now()}`;
+                    const cardId = `card_${Date.now()}`;
+                    card.setAttribute('data-card-id', cardId);
+                    
+                    const fadeBackStyle = document.createElement('style');
+                    fadeBackStyle.textContent = `
+                        @keyframes ${fadeBackId} {
+                            0% {
+                                clip-path: circle(150% at ${exitPoint});
+                            }
+                            10% {
+                                clip-path: circle(115% at ${exitPoint});
+                            }
+                            20% {
+                                clip-path: circle(95% at ${exitPoint});
+                            }
+                            30% {
+                                clip-path: circle(80% at ${exitPoint});
+                            }
+                            40% {
+                                clip-path: circle(65% at ${exitPoint});
+                            }
+                            50% {
+                                clip-path: circle(50% at ${exitPoint});
+                            }
+                            60% {
+                                clip-path: circle(35% at ${exitPoint});
+                            }
+                            70% {
+                                clip-path: circle(22% at ${exitPoint});
+                            }
+                            80% {
+                                clip-path: circle(12% at ${exitPoint});
+                            }
+                            90% {
+                                clip-path: circle(5% at ${exitPoint});
+                            }
+                            100% {
+                                clip-path: circle(0% at ${exitPoint});
+                            }
+                        }
+                        
+                        .day-card[data-card-id="${cardId}"]::after {
+                            animation: ${fadeBackId} 0.15s linear forwards;
+                        }
+                    `;
+                    document.head.appendChild(fadeBackStyle);
+                    
+                    // Remove both animations after fade-back completes
+                    setTimeout(() => {
+                        if (animationStyle && document.head.contains(animationStyle)) {
+                            document.head.removeChild(animationStyle);
+                            animationStyle = null;
+                        }
+                        if (document.head.contains(fadeBackStyle)) {
+                            document.head.removeChild(fadeBackStyle);
+                        }
+                        // Clean up hover ID
+                        card.removeAttribute('data-hover-id');
+                        card.removeAttribute('data-card-id');
+                        currentStartPoint = null;
+                    }, 150);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

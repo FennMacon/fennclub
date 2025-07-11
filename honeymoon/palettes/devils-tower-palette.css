@@ -1,0 +1,59 @@
+/* Devil's Tower - Monolithic Mystery Palette */
+/* Inspired by ancient basalt, sacred grounds, and Wyoming prairie */
+
+:root {
+  /* Basalt Tower */
+  --basalt-black: #2c2c2c;
+  --tower-grey: #696969;
+  --stone-column: #a9a9a9;
+  --lichen-patch: #bdb76b;
+  
+  /* Sacred Grounds */
+  --sacred-purple: #663399;
+  --mystical-indigo: #4b0082;
+  --spirit-lavender: #e6e6fa;
+  --prayer-white: #fffafa;
+  
+  /* Prairie Base */
+  --prairie-green: #9acd32;
+  --grass-meadow: #7cfc00;
+  --wildflower-yellow: #ffff00;
+  --earth-brown: #8b4513;
+  
+  /* Climbing Colors */
+  --rope-orange: #ff8c00;
+  --chalk-white: #f5f5f5;
+  --safety-red: #dc143c;
+  --carabiner-silver: #c0c0c0;
+  
+  /* Wyoming Sky */
+  --endless-blue: #4169e1;
+  --cloud-drift: #f0f8ff;
+  --storm-approach: #708090;
+  --sunset-amber: #ffbf00;
+}
+
+/* Devil's Tower Color Families */
+.monolithic-tower {
+  --primary: var(--basalt-black);
+  --secondary: var(--tower-grey);
+  --accent: var(--stone-column);
+}
+
+.sacred-mystery {
+  --primary: var(--sacred-purple);
+  --secondary: var(--mystical-indigo);
+  --accent: var(--spirit-lavender);
+}
+
+.prairie-life {
+  --primary: var(--prairie-green);
+  --secondary: var(--grass-meadow);
+  --accent: var(--wildflower-yellow);
+}
+
+.climbing-adventure {
+  --primary: var(--rope-orange);
+  --secondary: var(--safety-red);
+  --accent: var(--chalk-white);
+} 

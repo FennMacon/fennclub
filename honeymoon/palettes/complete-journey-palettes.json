@@ -1,0 +1,207 @@
+{
+  "honeymoon_journey": {
+    "title": "Our Honeymoon Color Journey",
+    "dates": "June 18 - July 7, 2024",
+    "description": "A collection of color palettes inspired by each location on our honeymoon adventure across America",
+    "total_locations": 9,
+    "total_colors": 72,
+    "palettes": {
+      "mackinac_island": {
+        "name": "Mackinac Island",
+        "theme": "Victorian Elegance",
+        "dates": "June 20, 2024",
+        "description": "Horse-drawn carriages, Victorian architecture, and Lake Huron's serene beauty",
+        "colors": {
+          "huron_light": "#87ceeb",
+          "huron_blue": "#3b82f6",
+          "huron_deep": "#1e3a8a",
+          "huron_mist": "#e0f2fe",
+          "victorian_rose": "#f8bbd9",
+          "lilac_dream": "#e1bee7",
+          "powder_blue": "#b3d9ff",
+          "mint_cream": "#f0fff0",
+          "white_porch": "#fefefe",
+          "cream_trim": "#fdf6e3",
+          "summer_lawn": "#7dd3c0",
+          "golden_hour": "#fbbf24"
+        }
+      },
+      "pictured_rocks": {
+        "name": "Pictured Rocks",
+        "theme": "Sandstone Cliffs",
+        "dates": "June 21, 2024",
+        "description": "Layered sandstone cliffs, Lake Superior blues, and mineral deposits",
+        "colors": {
+          "sandstone_warm": "#f4a460",
+          "sandstone_deep": "#d2691e",
+          "sandstone_light": "#ffd4a3",
+          "sandstone_cream": "#fff8dc",
+          "superior_blue": "#4682b4",
+          "superior_deep": "#003366",
+          "superior_foam": "#b0e0e6",
+          "iron_red": "#cd5c5c",
+          "copper_green": "#48a999",
+          "lichen_yellow": "#daa520",
+          "adventure_orange": "#ff7f50",
+          "paddle_blue": "#4169e1"
+        }
+      },
+      "badlands": {
+        "name": "Badlands",
+        "theme": "Dramatic Erosion",
+        "dates": "June 23-24, 2024",
+        "description": "Eroded landscapes, prairie grasses, and stark geological contrasts",
+        "colors": {
+          "badlands_red": "#b22222",
+          "rust_canyon": "#cd853f",
+          "clay_orange": "#d2691e",
+          "sunset_rust": "#ff6347",
+          "prairie_gold": "#daa520",
+          "buffalo_grass": "#bdb76b",
+          "dry_earth": "#d2b48c",
+          "weathered_brown": "#8b4513",
+          "sky_blue": "#87ceeb",
+          "storm_grey": "#778899",
+          "horizon_purple": "#9370db",
+          "sage_brush": "#9acd32"
+        }
+      },
+      "devils_tower": {
+        "name": "Devil's Tower",
+        "theme": "Monolithic Mystery",
+        "dates": "June 24-25, 2024",
+        "description": "Ancient basalt columns, sacred grounds, and Wyoming prairie",
+        "colors": {
+          "basalt_black": "#2c2c2c",
+          "tower_grey": "#696969",
+          "stone_column": "#a9a9a9",
+          "sacred_purple": "#663399",
+          "mystical_indigo": "#4b0082",
+          "spirit_lavender": "#e6e6fa",
+          "prairie_green": "#9acd32",
+          "wildflower_yellow": "#ffff00",
+          "rope_orange": "#ff8c00",
+          "safety_red": "#dc143c",
+          "endless_blue": "#4169e1",
+          "sunset_amber": "#ffbf00"
+        }
+      },
+      "glacier": {
+        "name": "Glacier National Park",
+        "theme": "Alpine Majesty",
+        "dates": "June 25-27, 2024",
+        "description": "Glacial ice, mountain peaks, and alpine wildflower meadows",
+        "colors": {
+          "glacier_blue": "#4682b4",
+          "ice_crystal": "#b0e0e6",
+          "meltwater": "#00ced1",
+          "arctic_white": "#f0f8ff",
+          "peak_grey": "#708090",
+          "granite_silver": "#c0c0c0",
+          "snow_cap": "#fffafa",
+          "alpine_green": "#228b22",
+          "pine_deep": "#006400",
+          "indian_paintbrush": "#ff6347",
+          "mountain_lupine": "#6495ed",
+          "glacier_lily": "#ffff00"
+        }
+      },
+      "yellowstone": {
+        "name": "Yellowstone",
+        "theme": "Geothermal Wonder",
+        "dates": "June 28-30, 2024",
+        "description": "Hot springs, geysers, wildlife, and thermal features",
+        "colors": {
+          "sulfur_yellow": "#ffff00",
+          "thermal_orange": "#ff8c00",
+          "mineral_rust": "#cd853f",
+          "spring_deep": "#0000cd",
+          "thermal_blue": "#4169e1",
+          "mineral_turquoise": "#40e0d0",
+          "eruption_white": "#ffffff",
+          "steam_grey": "#d3d3d3",
+          "bison_brown": "#8b4513",
+          "elk_tan": "#d2b48c",
+          "lodgepole_green": "#228b22",
+          "aspen_gold": "#ffd700"
+        }
+      },
+      "grand_teton": {
+        "name": "Grand Teton",
+        "theme": "Sepia Wildflower Meadows",
+        "dates": "July 1-2, 2024",
+        "description": "Our special wildflower meadows with vintage, sun-weathered blooms",
+        "colors": {
+          "faded_lupine": "#8a7ca8",
+          "dusty_lavender": "#b19cd9",
+          "vintage_poppy": "#cc7a6b",
+          "sun_bleached_yellow": "#f2d774",
+          "sepia_cream": "#f4f1e8",
+          "sepia_parchment": "#ddb892",
+          "burnt_sienna": "#a0522d",
+          "sun_kissed_amber": "#daa520",
+          "weathered_sage": "#9caf88",
+          "warm_honey": "#ffb347",
+          "desert_rose": "#c08081",
+          "golden_hour": "#ffd700"
+        }
+      },
+      "arches": {
+        "name": "Arches National Park",
+        "theme": "Red Rock Desert",
+        "dates": "July 3-4, 2024",
+        "description": "Sandstone formations, desert sunsets, and Utah's red rocks",
+        "colors": {
+          "delicate_arch": "#cd5c5c",
+          "fiery_furnace": "#b22222",
+          "red_rock": "#dc143c",
+          "canyon_rust": "#a0522d",
+          "sunset_orange": "#ff8c00",
+          "desert_flame": "#ff7f50",
+          "warm_terra": "#d2691e",
+          "desert_purple": "#8b008b",
+          "twilight_indigo": "#4b0082",
+          "lavender_sky": "#e6e6fa",
+          "sage_green": "#9acd32",
+          "cactus_bloom": "#ff1493"
+        }
+      },
+      "salt_flats": {
+        "name": "Salt Flats",
+        "theme": "Minimalist Infinite",
+        "dates": "July 6, 2024",
+        "description": "Endless white expanses, mirror reflections, and infinite skies",
+        "colors": {
+          "salt_white": "#ffffff",
+          "crystal_pure": "#fafafa",
+          "mineral_cream": "#fffef7",
+          "endless_blue": "#87ceeb",
+          "horizon_cyan": "#e0ffff",
+          "deep_azure": "#4682b4",
+          "mirror_silver": "#c0c0c0",
+          "reflection_blue": "#b0e0e6",
+          "water_clear": "#f0ffff",
+          "sunset_blush": "#ffb6c1",
+          "golden_rim": "#ffd700",
+          "violet_edge": "#ee82ee"
+        }
+      }
+    },
+    "color_families": {
+      "blues": ["huron_blue", "superior_blue", "glacier_blue", "thermal_blue", "endless_blue", "reflection_blue"],
+      "earth_tones": ["sandstone_warm", "badlands_red", "weathered_brown", "canyon_rust", "sepia_parchment"],
+      "greens": ["summer_lawn", "alpine_green", "sage_green", "prairie_green", "weathered_sage"],
+      "purples": ["sacred_purple", "desert_purple", "faded_lupine", "twilight_indigo"],
+      "whites": ["salt_white", "eruption_white", "snow_cap", "arctic_white"],
+      "golds": ["prairie_gold", "golden_hour", "aspen_gold", "sunset_amber", "warm_honey"]
+    },
+    "usage_suggestions": {
+      "romantic_combinations": ["victorian_rose", "lilac_dream", "sunset_blush"],
+      "adventure_themes": ["adventure_orange", "paddle_blue", "rope_orange"],
+      "natural_landscapes": ["alpine_green", "glacier_blue", "weathered_brown"],
+      "desert_sunsets": ["sunset_orange", "desert_purple", "lavender_sky"],
+      "vintage_aesthetic": ["sepia_cream", "vintage_poppy", "sun_bleached_yellow"],
+      "minimalist_clean": ["salt_white", "mirror_silver", "endless_blue"]
+    }
+  }
+} 

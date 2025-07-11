@@ -1,0 +1,19 @@
+/* Specialized Wildflower Color Palette */
+/* Targeting blues, purples, oranges, and vibrant wildflower colors */
+
+:root {
+  --specialized-1: #b9def6; /* sky-blue - blues */
+  --specialized-2: #45535c; /* blue-gray - blues */
+  --specialized-3: #8ba4b5; /* powder-blue - blues */
+  --specialized-4: #7a7956; /* butter-yellow - bright_yellows */
+  --specialized-5: #bcb687; /* butter-yellow - bright_yellows */
+  --specialized-6: #928e68; /* butter-yellow - bright_yellows */
+  --specialized-7: #acaa8b; /* cream-yellow - pale_yellows */
+  --specialized-8: #dedab7; /* cream-yellow - pale_yellows */
+  --specialized-9: #c1be9e; /* cream-yellow - pale_yellows */
+  --specialized-10: #b4a68d; /* terracotta - oranges */
+  --specialized-11: #92846c; /* terracotta - oranges */
+  --specialized-12: #71644e; /* terracotta - oranges */
+  --specialized-13: #8c7165; /* rose - reds */
+  --specialized-14: #a99bae; /* purple-gray - purples */
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honeymoon Project - Grand Tetons Wildflowers</title>
+    <link rel="stylesheet" href="colors/palette.css">
+    <style>
+        /* Base styles with your wildflower color palette */
+        :root {
+            /* Your extracted wildflower colors are automatically loaded from colors/palette.css */
+            /* Available colors:
+               --wildflower-1: #84846c (Sage)
+               --wildflower-2: #041119 (Mountain)
+               --wildflower-3: #05121a (Shadow)
+               --wildflower-4: #8d9073 (Meadow)
+               --wildflower-5: #888c73 (Prairie)
+               --wildflower-6: #848870 (Willow)
+               --wildflower-7: #7e8066 (Stone)
+               --wildflower-8: #878a6f (Earth)
+            */
+            
+            /* Additional utility colors */
+            --primary: var(--wildflower-4);
+            --secondary: var(--wildflower-1);
+            --accent: var(--wildflower-7);
+            --text-primary: var(--wildflower-2);
+            --text-secondary: var(--wildflower-6);
+            --background: #fafafa;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header styles */
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--wildflower-1), var(--wildflower-4));
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Content sections */
+        .section {
+            background: var(--white);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Button styles */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        /* Grid layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Wildflower-themed utilities */
+        .wildflower-bg {
+            background: linear-gradient(135deg, var(--wildflower-1), var(--wildflower-4));
+            color: white;
+        }
+        
+        .sage-accent { border-left: 4px solid var(--wildflower-1); }
+        .meadow-accent { border-left: 4px solid var(--wildflower-4); }
+        .stone-accent { border-left: 4px solid var(--wildflower-7); }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🌸 Your Honeymoon Project</h1>
+            <p class="subtitle">Built with Grand Tetons wildflower colors</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Main content area - customize this for your project -->
+        <div class="section">
+            <h2>Welcome to Your Project Template</h2>
+            <p>This template is ready to use with your extracted wildflower color palette. Choose your direction below or start building your own vision!</p>
+        </div>
+        
+        <!-- Example sections - modify or remove as needed -->
+        <div class="grid">
+            <div class="card sage-accent">
+                <h3>🖼️ Photo Gallery</h3>
+                <p>Showcase your honeymoon memories with beautiful wildflower-themed layouts.</p>
+                <br>
+                <button class="btn">Start Gallery</button>
+            </div>
+            
+            <div class="card meadow-accent">
+                <h3>📖 Memory Journal</h3>
+                <p>Create an interactive timeline of your Grand Tetons adventure.</p>
+                <br>
+                <button class="btn btn-secondary">Write Memories</button>
+            </div>
+            
+            <div class="card stone-accent">
+                <h3>🗺️ Travel Map</h3>
+                <p>Map out your journey with photos and stories from each location.</p>
+                <br>
+                <button class="btn">Create Map</button>
+            </div>
+        </div>
+        
+        <!-- Color palette reference -->
+        <div class="section">
+            <h2>Your Wildflower Color Palette</h2>
+            <p>Use these CSS variables throughout your project:</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0;">
+                <div style="background: var(--wildflower-1); color: white; padding: 1rem; border-radius: 5px; min-width: 120px; text-align: center;">
+                    <strong>Sage</strong><br>
+                    <small>--wildflower-1</small>
+                </div>
+                <div style="background: var(--wildflower-2); color: white; padding: 1rem; border-radius: 5px; min-width: 120px; text-align: center;">
+                    <strong>Mountain</strong><br>
+                    <small>--wildflower-2</small>
+                </div>
+                <div style="background: var(--wildflower-4); color: white; padding: 1rem; border-radius: 5px; min-width: 120px; text-align: center;">
+                    <strong>Meadow</strong><br>
+                    <small>--wildflower-4</small>
+                </div>
+                <div style="background: var(--wildflower-7); color: white; padding: 1rem; border-radius: 5px; min-width: 120px; text-align: center;">
+                    <strong>Stone</strong><br>
+                    <small>--wildflower-7</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Development notes -->
+        <div class="section" style="background: #f8f9fa; border: 1px dashed var(--wildflower-6);">
+            <h2>🚀 Getting Started</h2>
+            <ul style="margin-left: 2rem; line-height: 2;">
+                <li>Your color palette is loaded from <code>colors/palette.css</code></li>
+                <li>Customize this template by editing the HTML and CSS</li>
+                <li>Use the CSS variables (e.g., <code>var(--wildflower-1)</code>) for consistent colors</li>
+                <li>Check <code>PROJECT_OVERVIEW.md</code> for project ideas and planning</li>
+                <li>The <code>demo.html</code> shows an example of what's possible</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Add your JavaScript functionality here
+        console.log('🌸 Wildflower color palette loaded!');
+        console.log('Available colors:', {
+            sage: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-1'),
+            mountain: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-2'),
+            shadow: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-3'),
+            meadow: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-4'),
+            prairie: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-5'),
+            willow: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-6'),
+            stone: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-7'),
+            earth: getComputedStyle(document.documentElement).getPropertyValue('--wildflower-8')
+        });
+        
+        // Example: Add click handlers to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (!e.target.onclick) {  // Only if no specific onclick is set
+                    alert(`Ready to build: ${e.target.textContent}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

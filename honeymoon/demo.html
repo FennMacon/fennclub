@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Tetons Honeymoon Memories</title>
+    <link rel="stylesheet" href="colors/palette.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, var(--wildflower-1), var(--wildflower-4));
+            min-height: 100vh;
+            color: var(--wildflower-2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            color: var(--wildflower-7);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--wildflower-6);
+            font-style: italic;
+        }
+        
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .memory-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .memory-header {
+            padding: 1.5rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .memory-1 { background: var(--wildflower-1); }
+        .memory-2 { background: var(--wildflower-5); }
+        .memory-3 { background: var(--wildflower-7); }
+        .memory-4 { background: var(--wildflower-4); }
+        
+        .memory-content {
+            padding: 1.5rem;
+        }
+        
+        .memory-date {
+            font-size: 0.9rem;
+            color: var(--wildflower-6);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .memory-text {
+            color: var(--wildflower-2);
+            line-height: 1.7;
+        }
+        
+        .color-showcase {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-strip {
+            display: flex;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-band {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            transition: flex 0.3s ease;
+        }
+        
+        .color-band:hover {
+            flex: 1.5;
+        }
+        
+        .quote-section {
+            background: var(--wildflower-8);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 6s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+        
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .nav-btn {
+            background: var(--wildflower-6);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .nav-btn:hover {
+            background: var(--wildflower-7);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 1rem; }
+            .memory-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌸 Grand Tetons Honeymoon</h1>
+            <p class="subtitle">Wildflower memories from our mountain adventure</p>
+        </header>
+        
+        <div class="color-showcase">
+            <h2 style="color: var(--wildflower-7); margin-bottom: 1rem;">Our Wildflower Color Story</h2>
+            <p style="color: var(--wildflower-6); margin-bottom: 1rem;">
+                These colors were extracted from our wildflower photo, capturing the essence of the Grand Tetons landscape.
+            </p>
+            <div class="color-strip">
+                <div class="color-band" style="background: var(--wildflower-1);">Sage</div>
+                <div class="color-band" style="background: var(--wildflower-2);">Mountain</div>
+                <div class="color-band" style="background: var(--wildflower-3);">Shadow</div>
+                <div class="color-band" style="background: var(--wildflower-4);">Meadow</div>
+                <div class="color-band" style="background: var(--wildflower-5);">Prairie</div>
+                <div class="color-band" style="background: var(--wildflower-6);">Willow</div>
+                <div class="color-band" style="background: var(--wildflower-7);">Stone</div>
+                <div class="color-band" style="background: var(--wildflower-8);">Earth</div>
+            </div>
+        </div>
+        
+        <div class="memory-grid">
+            <div class="memory-card">
+                <div class="memory-header memory-1">
+                    <h3>🏔️ Mountain Morning</h3>
+                </div>
+                <div class="memory-content">
+                    <div class="memory-date">June 15, 2024</div>
+                    <p class="memory-text">
+                        Waking up to the majestic peaks of the Grand Tetons, surrounded by endless wildflower meadows. 
+                        The morning light painted everything in soft, sage greens and golden hues.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="memory-card">
+                <div class="memory-header memory-2">
+                    <h3>🌼 Wildflower Fields</h3>
+                </div>
+                <div class="memory-content">
+                    <div class="memory-date">June 16, 2024</div>
+                    <p class="memory-text">
+                        Dancing through fields of lupine and Alpine Flame. Every step revealed new colors, 
+                        new beauty, new reasons to fall in love with this place and each other.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="memory-card">
+                <div class="memory-header memory-3">
+                    <h3>🌅 Golden Hour</h3>
+                </div>
+                <div class="memory-content">
+                    <div class="memory-date">June 17, 2024</div>
+                    <p class="memory-text">
+                        The sun setting behind the mountains, casting everything in warm light. 
+                        These moments felt infinite, perfect, like nature was celebrating with us.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="memory-card">
+                <div class="memory-header memory-4">
+                    <h3>💕 Forever Promises</h3>
+                </div>
+                <div class="memory-content">
+                    <div class="memory-date">June 18, 2024</div>
+                    <p class="memory-text">
+                        Standing among the wildflowers, we promised to always find beauty in the simple things, 
+                        to grow together like these mountain blooms, resilient and beautiful.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quote-section">
+            <p class="quote">
+                "Like wildflowers, our love grows in the most beautiful, unexpected places."
+            </p>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn" onclick="alert('View Photo Gallery - Coming Soon!')">📸 Photo Gallery</button>
+            <button class="nav-btn" onclick="alert('Travel Map - Coming Soon!')">🗺️ Our Journey</button>
+            <button class="nav-btn" onclick="alert('Memory Journal - Coming Soon!')">📖 Full Story</button>
+        </div>
+    </div>
+    
+    <script>
+        // Simple animation for color bands
+        document.querySelectorAll('.color-band').forEach(band => {
+            band.addEventListener('click', () => {
+                const color = band.style.background;
+                document.body.style.background = color;
+                setTimeout(() => {
+                    document.body.style.background = 'linear-gradient(135deg, var(--wildflower-1), var(--wildflower-4))';
+                }, 2000);
+            });
+        });
+        
+        // Add some subtle animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.memory-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html> 

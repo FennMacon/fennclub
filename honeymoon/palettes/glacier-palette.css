@@ -1,0 +1,59 @@
+/* Glacier National Park - Alpine Majesty Palette */
+/* Inspired by glacial ice, mountain peaks, and alpine wildflowers */
+
+:root {
+  /* Glacial Ice */
+  --glacier-blue: #4682b4;
+  --ice-crystal: #b0e0e6;
+  --meltwater: #00ced1;
+  --arctic-white: #f0f8ff;
+  
+  /* Mountain Peaks */
+  --peak-grey: #708090;
+  --granite-silver: #c0c0c0;
+  --snow-cap: #fffafa;
+  --shadow-purple: #6a5acd;
+  
+  /* Alpine Meadows */
+  --alpine-green: #228b22;
+  --meadow-lime: #9acd32;
+  --pine-deep: #006400;
+  --moss-soft: #adff2f;
+  
+  /* Wildflower Accents */
+  --indian-paintbrush: #ff6347;
+  --mountain-lupine: #6495ed;
+  --glacier-lily: #ffff00;
+  --alpine-forget-me-not: #87ceeb;
+  
+  /* Mountain Weather */
+  --storm-cloud: #2f4f4f;
+  --mist-grey: #d3d3d3;
+  --sunrise-pink: #ffb6c1;
+  --golden-light: #ffd700;
+}
+
+/* Glacier Color Families */
+.glacial-waters {
+  --primary: var(--glacier-blue);
+  --secondary: var(--ice-crystal);
+  --accent: var(--meltwater);
+}
+
+.mountain-majesty {
+  --primary: var(--peak-grey);
+  --secondary: var(--granite-silver);
+  --accent: var(--snow-cap);
+}
+
+.alpine-life {
+  --primary: var(--alpine-green);
+  --secondary: var(--meadow-lime);
+  --accent: var(--moss-soft);
+}
+
+.wildflower-blooms {
+  --primary: var(--indian-paintbrush);
+  --secondary: var(--mountain-lupine);
+  --accent: var(--glacier-lily);
+} 

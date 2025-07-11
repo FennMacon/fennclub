@@ -1,0 +1,78 @@
+/* Enhanced Grand Tetons Wildflower Color Palette */
+/* Extracted using k-means clustering for maximum diversity */
+
+:root {
+  --wildflower-1: #938e74; /* dark-yellow */
+  --wildflower-2: #7c7b61; /* dark-yellow */
+  --wildflower-3: #747156; /* dark-yellow */
+  --wildflower-4: #85876e; /* dark-yellow */
+  --wildflower-5: #9d9980; /* dark-yellow */
+  --wildflower-6: #68664e; /* dark-yellow */
+  --wildflower-7: #5c5b43; /* dark-yellow */
+  --wildflower-8: #aaa48c; /* dark-yellow */
+  --wildflower-9: #8b8164; /* dark-orange */
+  --wildflower-10: #4c4d3b; /* dark-yellow */
+  --wildflower-11: #393c31; /* dark-other */
+  --wildflower-12: #0a161c; /* muted-brown */
+  --wildflower-13: #222a27; /* dark-dark-gray */
+  --wildflower-14: #bab49c; /* dark-yellow */
+  --wildflower-15: #d1cbb0; /* vibrant-yellow */
+  --wildflower-16: #c7e5f5; /* vibrant-other */
+
+  /* Color category shortcuts */
+  --oranges-primary: #8b8164;
+  --yellows-primary: #938e74;
+  --browns-primary: #0a161c;
+  --grays-primary: #222a27;
+  --others-primary: #393c31;
+}
+
+/* Enhanced color utility classes */
+.bg-wildflower-1 { background-color: var(--wildflower-1); }
+.text-wildflower-1 { color: var(--wildflower-1); }
+.border-wildflower-1 { border-color: var(--wildflower-1); }
+.bg-wildflower-2 { background-color: var(--wildflower-2); }
+.text-wildflower-2 { color: var(--wildflower-2); }
+.border-wildflower-2 { border-color: var(--wildflower-2); }
+.bg-wildflower-3 { background-color: var(--wildflower-3); }
+.text-wildflower-3 { color: var(--wildflower-3); }
+.border-wildflower-3 { border-color: var(--wildflower-3); }
+.bg-wildflower-4 { background-color: var(--wildflower-4); }
+.text-wildflower-4 { color: var(--wildflower-4); }
+.border-wildflower-4 { border-color: var(--wildflower-4); }
+.bg-wildflower-5 { background-color: var(--wildflower-5); }
+.text-wildflower-5 { color: var(--wildflower-5); }
+.border-wildflower-5 { border-color: var(--wildflower-5); }
+.bg-wildflower-6 { background-color: var(--wildflower-6); }
+.text-wildflower-6 { color: var(--wildflower-6); }
+.border-wildflower-6 { border-color: var(--wildflower-6); }
+.bg-wildflower-7 { background-color: var(--wildflower-7); }
+.text-wildflower-7 { color: var(--wildflower-7); }
+.border-wildflower-7 { border-color: var(--wildflower-7); }
+.bg-wildflower-8 { background-color: var(--wildflower-8); }
+.text-wildflower-8 { color: var(--wildflower-8); }
+.border-wildflower-8 { border-color: var(--wildflower-8); }
+.bg-wildflower-9 { background-color: var(--wildflower-9); }
+.text-wildflower-9 { color: var(--wildflower-9); }
+.border-wildflower-9 { border-color: var(--wildflower-9); }
+.bg-wildflower-10 { background-color: var(--wildflower-10); }
+.text-wildflower-10 { color: var(--wildflower-10); }
+.border-wildflower-10 { border-color: var(--wildflower-10); }
+.bg-wildflower-11 { background-color: var(--wildflower-11); }
+.text-wildflower-11 { color: var(--wildflower-11); }
+.border-wildflower-11 { border-color: var(--wildflower-11); }
+.bg-wildflower-12 { background-color: var(--wildflower-12); }
+.text-wildflower-12 { color: var(--wildflower-12); }
+.border-wildflower-12 { border-color: var(--wildflower-12); }
+.bg-wildflower-13 { background-color: var(--wildflower-13); }
+.text-wildflower-13 { color: var(--wildflower-13); }
+.border-wildflower-13 { border-color: var(--wildflower-13); }
+.bg-wildflower-14 { background-color: var(--wildflower-14); }
+.text-wildflower-14 { color: var(--wildflower-14); }
+.border-wildflower-14 { border-color: var(--wildflower-14); }
+.bg-wildflower-15 { background-color: var(--wildflower-15); }
+.text-wildflower-15 { color: var(--wildflower-15); }
+.border-wildflower-15 { border-color: var(--wildflower-15); }
+.bg-wildflower-16 { background-color: var(--wildflower-16); }
+.text-wildflower-16 { color: var(--wildflower-16); }
+.border-wildflower-16 { border-color: var(--wildflower-16); }

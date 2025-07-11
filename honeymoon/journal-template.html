@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honeymoon Journal Entries</title>
+    <link rel="stylesheet" href="sepia-wildflower-palette.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, var(--sepia-cream), var(--sepia-ivory));
+            color: var(--aged-charcoal);
+            line-height: 1.7;
+        }
+
+        .journal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .journal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--sepia-ivory);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(107, 91, 71, 0.1);
+        }
+
+        .journal-header h1 {
+            font-size: 2.5rem;
+            color: var(--vintage-brown);
+            margin-bottom: 1rem;
+        }
+
+        .journal-header p {
+            color: var(--sepia-shadow);
+            font-style: italic;
+        }
+
+        .day-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .day-button {
+            background: var(--sepia-parchment);
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: var(--vintage-brown);
+            font-weight: bold;
+        }
+
+        .day-button:hover {
+            background: var(--sepia-tan);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(107, 91, 71, 0.2);
+        }
+
+        .day-button.active {
+            background: var(--sun-kissed-amber);
+            color: white;
+        }
+
+        .journal-entry {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(107, 91, 71, 0.1);
+            border-left: 5px solid var(--faded-lupine);
+            display: none;
+        }
+
+        .journal-entry.active {
+            display: block;
+        }
+
+        .entry-header {
+            border-bottom: 2px solid var(--sepia-parchment);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .entry-date {
+            font-size: 1.5rem;
+            color: var(--vintage-brown);
+            font-weight: bold;
+        }
+
+        .entry-location {
+            font-size: 1.2rem;
+            color: var(--faded-lupine);
+            margin-top: 0.5rem;
+        }
+
+        .entry-weather {
+            font-size: 0.9rem;
+            color: var(--sepia-shadow);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .entry-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .entry-highlights {
+            background: var(--sepia-ivory);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .highlights-title {
+            color: var(--vintage-brown);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .highlights-list {
+            list-style: none;
+        }
+
+        .highlights-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .highlights-list li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .photo-placeholder {
+            height: 150px;
+            background: var(--sepia-parchment);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vintage-brown);
+            font-style: italic;
+            border: 2px dashed var(--sepia-tan);
+        }
+
+        .entry-footer {
+            border-top: 1px solid var(--sepia-parchment);
+            padding-top: 1rem;
+            text-align: right;
+            font-style: italic;
+            color: var(--sepia-shadow);
+        }
+
+        .color-palette-preview {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--sepia-tan);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+
+        .nav-button {
+            background: var(--faded-lupine);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--dusty-lavender);
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: var(--sepia-shadow);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .edit-mode {
+            background: var(--warm-honey);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+
+        .editable {
+            min-height: 100px;
+            padding: 1rem;
+            border: 2px dashed var(--sepia-tan);
+            border-radius: 5px;
+            background: var(--sepia-cream);
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: var(--faded-lupine);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="journal-container">
+        <div class="journal-header">
+            <h1>Our Honeymoon Journal</h1>
+            <p>Daily memories from our adventure across America</p>
+            <p>June 18 - July 7, 2024</p>
+        </div>
+
+        <div class="day-selector" id="daySelector">
+            <!-- Day buttons will be generated by JavaScript -->
+        </div>
+
+        <div class="navigation">
+            <button class="nav-button" id="prevDay" onclick="navigateDay(-1)">← Previous Day</button>
+            <button class="nav-button" id="nextDay" onclick="navigateDay(1)">Next Day →</button>
+        </div>
+
+        <!-- Sample Journal Entry Template -->
+        <div class="journal-entry active" id="entry-tetons">
+            <div class="entry-header">
+                <div class="entry-date">Tuesday, July 1st, 2024</div>
+                <div class="entry-location">Grand Teton National Park, Wyoming</div>
+                <div class="entry-weather">Sunny, 75°F • Perfect wildflower weather</div>
+                <button class="edit-mode" onclick="toggleEdit('entry-tetons')">✏️ Edit</button>
+            </div>
+
+            <div class="color-palette-preview">
+                <div class="color-swatch" style="background: var(--faded-lupine);"></div>
+                <div class="color-swatch" style="background: var(--vintage-poppy);"></div>
+                <div class="color-swatch" style="background: var(--sun-bleached-yellow);"></div>
+                <div class="color-swatch" style="background: var(--sepia-parchment);"></div>
+            </div>
+
+            <div class="entry-content">
+                <p>Today was absolutely magical! We woke up early for our river rafting adventure on the Snake River. The morning mist was still rising from the water as we paddled through the valley, with the Grand Tetons towering above us like ancient guardians.</p>
+                
+                <p>But the real treasure was discovering the wildflower meadows afterward. We hiked through fields of lupines and Alpine Flame, their colors so vibrant against the mountain backdrop. I must have taken a hundred photos, trying to capture how the afternoon light made everything look like a vintage postcard - all sepia-toned and dreamy.</p>
+                
+                <div class="entry-highlights">
+                    <div class="highlights-title">Day Highlights:</div>
+                    <ul class="highlights-list">
+                        <li>Snake River rafting at sunrise</li>
+                        <li>Discovered the incredible wildflower meadows</li>
+                        <li>Captured those perfect lupine & paintbrush photos</li>
+                        <li>Evening campfire under the stars</li>
+                        <li>Saw a moose drinking from the river!</li>
+                    </ul>
+                </div>
+
+                <p>The camping spot tonight is perfect - we can see the Milky Way from our tent. Tomorrow we head toward Moab, but I could stay in these mountains forever. There's something about the way the light hits the wildflowers that makes everything feel timeless and romantic.</p>
+            </div>
+
+            <div class="photo-gallery">
+                <div class="photo-placeholder">Wildflower Field Photo</div>
+                <div class="photo-placeholder">River Rafting Shot</div>
+                <div class="photo-placeholder">Mountain Vista</div>
+                <div class="photo-placeholder">Camping Setup</div>
+            </div>
+
+            <div class="entry-footer">
+                Written with love, overlooking the Grand Tetons ✨
+            </div>
+        </div>
+
+        <!-- Template for other entries -->
+        <div class="journal-entry" id="entry-template">
+            <div class="entry-header">
+                <div class="entry-date">Date</div>
+                <div class="entry-location">Location</div>
+                <div class="entry-weather">Weather & Conditions</div>
+                <button class="edit-mode" onclick="toggleEdit('entry-template')">✏️ Edit</button>
+            </div>
+
+            <div class="entry-content editable" contenteditable="false">
+                <p>Click the edit button to add your memories for this day...</p>
+            </div>
+
+            <div class="entry-highlights">
+                <div class="highlights-title">Day Highlights:</div>
+                <ul class="highlights-list">
+                    <li>Add your favorite moments...</li>
+                </ul>
+            </div>
+
+            <div class="photo-gallery">
+                <div class="photo-placeholder">Add Photos</div>
+            </div>
+
+            <div class="entry-footer">
+                Written with love ✨
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const journeyData = [
+            { date: "6/18", day: "Wed", location: "Chicago", id: "chicago" },
+            { date: "6/19", day: "Thu", location: "St. Ignace", id: "stignace" },
+            { date: "6/20", day: "Fri", location: "Mackinac Island", id: "mackinac" },
+            { date: "6/21", day: "Sat", location: "Pictured Rocks", id: "pictured" },
+            { date: "6/22", day: "Sun", location: "Drive to SD", id: "drive-sd" },
+            { date: "6/23", day: "Mon", location: "Badlands", id: "badlands" },
+            { date: "6/24", day: "Tue", location: "Badlands/Devil's Tower", id: "devils" },
+            { date: "6/25", day: "Wed", location: "Devil's Tower/Glacier", id: "glacier1" },
+            { date: "6/26", day: "Thu", location: "Glacier National Park", id: "glacier2" },
+            { date: "6/27", day: "Fri", location: "Glacier National Park", id: "glacier3" },
+            { date: "6/28", day: "Sat", location: "Yellowstone", id: "yellowstone1" },
+            { date: "6/29", day: "Sun", location: "Yellowstone", id: "yellowstone2" },
+            { date: "6/30", day: "Mon", location: "Grand Teton", id: "tetons1" },
+            { date: "7/1", day: "Tue", location: "Grand Teton", id: "tetons" },
+            { date: "7/2", day: "Wed", location: "Drive to Moab", id: "drive-moab" },
+            { date: "7/3", day: "Thu", location: "Arches", id: "arches1" },
+            { date: "7/4", day: "Fri", location: "Arches", id: "arches2" },
+            { date: "7/5", day: "Sat", location: "Salt Lake City", id: "saltlake1" },
+            { date: "7/6", day: "Sun", location: "Salt Lake/Salt Flats", id: "saltlake2" },
+            { date: "7/7", day: "Mon", location: "Home", id: "home" }
+        ];
+
+        let currentEntryIndex = 13; // Start with Grand Teton day
+
+        function generateDaySelector() {
+            const selector = document.getElementById('daySelector');
+            selector.innerHTML = '';
+            
+            journeyData.forEach((day, index) => {
+                const button = document.createElement('button');
+                button.className = `day-button ${index === currentEntryIndex ? 'active' : ''}`;
+                button.innerHTML = `${day.day}<br/>${day.date}<br/><small>${day.location}</small>`;
+                button.onclick = () => showEntry(index);
+                selector.appendChild(button);
+            });
+        }
+
+        function showEntry(index) {
+            currentEntryIndex = index;
+            
+            // Update day selector
+            document.querySelectorAll('.day-button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prevDay').disabled = index === 0;
+            document.getElementById('nextDay').disabled = index === journeyData.length - 1;
+            
+            // Show corresponding entry (for now just show template or tetons)
+            document.querySelectorAll('.journal-entry').forEach(entry => {
+                entry.classList.remove('active');
+            });
+            
+            if (index === 13) { // Grand Teton day
+                document.getElementById('entry-tetons').classList.add('active');
+            } else {
+                document.getElementById('entry-template').classList.add('active');
+            }
+        }
+
+        function navigateDay(direction) {
+            const newIndex = currentEntryIndex + direction;
+            if (newIndex >= 0 && newIndex < journeyData.length) {
+                showEntry(newIndex);
+            }
+        }
+
+        function toggleEdit(entryId) {
+            const entry = document.getElementById(entryId);
+            const editableElements = entry.querySelectorAll('.editable');
+            const editButton = entry.querySelector('.edit-mode');
+            
+            editableElements.forEach(element => {
+                const isEditable = element.contentEditable === 'true';
+                element.contentEditable = !isEditable;
+                
+                if (!isEditable) {
+                    element.focus();
+                    editButton.innerHTML = '💾 Save';
+                    editButton.style.background = 'var(--vintage-poppy)';
+                } else {
+                    editButton.innerHTML = '✏️ Edit';
+                    editButton.style.background = 'var(--warm-honey)';
+                }
+            });
+        }
+
+        // Initialize
+        generateDaySelector();
+        showEntry(currentEntryIndex);
+
+        // Auto-save functionality
+        document.addEventListener('input', function(e) {
+            if (e.target.contentEditable === 'true') {
+                // Save to localStorage or send to server
+                localStorage.setItem('journal-' + currentEntryIndex, e.target.innerHTML);
+            }
+        });
+    </script>
+</body>
+</html> 

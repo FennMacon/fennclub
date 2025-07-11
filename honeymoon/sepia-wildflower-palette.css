@@ -1,0 +1,59 @@
+/* Sepia Sunburnt Wildflower Palette */
+/* Inspired by vintage photography and sun-weathered blooms */
+
+:root {
+  /* Sepia Base Tones */
+  --sepia-cream: #f4f1e8;
+  --sepia-ivory: #f0ead2;
+  --sepia-parchment: #ddb892;
+  --sepia-tan: #bc9a6a;
+  
+  /* Sunburnt Earth */
+  --burnt-sienna: #a0522d;
+  --dusty-terracotta: #cd853f;
+  --weathered-clay: #d2691e;
+  --sun-kissed-amber: #daa520;
+  
+  /* Muted Wildflower Colors */
+  --faded-lupine: #8a7ca8;  /* muted purple-blue */
+  --dusty-lavender: #b19cd9;
+  --weathered-sage: #9caf88;
+  --burnt-marigold: #e6a756;
+  --vintage-poppy: #cc7a6b;
+  --sun-bleached-yellow: #f2d774;
+  
+  /* Shadow & Depth */
+  --sepia-shadow: #6b5b47;
+  --vintage-brown: #8b4513;
+  --aged-charcoal: #4a4238;
+  
+  /* Highlight Accents */
+  --golden-hour: #ffd700;
+  --warm-honey: #ffb347;
+  --desert-rose: #c08081;
+}
+
+/* Color Families for Easy Reference */
+.sepia-tones {
+  --primary: var(--sepia-cream);
+  --secondary: var(--sepia-parchment);
+  --accent: var(--sepia-tan);
+}
+
+.sunburnt-earth {
+  --primary: var(--burnt-sienna);
+  --secondary: var(--dusty-terracotta);
+  --accent: var(--sun-kissed-amber);
+}
+
+.muted-wildflowers {
+  --primary: var(--faded-lupine);
+  --secondary: var(--dusty-lavender);
+  --accent: var(--vintage-poppy);
+}
+
+.golden-accents {
+  --primary: var(--golden-hour);
+  --secondary: var(--warm-honey);
+  --accent: var(--sun-bleached-yellow);
+} 

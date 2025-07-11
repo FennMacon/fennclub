@@ -1,0 +1,59 @@
+/* Mackinac Island - Victorian Elegance Palette */
+/* Inspired by Victorian charm, horse-drawn carriages, and Lake Huron */
+
+:root {
+  /* Lake Huron Blues */
+  --huron-deep: #1e3a8a;
+  --huron-blue: #3b82f6;
+  --huron-light: #87ceeb;
+  --huron-mist: #e0f2fe;
+  
+  /* Victorian Pastels */
+  --victorian-rose: #f8bbd9;
+  --lilac-dream: #e1bee7;
+  --powder-blue: #b3d9ff;
+  --mint-cream: #f0fff0;
+  
+  /* Carriage & Architecture */
+  --carriage-black: #2d2d2d;
+  --iron-grey: #6b7280;
+  --white-porch: #fefefe;
+  --cream-trim: #fdf6e3;
+  
+  /* Island Greens */
+  --summer-lawn: #7dd3c0;
+  --pine-shadow: #22543d;
+  --fern-green: #68d391;
+  --moss-stone: #a7f3d0;
+  
+  /* Romantic Accents */
+  --sunset-blush: #fed7e2;
+  --golden-hour: #fbbf24;
+  --lavender-sky: #c7d2fe;
+  --pearl-white: #fafafa;
+}
+
+/* Victorian Color Families */
+.lake-blues {
+  --primary: var(--huron-blue);
+  --secondary: var(--huron-light);
+  --accent: var(--huron-mist);
+}
+
+.victorian-pastels {
+  --primary: var(--victorian-rose);
+  --secondary: var(--lilac-dream);
+  --accent: var(--powder-blue);
+}
+
+.island-architecture {
+  --primary: var(--white-porch);
+  --secondary: var(--cream-trim);
+  --accent: var(--iron-grey);
+}
+
+.romantic-summer {
+  --primary: var(--sunset-blush);
+  --secondary: var(--golden-hour);
+  --accent: var(--lavender-sky);
+} 

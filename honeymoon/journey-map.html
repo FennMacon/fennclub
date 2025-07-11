@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Honeymoon Journey - Interactive Map</title>
+    <link rel="stylesheet" href="sepia-wildflower-palette.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #ccc;
+            font-style: italic;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .map-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23234567" width="1200" height="800"/><path fill="%23345678" d="M0,400 Q300,350 600,400 T1200,400 V800 H0 Z"/></svg>') no-repeat center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .route-path {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .route-line {
+            stroke: #ffd700;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 10, 5;
+            animation: dash 3s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -30;
+            }
+        }
+
+        .location-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .location-marker:hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .location-marker.active {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1.3); }
+            50% { transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        /* Location-specific colors */
+        .marker-mackinac { background: #87CEEB; }
+        .marker-pictured { background: #CD853F; }
+        .marker-badlands { background: #B22222; }
+        .marker-devils { background: #2F4F4F; }
+        .marker-glacier { background: #4682B4; }
+        .marker-yellowstone { background: #FFD700; }
+        .marker-tetons { background: var(--faded-lupine); }
+        .marker-arches { background: #CD5C5C; }
+        .marker-saltlake { background: #F0F8FF; }
+
+        .timeline {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-top: 2px solid #ffd700;
+        }
+
+        .timeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        .timeline-track {
+            display: flex;
+            gap: 1rem;
+            min-width: max-content;
+            padding: 0 1rem;
+        }
+
+        .day-card {
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .day-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .day-card.active {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .day-date {
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-location {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-activity {
+            font-size: 0.9rem;
+            color: #ccc;
+            font-style: italic;
+        }
+
+        .location-popup {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 300px;
+            max-width: 400px;
+            border: 2px solid #ffd700;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .popup-dates {
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .popup-description {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .popup-palette {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .palette-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .journey-controls {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            margin: 0 0.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Our Honeymoon Journey</h1>
+        <p>3 weeks • 9 locations • Endless memories</p>
+        <p>June 18 - July 7, 2024</p>
+    </div>
+
+    <div class="journey-controls">
+        <button class="control-btn" onclick="playJourney()">▶ Play Journey</button>
+        <button class="control-btn" onclick="pauseJourney()">⏸ Pause</button>
+        <button class="control-btn" onclick="resetJourney()">⏮ Reset</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="map-container">
+        <div class="map-background"></div>
+        
+        <!-- SVG Route Path -->
+        <svg class="route-path">
+            <path class="route-line" d="M200,300 Q300,280 400,250 Q500,220 600,200 Q700,180 800,160 Q900,140 1000,120" />
+        </svg>
+
+        <!-- Location Markers -->
+        <div class="location-marker marker-mackinac" data-location="mackinac" style="left: 15%; top: 25%;"></div>
+        <div class="location-marker marker-pictured" data-location="pictured" style="left: 18%; top: 22%;"></div>
+        <div class="location-marker marker-badlands" data-location="badlands" style="left: 35%; top: 35%;"></div>
+        <div class="location-marker marker-devils" data-location="devils" style="left: 42%; top: 32%;"></div>
+        <div class="location-marker marker-glacier" data-location="glacier" style="left: 38%; top: 15%;"></div>
+        <div class="location-marker marker-yellowstone" data-location="yellowstone" style="left: 45%; top: 25%;"></div>
+        <div class="location-marker marker-tetons" data-location="tetons" style="left: 47%; top: 30%;"></div>
+        <div class="location-marker marker-arches" data-location="arches" style="left: 55%; top: 45%;"></div>
+        <div class="location-marker marker-saltlake" data-location="saltlake" style="left: 52%; top: 42%;"></div>
+
+        <!-- Location Popups -->
+        <div class="location-popup" id="popup-mackinac" style="left: 15%; top: 10%;">
+            <button class="popup-close">&times;</button>
+            <div class="popup-title">Mackinac Island</div>
+            <div class="popup-dates">June 20, 2024</div>
+            <div class="popup-description">Victorian charm and horse-drawn carriages on this magical island retreat.</div>
+            <div class="popup-palette">
+                <div class="palette-swatch" style="background: #87CEEB;"></div>
+                <div class="palette-swatch" style="background: #F0F8FF;"></div>
+                <div class="palette-swatch" style="background: #FFB6C1;"></div>
+                <div class="palette-swatch" style="background: #98FB98;"></div>
+            </div>
+        </div>
+
+        <div class="location-popup" id="popup-tetons" style="left: 47%; top: 15%;">
+            <button class="popup-close">&times;</button>
+            <div class="popup-title">Grand Teton National Park</div>
+            <div class="popup-dates">July 1-2, 2024</div>
+            <div class="popup-description">Where we captured those beautiful wildflower photos! River rafting and camping under the majestic peaks.</div>
+            <div class="popup-palette">
+                <div class="palette-swatch" style="background: var(--faded-lupine);"></div>
+                <div class="palette-swatch" style="background: var(--vintage-poppy);"></div>
+                <div class="palette-swatch" style="background: var(--sun-bleached-yellow);"></div>
+                <div class="palette-swatch" style="background: var(--sepia-parchment);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-container">
+            <div class="timeline-track" id="timeline">
+                <!-- Timeline items will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const journeyData = [
+            { date: "6/18", day: "Wed", location: "Chicago", activity: "Fly to Chicago", marker: null },
+            { date: "6/19", day: "Thu", location: "St. Ignace", activity: "Rent car, drive to UP (6.5hr)", marker: null },
+            { date: "6/20", day: "Fri", location: "Mackinac Island", activity: "Island day trip, drive to Marquette", marker: "mackinac" },
+            { date: "6/21", day: "Sat", location: "Pictured Rocks", activity: "Kayaking adventure", marker: "pictured" },
+            { date: "6/22", day: "Sun", location: "Drive to SD", activity: "Epic 13-14hr drive, stay in Kadoka", marker: null },
+            { date: "6/23", day: "Mon", location: "Badlands", activity: "National Park exploration & camping", marker: "badlands" },
+            { date: "6/24", day: "Tue", location: "Badlands/Devil's Tower", activity: "More Badlands, drive to Devil's Tower", marker: "devils" },
+            { date: "6/25", day: "Wed", location: "Devil's Tower/Glacier", activity: "Visit tower, drive to Glacier (12hr)", marker: "glacier" },
+            { date: "6/26", day: "Thu", location: "Glacier National Park", activity: "Park exploration & camping", marker: "glacier" },
+            { date: "6/27", day: "Fri", location: "Glacier National Park", activity: "More park adventures & camping", marker: "glacier" },
+            { date: "6/28", day: "Sat", location: "Yellowstone", activity: "Drive to Yellowstone, Garnet ghost town, Old Faithful Inn", marker: "yellowstone" },
+            { date: "6/29", day: "Sun", location: "Yellowstone", activity: "Park exploration (staying at inn)", marker: "yellowstone" },
+            { date: "6/30", day: "Mon", location: "Grand Teton", activity: "Morning Yellowstone, drive to Grand Teton", marker: "tetons" },
+            { date: "7/1", day: "Tue", location: "Grand Teton", activity: "River rafting & camping - wildflower photos!", marker: "tetons" },
+            { date: "7/2", day: "Wed", location: "Drive to Moab", activity: "Drive to Moab, stop at Dinosaur National Monument", marker: null },
+            { date: "7/3", day: "Thu", location: "Arches", activity: "Arches National Park & camping", marker: "arches" },
+            { date: "7/4", day: "Fri", location: "Arches", activity: "Arches National Park & camping", marker: "arches" },
+            { date: "7/5", day: "Sat", location: "Salt Lake City", activity: "Drive to SLC (4hr)", marker: "saltlake" },
+            { date: "7/6", day: "Sun", location: "Salt Lake/Salt Flats", activity: "SLC & Salt Flats exploration", marker: "saltlake" },
+            { date: "7/7", day: "Mon", location: "Home", activity: "Fly home", marker: null }
+        ];
+
+        let currentDay = 0;
+        let isPlaying = false;
+        let journeyInterval;
+
+        function generateTimeline() {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            
+            journeyData.forEach((day, index) => {
+                const dayCard = document.createElement('div');
+                dayCard.className = `day-card ${index === currentDay ? 'active' : ''}`;
+                dayCard.onclick = () => goToDay(index);
+                
+                dayCard.innerHTML = `
+                    <div class="day-date">${day.day} ${day.date}</div>
+                    <div class="day-location">${day.location}</div>
+                    <div class="day-activity">${day.activity}</div>
+                `;
+                
+                timeline.appendChild(dayCard);
+            });
+        }
+
+        function goToDay(dayIndex) {
+            currentDay = dayIndex;
+            updateProgress();
+            updateActiveMarkers();
+            updateTimeline();
+        }
+
+        function updateProgress() {
+            const progress = (currentDay / (journeyData.length - 1)) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function updateActiveMarkers() {
+            // Reset all markers
+            document.querySelectorAll('.location-marker').forEach(marker => {
+                marker.classList.remove('active');
+            });
+            
+            // Activate current marker if exists
+            const currentMarker = journeyData[currentDay].marker;
+            if (currentMarker) {
+                const marker = document.querySelector(`[data-location="${currentMarker}"]`);
+                if (marker) {
+                    marker.classList.add('active');
+                }
+            }
+        }
+
+        function updateTimeline() {
+            document.querySelectorAll('.day-card').forEach((card, index) => {
+                card.classList.toggle('active', index === currentDay);
+            });
+            
+            // Scroll to active card
+            const activeCard = document.querySelector('.day-card.active');
+            if (activeCard) {
+                activeCard.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            }
+        }
+
+        function playJourney() {
+            if (!isPlaying) {
+                isPlaying = true;
+                journeyInterval = setInterval(() => {
+                    if (currentDay < journeyData.length - 1) {
+                        currentDay++;
+                        updateProgress();
+                        updateActiveMarkers();
+                        updateTimeline();
+                    } else {
+                        pauseJourney();
+                    }
+                }, 2000);
+            }
+        }
+
+        function pauseJourney() {
+            isPlaying = false;
+            if (journeyInterval) {
+                clearInterval(journeyInterval);
+            }
+        }
+
+        function resetJourney() {
+            pauseJourney();
+            currentDay = 0;
+            updateProgress();
+            updateActiveMarkers();
+            updateTimeline();
+        }
+
+        // Location marker click handlers
+        document.querySelectorAll('.location-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                const location = this.dataset.location;
+                const popup = document.getElementById(`popup-${location}`);
+                if (popup) {
+                    // Hide all popups first
+                    document.querySelectorAll('.location-popup').forEach(p => p.style.display = 'none');
+                    // Show selected popup
+                    popup.style.display = 'block';
+                }
+            });
+        });
+
+        // Close popup handlers
+        document.querySelectorAll('.popup-close').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+
+        // Close popups when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.location-popup') && !e.target.closest('.location-marker')) {
+                document.querySelectorAll('.location-popup').forEach(p => p.style.display = 'none');
+            }
+        });
+
+        // Initialize
+        generateTimeline();
+        updateProgress();
+        updateActiveMarkers();
+    </script>
+</body>
+</html> 

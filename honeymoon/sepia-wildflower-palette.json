@@ -1,0 +1,150 @@
+{
+  "palette_name": "Sepia Sunburnt Wildflower",
+  "description": "A vintage-inspired color story of sun-weathered blooms and golden memories",
+  "created": "2024",
+  "color_families": {
+    "sepia_base_tones": {
+      "sepia_cream": {
+        "hex": "#f4f1e8",
+        "rgb": [244, 241, 232],
+        "hsl": [48, 27, 93],
+        "description": "Soft, warm base like vintage photograph paper"
+      },
+      "sepia_ivory": {
+        "hex": "#f0ead2",
+        "rgb": [240, 234, 210],
+        "hsl": [48, 50, 88],
+        "description": "Aged ivory with golden undertones"
+      },
+      "sepia_parchment": {
+        "hex": "#ddb892",
+        "rgb": [221, 184, 146],
+        "hsl": [30, 48, 72],
+        "description": "Weathered parchment with warm brown notes"
+      },
+      "sepia_tan": {
+        "hex": "#bc9a6a",
+        "rgb": [188, 154, 106],
+        "hsl": [35, 37, 58],
+        "description": "Rich, sun-soaked tan"
+      }
+    },
+    "sunburnt_earth": {
+      "burnt_sienna": {
+        "hex": "#a0522d",
+        "rgb": [160, 82, 45],
+        "hsl": [19, 56, 40],
+        "description": "Deep, earthy red-brown like desert clay"
+      },
+      "dusty_terracotta": {
+        "hex": "#cd853f",
+        "rgb": [205, 133, 63],
+        "hsl": [30, 56, 53],
+        "description": "Weathered terracotta pot in afternoon sun"
+      },
+      "weathered_clay": {
+        "hex": "#d2691e",
+        "rgb": [210, 105, 30],
+        "hsl": [25, 75, 47],
+        "description": "Sun-baked clay with orange warmth"
+      },
+      "sun_kissed_amber": {
+        "hex": "#daa520",
+        "rgb": [218, 165, 32],
+        "hsl": [43, 77, 49],
+        "description": "Golden amber catching late sunlight"
+      }
+    },
+    "muted_wildflowers": {
+      "faded_lupine": {
+        "hex": "#8a7ca8",
+        "rgb": [138, 124, 168],
+        "hsl": [259, 20, 57],
+        "description": "Muted purple-blue like sun-faded lupines"
+      },
+      "dusty_lavender": {
+        "hex": "#b19cd9",
+        "rgb": [177, 156, 217],
+        "hsl": [261, 42, 73],
+        "description": "Soft lavender touched by desert dust"
+      },
+      "weathered_sage": {
+        "hex": "#9caf88",
+        "rgb": [156, 175, 136],
+        "hsl": [89, 20, 61],
+        "description": "Muted sage green like dried wildflower stems"
+      },
+      "burnt_marigold": {
+        "hex": "#e6a756",
+        "rgb": [230, 167, 86],
+        "hsl": [34, 73, 62],
+        "description": "Sun-scorched marigold petals"
+      },
+      "vintage_poppy": {
+        "hex": "#cc7a6b",
+        "rgb": [204, 122, 107],
+        "hsl": [9, 47, 61],
+        "description": "Faded poppy red with dusty pink undertones"
+      },
+      "sun_bleached_yellow": {
+        "hex": "#f2d774",
+        "rgb": [242, 215, 116],
+        "hsl": [47, 82, 70],
+        "description": "Pale yellow like sun-bleached wildflower petals"
+      }
+    },
+    "golden_hour_accents": {
+      "golden_hour": {
+        "hex": "#ffd700",
+        "rgb": [255, 215, 0],
+        "hsl": [51, 100, 50],
+        "description": "Pure golden light of magic hour"
+      },
+      "warm_honey": {
+        "hex": "#ffb347",
+        "rgb": [255, 179, 71],
+        "hsl": [35, 100, 64],
+        "description": "Rich honey dripping with warmth"
+      },
+      "desert_rose": {
+        "hex": "#c08081",
+        "rgb": [192, 128, 129],
+        "hsl": [359, 33, 63],
+        "description": "Soft dusty rose like desert evening sky"
+      }
+    },
+    "shadows_and_depth": {
+      "sepia_shadow": {
+        "hex": "#6b5b47",
+        "rgb": [107, 91, 71],
+        "hsl": [33, 20, 35],
+        "description": "Deep sepia shadow for contrast"
+      },
+      "vintage_brown": {
+        "hex": "#8b4513",
+        "rgb": [139, 69, 19],
+        "hsl": [25, 76, 31],
+        "description": "Rich vintage brown"
+      },
+      "aged_charcoal": {
+        "hex": "#4a4238",
+        "rgb": [74, 66, 56],
+        "hsl": [33, 14, 25],
+        "description": "Aged charcoal for text and deep accents"
+      }
+    }
+  },
+  "usage_suggestions": {
+    "primary_backgrounds": ["sepia_cream", "sepia_ivory"],
+    "accent_colors": ["sun_kissed_amber", "faded_lupine", "vintage_poppy"],
+    "text_colors": ["aged_charcoal", "vintage_brown", "sepia_shadow"],
+    "warm_combinations": ["sepia_parchment", "burnt_sienna", "warm_honey"],
+    "cool_combinations": ["faded_lupine", "dusty_lavender", "weathered_sage"],
+    "sunset_combinations": ["golden_hour", "sun_kissed_amber", "desert_rose"]
+  },
+  "aesthetic_keywords": [
+    "vintage", "sepia", "sunburnt", "weathered", "nostalgic", 
+    "golden hour", "wildflowers", "mountain meadow", "aged photography",
+    "romantic", "timeless", "warm", "muted", "desert"
+  ]
+} 

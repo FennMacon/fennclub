@@ -1,0 +1,59 @@
+/* Arches National Park - Red Rock Desert Palette */
+/* Inspired by sandstone formations, desert sunsets, and Utah's red rocks */
+
+:root {
+  /* Sandstone Reds */
+  --delicate-arch: #cd5c5c;
+  --fiery-furnace: #b22222;
+  --red-rock: #dc143c;
+  --canyon-rust: #a0522d;
+  
+  /* Desert Oranges */
+  --sunset-orange: #ff8c00;
+  --sandstone-glow: #ffa500;
+  --desert-flame: #ff7f50;
+  --warm-terra: #d2691e;
+  
+  /* Purple Sunsets */
+  --desert-purple: #8b008b;
+  --twilight-indigo: #4b0082;
+  --lavender-sky: #e6e6fa;
+  --magenta-glow: #ff69b4;
+  
+  /* Desert Life */
+  --sage-green: #9acd32;
+  --juniper-dark: #2e8b57;
+  --cactus-bloom: #ff1493;
+  --desert-sand: #f4a460;
+  
+  /* Sky & Weather */
+  --desert-blue: #4169e1;
+  --cloud-white: #f8f8ff;
+  --storm-grey: #708090;
+  --star-silver: #c0c0c0;
+}
+
+/* Arches Color Families */
+.red-rock-formations {
+  --primary: var(--delicate-arch);
+  --secondary: var(--fiery-furnace);
+  --accent: var(--canyon-rust);
+}
+
+.desert-fire {
+  --primary: var(--sunset-orange);
+  --secondary: var(--desert-flame);
+  --accent: var(--warm-terra);
+}
+
+.purple-twilight {
+  --primary: var(--desert-purple);
+  --secondary: var(--twilight-indigo);
+  --accent: var(--lavender-sky);
+}
+
+.desert-ecosystem {
+  --primary: var(--sage-green);
+  --secondary: var(--juniper-dark);
+  --accent: var(--cactus-bloom);
+} 

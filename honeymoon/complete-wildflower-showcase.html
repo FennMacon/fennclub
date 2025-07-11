@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Grand Tetons Wildflower Color Collection</title>
+    <link rel="stylesheet" href="colors/palette.css">
+    <link rel="stylesheet" href="colors/enhanced-palette.css">
+    <link rel="stylesheet" href="colors/specialized-palette.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--specialized-1), var(--specialized-3));
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .extraction-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background: rgba(255,255,255,0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .collection-section {
+            margin: 3rem 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--specialized-11), var(--specialized-10));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .color-showcase {
+            padding: 2rem;
+        }
+        
+        .color-family {
+            margin: 2rem 0;
+        }
+        
+        .family-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 3px solid #e74c3c;
+            color: #2c3e50;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .color-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .color-preview {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .color-details {
+            padding: 1rem;
+            background: white;
+        }
+        
+        .color-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .color-values {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .blues { border-left: 6px solid #3498db; }
+        .purples { border-left: 6px solid #9b59b6; }
+        .oranges { border-left: 6px solid #e67e22; }
+        .yellows { border-left: 6px solid #f1c40f; }
+        .reds { border-left: 6px solid #e74c3c; }
+        .earth-tones { border-left: 6px solid #8b4513; }
+        
+        .interactive-demo {
+            background: linear-gradient(135deg, var(--specialized-8), var(--specialized-9));
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .demo-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .usage-examples {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .code-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 1rem; }
+            .extraction-stats { flex-direction: column; align-items: center; }
+            .color-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🌸 Complete Wildflower Color Collection</h1>
+            <p class="subtitle">From Your Grand Tetons Honeymoon Photo</p>
+            <div class="extraction-stats">
+                <div class="stat">
+                    <strong>38+</strong><br>
+                    Total Colors Found
+                </div>
+                <div class="stat">
+                    <strong>3</strong><br>
+                    Extraction Methods
+                </div>
+                <div class="stat">
+                    <strong>8</strong><br>
+                    Color Families
+                </div>
+                <div class="stat">
+                    <strong>1</strong><br>
+                    Beautiful Memory
+                </div>
+            </div>
+        </div>
+
+        <!-- Specialized Colors Section -->
+        <div class="collection-section">
+            <div class="section-header">
+                <h2 class="section-title">🎯 Targeted Wildflower Colors</h2>
+                <p class="section-description">The specific blues, purples, oranges, and yellows you mentioned</p>
+            </div>
+            <div class="color-showcase">
+                
+                <!-- Blues -->
+                <div class="color-family blues">
+                    <h3 class="family-title">🔵 Blues - The Blueish Colors You Saw</h3>
+                    <div class="color-grid">
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-1);">Sky Blue</div>
+                            <div class="color-details">
+                                <div class="color-name">Sky Blue</div>
+                                <div class="color-values">
+                                    #b9def6<br>
+                                    HSV: 203°, 24%, 96%<br>
+                                    CSS: var(--specialized-1)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-3);">Powder Blue</div>
+                            <div class="color-details">
+                                <div class="color-name">Powder Blue</div>
+                                <div class="color-values">
+                                    #8ba4b5<br>
+                                    HSV: 204°, 23%, 70%<br>
+                                    CSS: var(--specialized-3)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-2);">Blue Gray</div>
+                            <div class="color-details">
+                                <div class="color-name">Blue Gray</div>
+                                <div class="color-values">
+                                    #45535c<br>
+                                    HSV: 203°, 25%, 36%<br>
+                                    CSS: var(--specialized-2)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purple -->
+                <div class="color-family purples">
+                    <h3 class="family-title">🟣 Purple - The Blueish Purple</h3>
+                    <div class="color-grid">
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-14);">Purple Gray</div>
+                            <div class="color-details">
+                                <div class="color-name">Purple Gray</div>
+                                <div class="color-values">
+                                    #a99bae<br>
+                                    HSV: 284°, 10%, 68%<br>
+                                    CSS: var(--specialized-14)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oranges -->
+                <div class="color-family oranges">
+                    <h3 class="family-title">🧡 Oranges - The Burnt Orangeish Reds</h3>
+                    <div class="color-grid">
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-10);">Light Terracotta</div>
+                            <div class="color-details">
+                                <div class="color-name">Light Terracotta</div>
+                                <div class="color-values">
+                                    #b4a68d<br>
+                                    HSV: 38°, 21%, 70%<br>
+                                    CSS: var(--specialized-10)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-11);">Terracotta</div>
+                            <div class="color-details">
+                                <div class="color-name">Terracotta</div>
+                                <div class="color-values">
+                                    #92846c<br>
+                                    HSV: 37°, 26%, 57%<br>
+                                    CSS: var(--specialized-11)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-12);">Deep Terracotta</div>
+                            <div class="color-details">
+                                <div class="color-name">Deep Terracotta</div>
+                                <div class="color-values">
+                                    #71644e<br>
+                                    HSV: 37°, 30%, 44%<br>
+                                    CSS: var(--specialized-12)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yellows -->
+                <div class="color-family yellows">
+                    <h3 class="family-title">🟡 Yellows - The Lighter Yellow Tones</h3>
+                    <div class="color-grid">
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-8); color: #333;">Cream Yellow</div>
+                            <div class="color-details">
+                                <div class="color-name">Light Cream</div>
+                                <div class="color-values">
+                                    #dedab7<br>
+                                    HSV: 53°, 17%, 87%<br>
+                                    CSS: var(--specialized-8)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-5); color: #333;">Butter Yellow</div>
+                            <div class="color-details">
+                                <div class="color-name">Butter Yellow</div>
+                                <div class="color-values">
+                                    #bcb687<br>
+                                    HSV: 53°, 28%, 73%<br>
+                                    CSS: var(--specialized-5)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-4);">Golden Yellow</div>
+                            <div class="color-details">
+                                <div class="color-name">Golden Yellow</div>
+                                <div class="color-values">
+                                    #7a7956<br>
+                                    HSV: 58°, 29%, 47%<br>
+                                    CSS: var(--specialized-4)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Red -->
+                <div class="color-family reds">
+                    <h3 class="family-title">🔴 Red - Bonus Wildflower Accent</h3>
+                    <div class="color-grid">
+                        <div class="color-card">
+                            <div class="color-preview" style="background: var(--specialized-13);">Rose</div>
+                            <div class="color-details">
+                                <div class="color-name">Dusty Rose</div>
+                                <div class="color-values">
+                                    #8c7165<br>
+                                    HSV: 18°, 27%, 54%<br>
+                                    CSS: var(--specialized-13)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="interactive-demo">
+            <h3>🎨 Try Your Colors</h3>
+            <p>Click these buttons to see your wildflower colors in action!</p>
+            <div class="demo-buttons">
+                <button class="demo-btn" style="background: var(--specialized-1);" onclick="changeBackground('var(--specialized-1)')">Sky Blue</button>
+                <button class="demo-btn" style="background: var(--specialized-14);" onclick="changeBackground('var(--specialized-14)')">Purple</button>
+                <button class="demo-btn" style="background: var(--specialized-11);" onclick="changeBackground('var(--specialized-11)')">Terracotta</button>
+                <button class="demo-btn" style="background: var(--specialized-8); color: #333;" onclick="changeBackground('var(--specialized-8)')">Cream</button>
+                <button class="demo-btn" style="background: var(--specialized-13);" onclick="changeBackground('var(--specialized-13)')">Rose</button>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="usage-examples">
+            <h3>💻 How to Use These Colors</h3>
+            <p>Your extracted wildflower colors are ready to use in your projects:</p>
+            
+            <div class="code-example">
+/* CSS Variables - Ready to use! */
+background: var(--specialized-1);  /* Sky blue */
+color: var(--specialized-11);      /* Terracotta */
+border: 2px solid var(--specialized-14); /* Purple */
+
+/* Or use hex values directly */
+background: #b9def6;  /* Sky blue */
+color: #92846c;       /* Terracotta */
+            </div>
+
+            <p><strong>Available in 3 formats:</strong></p>
+            <ul>
+                <li>🎯 <code>specialized-palette.css</code> - Targeted wildflower colors</li>
+                <li>🌈 <code>enhanced-palette.css</code> - Diverse color collection</li>
+                <li>🎨 <code>palette.css</code> - Original dominant colors</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function changeBackground(color) {
+            document.body.style.background = color;
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+            }, 3000);
+        }
+
+        // Add click handlers to all color cards
+        document.querySelectorAll('.color-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const colorPreview = card.querySelector('.color-preview');
+                const backgroundColor = window.getComputedStyle(colorPreview).backgroundColor;
+                document.body.style.background = backgroundColor;
+                setTimeout(() => {
+                    document.body.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+                }, 2000);
+            });
+        });
+
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.color-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        console.log('🌸 Wildflower Color Collection Loaded!');
+        console.log('Your colors are ready to use in any project!');
+    </script>
+</body>
+</html> 

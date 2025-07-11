@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Honeymoon Palette Collection</title>
+    
+    <!-- Import all palette CSS files -->
+    <link rel="stylesheet" href="sepia-wildflower-palette.css">
+    <link rel="stylesheet" href="palettes/mackinac-island-palette.css">
+    <link rel="stylesheet" href="palettes/pictured-rocks-palette.css">
+    <link rel="stylesheet" href="palettes/badlands-palette.css">
+    <link rel="stylesheet" href="palettes/devils-tower-palette.css">
+    <link rel="stylesheet" href="palettes/glacier-palette.css">
+    <link rel="stylesheet" href="palettes/yellowstone-palette.css">
+    <link rel="stylesheet" href="palettes/arches-palette.css">
+    <link rel="stylesheet" href="palettes/salt-flats-palette.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #9b59b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: #ccc;
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .journey-path {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .path-marker {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: relative;
+        }
+
+        .path-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 30px;
+            height: 2px;
+            background: #ffd700;
+            transform: translateY(-50%);
+        }
+
+        .path-marker:last-child::after {
+            display: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+
+
+        .palette-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            color: #333;
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .palette-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 1;
+            border: 4px solid white;
+            box-sizing: border-box;
+        }
+
+        .palette-header {
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--border-color-1, white);
+            border-left: 4px solid var(--border-color-1, white);
+            border-right: 4px solid var(--border-color-1, white);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .palette-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .palette-subtitle {
+            font-size: 1rem;
+            opacity: 0.7;
+            font-style: italic;
+            z-index: 2;
+            position: relative;
+        }
+
+        .palette-dates {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: bold;
+            z-index: 2;
+            position: relative;
+        }
+
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            height: 120px;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .color-swatch {
+            position: relative;
+            cursor: pointer;
+            overflow: visible;
+            box-sizing: border-box;
+        }
+
+        .color-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: none;
+            color: #2c2c2c;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            text-shadow: 
+                -1px -1px 0 white,
+                1px -1px 0 white,
+                -1px 1px 0 white,
+                1px 1px 0 white,
+                0 -1px 0 white,
+                0 1px 0 white,
+                -1px 0 0 white,
+                1px 0 0 white;
+            font-weight: bold;
+        }
+
+        /* Dark background colors need white text */
+        .color-swatch[style*="#4682b4"] .color-info,
+        .color-swatch[style*="#cd5c5c"] .color-info,
+        .color-swatch[style*="#48a999"] .color-info,
+        .color-swatch[style*="#b22222"] .color-info,
+        .color-swatch[style*="#8b4513"] .color-info,
+        .color-swatch[style*="#2c2c2c"] .color-info,
+        .color-swatch[style*="#663399"] .color-info,
+        .color-swatch[style*="#228b22"] .color-info,
+        .color-swatch[style*="#708090"] .color-info,
+        .color-swatch[style*="#8b008b"] .color-info {
+            color: white;
+            text-shadow: 
+                -1px -1px 0 #2c2c2c,
+                1px -1px 0 #2c2c2c,
+                -1px 1px 0 #2c2c2c,
+                1px 1px 0 #2c2c2c,
+                0 -1px 0 #2c2c2c,
+                0 1px 0 #2c2c2c,
+                -1px 0 0 #2c2c2c,
+                1px 0 0 #2c2c2c;
+        }
+
+        .color-swatch:hover .color-info {
+            opacity: 1;
+        }
+
+        /* Specific border colors for each location's swatches */
+        .mackinac .color-swatch:first-child { border-left: 4px solid #7dd3c0; }
+.mackinac .color-swatch:last-child { border-right: 4px solid #fefefe; }
+
+.pictured .color-swatch:first-child { border-left: 4px solid #48a999; }
+.pictured .color-swatch:last-child { border-right: 4px solid #cd5c5c; }
+
+.badlands .color-swatch:first-child { border-left: 4px solid #8b4513; }
+.badlands .color-swatch:last-child { border-right: 4px solid #87ceeb; }
+
+.devils .color-swatch:first-child { border-left: 4px solid #ff8c00; }
+.devils .color-swatch:last-child { border-right: 4px solid #9acd32; }
+
+.glacier .color-swatch:first-child { border-left: 4px solid #ff6347; }
+.glacier .color-swatch:last-child { border-right: 4px solid #708090; }
+
+.yellowstone .color-swatch:first-child { border-left: 4px solid #ffffff; }
+.yellowstone .color-swatch:last-child { border-right: 4px solid #8b4513; }
+
+.tetons .color-swatch:first-child { border-left: 4px solid var(--sepia-parchment); }
+.tetons .color-swatch:last-child { border-right: 4px solid var(--sun-bleached-yellow); }
+
+.arches .color-swatch:first-child { border-left: 4px solid #9acd32; }
+.arches .color-swatch:last-child { border-right: 4px solid #8b008b; }
+
+.salt-flats .color-swatch:first-child { border-left: 4px solid #ffb6c1; }
+.salt-flats .color-swatch:last-child { border-right: 4px solid #c0c0c0; }
+
+        .palette-description {
+            padding: 1.5rem;
+            line-height: 1.6;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        /* Location-specific description borders that continue header gradients */
+        .mackinac .palette-description {
+            border-left: 4px solid #87ceeb;
+            border-right: 4px solid #f8bbd9;
+            border-bottom: 4px solid #87ceeb;
+        }
+        
+        .pictured .palette-description {
+            border-left: 4px solid #f4a460;
+            border-right: 4px solid #4682b4;
+            border-bottom: 4px solid #f4a460;
+        }
+        
+        .badlands .palette-description {
+            border-left: 4px solid #b22222;
+            border-right: 4px solid #daa520;
+            border-bottom: 4px solid #b22222;
+        }
+        
+        .devils .palette-description {
+            border-left: 4px solid #2c2c2c;
+            border-right: 4px solid #663399;
+            border-bottom: 4px solid #2c2c2c;
+        }
+        
+        .glacier .palette-description {
+            border-left: 4px solid #4682b4;
+            border-right: 4px solid #228b22;
+            border-bottom: 4px solid #4682b4;
+        }
+        
+        .yellowstone .palette-description {
+            border-left: 4px solid #ffff00;
+            border-right: 4px solid #4169e1;
+            border-bottom: 4px solid #ffff00;
+        }
+        
+        .tetons .palette-description {
+            border-left: 4px solid var(--faded-lupine);
+            border-right: 4px solid var(--vintage-poppy);
+            border-bottom: 4px solid var(--faded-lupine);
+        }
+        
+        .arches .palette-description {
+            border-left: 4px solid #cd5c5c;
+            border-right: 4px solid #ff8c00;
+            border-bottom: 4px solid #cd5c5c;
+        }
+        
+        .salt-flats .palette-description {
+            border-left: 4px solid #ffffff;
+            border-right: 4px solid #87ceeb;
+            border-bottom: 4px solid #ffffff;
+        }
+
+        /* Dark overlay for bright headers */
+        .yellowstone::before,
+        .salt-flats::before {
+            border-color: #2c2c2c;
+        }
+
+        .color-families {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .family-card {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .family-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .family-colors {
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .family-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        /* Location-specific header backgrounds */
+        .mackinac .palette-header { background: linear-gradient(135deg, #87ceeb, #f8bbd9); }
+        .pictured .palette-header { background: linear-gradient(135deg, #f4a460, #4682b4); }
+        .badlands .palette-header { background: linear-gradient(135deg, #b22222, #daa520); }
+        .devils .palette-header { background: linear-gradient(135deg, #2c2c2c, #663399); color: white; }
+        .glacier .palette-header { background: linear-gradient(135deg, #4682b4, #228b22); }
+        .yellowstone .palette-header { background: linear-gradient(135deg, #ffff00, #4169e1); }
+        .tetons .palette-header { background: linear-gradient(135deg, var(--faded-lupine), var(--vintage-poppy)); }
+        .arches .palette-header { background: linear-gradient(135deg, #cd5c5c, #ff8c00); }
+        .salt-flats .palette-header { background: linear-gradient(135deg, #ffffff, #87ceeb); color: #333; }
+
+        /* Location-specific border color mappings (all four colors incorporated) */
+        .mackinac {
+            --border-color-1: #2c2c2c; /* header inverse */
+            --border-color-2: #7dd3c0; /* 4th color (summer lawn) for left border */
+            --border-color-3: #fefefe; /* 3rd color (white porch) for right border */
+        }
+        
+        .pictured {
+            --border-color-1: #2c2c2c;
+            --border-color-2: #48a999; /* 4th color (copper green) for left border */
+            --border-color-3: #cd5c5c; /* 3rd color (iron red) for right border */
+        }
+        
+        .badlands {
+            --border-color-1: #2c2c2c;
+            --border-color-2: #8b4513; /* 4th color (weathered brown) for left border */
+            --border-color-3: #87ceeb; /* 3rd color (big sky blue) for right border */
+        }
+        
+        .devils {
+            --border-color-1: #2c2c2c;
+            --border-color-2: #ff8c00; /* 4th color (rope orange) for left border */
+            --border-color-3: #9acd32; /* 3rd color (prairie green) for right border */
+        }
+        
+        .glacier {
+            --border-color-1: #2c2c2c;
+            --border-color-2: #ff6347; /* 4th color (alpine flame) for left border */
+            --border-color-3: #708090; /* 3rd color (peak grey) for right border */
+        }
+        
+        .yellowstone {
+            --border-color-1: white; /* bright contrast for dark header */
+            --border-color-2: #ffffff; /* 4th color (geyser white) for left border */
+            --border-color-3: #8b4513; /* 3rd color (bison brown) for right border */
+        }
+        
+        .tetons {
+            --border-color-1: #2c2c2c;
+            --border-color-2: var(--sepia-parchment); /* 4th color for left border */
+            --border-color-3: var(--sun-bleached-yellow); /* 3rd color for right border */
+        }
+        
+        .arches {
+            --border-color-1: #2c2c2c;
+            --border-color-2: #9acd32; /* 4th color (sage green) for left border */
+            --border-color-3: #8b008b; /* 3rd color (desert purple) for right border */
+        }
+        
+        .salt-flats {
+            --border-color-1: white; /* bright contrast for dark header */
+            --border-color-2: #ffb6c1; /* 4th color (sunset blush) for left border */
+            --border-color-3: #c0c0c0; /* 3rd color (mirror silver) for right border */
+        }
+
+        .download-section {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Our Honeymoon Color Journey</h1>
+        <p>9 breathtaking locations • 9 unique palettes • Endless memories captured in color</p>
+        
+        <div class="journey-path">
+            <div class="path-marker" style="background: #87ceeb;"></div>
+            <div class="path-marker" style="background: #f4a460;"></div>
+            <div class="path-marker" style="background: #b22222;"></div>
+            <div class="path-marker" style="background: #663399;"></div>
+            <div class="path-marker" style="background: #4682b4;"></div>
+            <div class="path-marker" style="background: #ffff00;"></div>
+            <div class="path-marker" style="background: var(--faded-lupine);"></div>
+            <div class="path-marker" style="background: #cd5c5c;"></div>
+            <div class="path-marker" style="background: #ffffff; border-color: #87ceeb;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">9</div>
+                <div class="stat-label">Unique Locations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">72</div>
+                <div class="stat-label">Distinct Colors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">20</div>
+                <div class="stat-label">Days of Adventure</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Precious Memories</div>
+            </div>
+        </div>
+
+        <div class="palette-grid">
+            <!-- Mackinac Island -->
+            <div class="palette-card mackinac">
+                <div class="palette-header">
+                    <div class="palette-title">Mackinac Island</div>
+                    <div class="palette-subtitle">Victorian Elegance</div>
+                    <div class="palette-dates">June 20, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #87ceeb;">
+                        <div class="color-info">Lake Huron Light<br/>#87ceeb</div>
+                    </div>
+                    <div class="color-swatch" style="background: #f8bbd9;">
+                        <div class="color-info">Victorian Rose<br/>#f8bbd9</div>
+                    </div>
+                    <div class="color-swatch" style="background: #fefefe;">
+                        <div class="color-info">White Porch<br/>#fefefe</div>
+                    </div>
+                    <div class="color-swatch" style="background: #7dd3c0;">
+                        <div class="color-info">Summer Lawn<br/>#7dd3c0</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Horse-drawn carriages, Victorian architecture, and the serene beauty of Lake Huron create a palette of soft pastels and romantic elegance.
+                </div>
+            </div>
+
+            <!-- Pictured Rocks -->
+            <div class="palette-card pictured">
+                <div class="palette-header">
+                    <div class="palette-title">Pictured Rocks</div>
+                    <div class="palette-subtitle">Sandstone Cliffs</div>
+                    <div class="palette-dates">June 21, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #f4a460;">
+                        <div class="color-info">Sandstone Warm<br/>#f4a460</div>
+                    </div>
+                    <div class="color-swatch" style="background: #4682b4;">
+                        <div class="color-info">Superior Blue<br/>#4682b4</div>
+                    </div>
+                    <div class="color-swatch" style="background: #cd5c5c;">
+                        <div class="color-info">Iron Red<br/>#cd5c5c</div>
+                    </div>
+                    <div class="color-swatch" style="background: #48a999;">
+                        <div class="color-info">Copper Green<br/>#48a999</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Layered sandstone cliffs meet the deep blues of Lake Superior, with mineral streaks creating nature's masterpiece of geological art.
+                </div>
+            </div>
+
+            <!-- Badlands -->
+            <div class="palette-card badlands">
+                <div class="palette-header">
+                    <div class="palette-title">Badlands</div>
+                    <div class="palette-subtitle">Dramatic Erosion</div>
+                    <div class="palette-dates">June 23-24, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #b22222;">
+                        <div class="color-info">Badlands Red<br/>#b22222</div>
+                    </div>
+                    <div class="color-swatch" style="background: #daa520;">
+                        <div class="color-info">Prairie Gold<br/>#daa520</div>
+                    </div>
+                    <div class="color-swatch" style="background: #87ceeb;">
+                        <div class="color-info">Big Sky Blue<br/>#87ceeb</div>
+                    </div>
+                    <div class="color-swatch" style="background: #8b4513;">
+                        <div class="color-info">Weathered Brown<br/>#8b4513</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Dramatic eroded landscapes showcase millions of years of geological history in brilliant reds, prairie golds, and endless sky.
+                </div>
+            </div>
+
+            <!-- Devil's Tower -->
+            <div class="palette-card devils">
+                <div class="palette-header">
+                    <div class="palette-title">Devil's Tower</div>
+                    <div class="palette-subtitle">Monolithic Mystery</div>
+                    <div class="palette-dates">June 24-25, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #2c2c2c;">
+                        <div class="color-info">Basalt Black<br/>#2c2c2c</div>
+                    </div>
+                    <div class="color-swatch" style="background: #663399;">
+                        <div class="color-info">Sacred Purple<br/>#663399</div>
+                    </div>
+                    <div class="color-swatch" style="background: #9acd32;">
+                        <div class="color-info">Prairie Green<br/>#9acd32</div>
+                    </div>
+                    <div class="color-swatch" style="background: #ff8c00;">
+                        <div class="color-info">Rope Orange<br/>#ff8c00</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    An ancient volcanic neck rises mysteriously from the prairie, its dark basalt columns creating a spiritual presence against the Wyoming sky.
+                </div>
+            </div>
+
+            <!-- Glacier National Park -->
+            <div class="palette-card glacier">
+                <div class="palette-header">
+                    <div class="palette-title">Glacier National Park</div>
+                    <div class="palette-subtitle">Alpine Majesty</div>
+                    <div class="palette-dates">June 25-27, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #4682b4;">
+                        <div class="color-info">Glacier Blue<br/>#4682b4</div>
+                    </div>
+                    <div class="color-swatch" style="background: #228b22;">
+                        <div class="color-info">Alpine Green<br/>#228b22</div>
+                    </div>
+                    <div class="color-swatch" style="background: #708090;">
+                        <div class="color-info">Peak Grey<br/>#708090</div>
+                    </div>
+                    <div class="color-swatch" style="background: #ff6347;">
+                        <div class="color-info">Alpine Flame<br/>#ff6347</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Pristine glacial waters, towering mountain peaks, and alpine meadows bursting with wildflowers create nature's most majestic palette.
+                </div>
+            </div>
+
+            <!-- Yellowstone -->
+            <div class="palette-card yellowstone">
+                <div class="palette-header">
+                    <div class="palette-title">Yellowstone</div>
+                    <div class="palette-subtitle">Geothermal Wonder</div>
+                    <div class="palette-dates">June 28-30, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #ffff00;">
+                        <div class="color-info">Sulfur Yellow<br/>#ffff00</div>
+                    </div>
+                    <div class="color-swatch" style="background: #4169e1;">
+                        <div class="color-info">Thermal Blue<br/>#4169e1</div>
+                    </div>
+                    <div class="color-swatch" style="background: #8b4513;">
+                        <div class="color-info">Bison Brown<br/>#8b4513</div>
+                    </div>
+                    <div class="color-swatch" style="background: #ffffff;">
+                        <div class="color-info">Geyser White<br/>#ffffff</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Geothermal wonders paint the landscape in otherworldly colors - from sulfur springs to prismatic pools and erupting geysers.
+                </div>
+            </div>
+
+            <!-- Grand Teton -->
+            <div class="palette-card tetons">
+                <div class="palette-header">
+                    <div class="palette-title">Grand Teton</div>
+                    <div class="palette-subtitle">Sepia Wildflower Meadows</div>
+                    <div class="palette-dates">July 1-2, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: var(--faded-lupine);">
+                        <div class="color-info">Faded Lupine<br/>--faded-lupine</div>
+                    </div>
+                    <div class="color-swatch" style="background: var(--vintage-poppy);">
+                        <div class="color-info">Vintage Poppy<br/>--vintage-poppy</div>
+                    </div>
+                    <div class="color-swatch" style="background: var(--sun-bleached-yellow);">
+                        <div class="color-info">Sun-Bleached Yellow<br/>--sun-bleached-yellow</div>
+                    </div>
+                    <div class="color-swatch" style="background: var(--sepia-parchment);">
+                        <div class="color-info">Sepia Parchment<br/>--sepia-parchment</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Our special wildflower meadows - where we captured those perfect sepia-toned, sun-weathered blooms that inspired our vintage aesthetic.
+                </div>
+            </div>
+
+            <!-- Arches -->
+            <div class="palette-card arches">
+                <div class="palette-header">
+                    <div class="palette-title">Arches</div>
+                    <div class="palette-subtitle">Red Rock Desert</div>
+                    <div class="palette-dates">July 3-4, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #cd5c5c;">
+                        <div class="color-info">Delicate Arch<br/>#cd5c5c</div>
+                    </div>
+                    <div class="color-swatch" style="background: #ff8c00;">
+                        <div class="color-info">Sunset Orange<br/>#ff8c00</div>
+                    </div>
+                    <div class="color-swatch" style="background: #8b008b;">
+                        <div class="color-info">Desert Purple<br/>#8b008b</div>
+                    </div>
+                    <div class="color-swatch" style="background: #9acd32;">
+                        <div class="color-info">Sage Green<br/>#9acd32</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    Red sandstone arches frame desert sunsets in brilliant oranges and purples, creating Utah's most iconic landscape.
+                </div>
+            </div>
+
+            <!-- Salt Flats -->
+            <div class="palette-card salt-flats">
+                <div class="palette-header">
+                    <div class="palette-title">Salt Flats</div>
+                    <div class="palette-subtitle">Minimalist Infinite</div>
+                    <div class="palette-dates">July 6, 2024</div>
+                </div>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #ffffff;">
+                        <div class="color-info">Salt White<br/>#ffffff</div>
+                    </div>
+                    <div class="color-swatch" style="background: #87ceeb;">
+                        <div class="color-info">Endless Blue<br/>#87ceeb</div>
+                    </div>
+                    <div class="color-swatch" style="background: #c0c0c0;">
+                        <div class="color-info">Mirror Silver<br/>#c0c0c0</div>
+                    </div>
+                    <div class="color-swatch" style="background: #ffb6c1;">
+                        <div class="color-info">Sunset Blush<br/>#ffb6c1</div>
+                    </div>
+                </div>
+                <div class="palette-description">
+                    An otherworldly expanse of pure white salt creates infinite reflections and minimal beauty where earth meets sky.
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h2>Download Your Complete Palette Collection</h2>
+            <p>Get all palettes in various formats for your creative projects</p>
+            <button class="download-btn" onclick="downloadCSS()">📄 Download CSS</button>
+            <button class="download-btn" onclick="downloadJSON()">📊 Download JSON</button>
+            <button class="download-btn" onclick="downloadPNG()">🎨 Download Swatches</button>
+        </div>
+    </div>
+
+    <script>
+        function downloadCSS() {
+            alert('CSS download feature coming soon! All palette files are already in the palettes/ folder.');
+        }
+
+        function downloadJSON() {
+            alert('JSON download feature coming soon! Check the palettes/ folder for individual JSON files.');
+        }
+
+        function downloadPNG() {
+            alert('PNG export feature coming soon! This will generate visual swatches for each palette.');
+        }
+
+        // Add color swatch interaction
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                const colorInfo = this.querySelector('.color-info').textContent;
+                const hexCode = colorInfo.split('\n')[1];
+                
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(hexCode).then(() => {
+                        // Show temporary notification
+                        const notification = document.createElement('div');
+                        notification.textContent = `Copied ${hexCode}!`;
+                        notification.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: #4ecdc4;
+                            color: white;
+                            padding: 1rem;
+                            border-radius: 5px;
+                            z-index: 1000;
+                            transition: opacity 0.3s ease;
+                        `;
+                        document.body.appendChild(notification);
+                        
+                        setTimeout(() => {
+                            notification.style.opacity = '0';
+                            setTimeout(() => notification.remove(), 300);
+                        }, 2000);
+                    });
+                }
+            });
+        });
+
+        // Sophisticated border animation based on mouse entry point
+        document.querySelectorAll('.palette-card').forEach(card => {
+            let animationStyle = null;
+            let currentStartPoint = null;
+            
+            card.addEventListener('mouseenter', function(e) {
+                // Remove any existing animation
+                if (animationStyle) {
+                    document.head.removeChild(animationStyle);
+                }
+                
+                const rect = card.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                // Calculate which edge the mouse entered from
+                const fromTop = mouseY;
+                const fromBottom = rect.height - mouseY;
+                const fromLeft = mouseX;
+                const fromRight = rect.width - mouseX;
+                
+                const minDistance = Math.min(fromTop, fromBottom, fromLeft, fromRight);
+                
+                let startPoint, direction;
+                if (minDistance === fromTop) {
+                    startPoint = `${(mouseX / rect.width) * 100}% 0%`;
+                    direction = 'from-top';
+                } else if (minDistance === fromBottom) {
+                    startPoint = `${(mouseX / rect.width) * 100}% 100%`;
+                    direction = 'from-bottom';
+                } else if (minDistance === fromLeft) {
+                    startPoint = `0% ${(mouseY / rect.height) * 100}%`;
+                    direction = 'from-left';
+                } else {
+                    startPoint = `100% ${(mouseY / rect.height) * 100}%`;
+                    direction = 'from-right';
+                }
+                
+                // Store the start point for the fade-back animation
+                currentStartPoint = startPoint;
+                
+                // Create unique animation for this entry point
+                const animationId = `borderSweep_${Date.now()}`;
+                animationStyle = document.createElement('style');
+                                 animationStyle.textContent = `
+                     @keyframes ${animationId} {
+                         0% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 0%, white 0%, white 100%);
+                         }
+                         10% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 5%, white 5%, white 100%);
+                         }
+                         20% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 12%, white 12%, white 100%);
+                         }
+                         30% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 22%, white 22%, white 100%);
+                         }
+                         40% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 35%, white 35%, white 100%);
+                         }
+                         50% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 50%, white 50%, white 100%);
+                         }
+                         60% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 65%, white 65%, white 100%);
+                         }
+                         70% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 80%, white 80%, white 100%);
+                         }
+                         80% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 95%, white 95%, white 100%);
+                         }
+                         90% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 115%, white 115%, white 100%);
+                         }
+                         100% {
+                             mask: radial-gradient(circle at ${startPoint}, transparent 0%, transparent 150%, white 150%, white 100%);
+                         }
+                     }
+                     
+                     .palette-card:hover::before {
+                         animation: ${animationId} 0.15s linear forwards;
+                     }
+                 `;
+                document.head.appendChild(animationStyle);
+            });
+            
+            card.addEventListener('mouseleave', function(e) {
+                if (animationStyle) {
+                    // Calculate where the mouse is exiting
+                    const rect = card.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    // Calculate which edge the mouse is exiting from
+                    const fromTop = mouseY;
+                    const fromBottom = rect.height - mouseY;
+                    const fromLeft = mouseX;
+                    const fromRight = rect.width - mouseX;
+                    
+                    const minDistance = Math.min(fromTop, fromBottom, fromLeft, fromRight);
+                    
+                    let exitPoint;
+                    if (minDistance === fromTop) {
+                        exitPoint = `${(mouseX / rect.width) * 100}% 0%`;
+                    } else if (minDistance === fromBottom) {
+                        exitPoint = `${(mouseX / rect.width) * 100}% 100%`;
+                    } else if (minDistance === fromLeft) {
+                        exitPoint = `0% ${(mouseY / rect.height) * 100}%`;
+                    } else {
+                        exitPoint = `100% ${(mouseY / rect.height) * 100}%`;
+                    }
+                    
+                    // Create reverse animation towards the exit point
+                    const fadeBackId = `borderFadeBack_${Date.now()}`;
+                    const cardId = `card_${Date.now()}`;
+                    card.setAttribute('data-card-id', cardId);
+                    
+                    const fadeBackStyle = document.createElement('style');
+                    fadeBackStyle.textContent = `
+                        @keyframes ${fadeBackId} {
+                            0% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 150%, white 150%, white 100%);
+                            }
+                            10% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 115%, white 115%, white 100%);
+                            }
+                            20% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 95%, white 95%, white 100%);
+                            }
+                            30% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 80%, white 80%, white 100%);
+                            }
+                            40% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 65%, white 65%, white 100%);
+                            }
+                            50% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 50%, white 50%, white 100%);
+                            }
+                            60% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 35%, white 35%, white 100%);
+                            }
+                            70% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 22%, white 22%, white 100%);
+                            }
+                            80% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 12%, white 12%, white 100%);
+                            }
+                            90% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 5%, white 5%, white 100%);
+                            }
+                            100% {
+                                mask: radial-gradient(circle at ${exitPoint}, transparent 0%, transparent 0%, white 0%, white 100%);
+                            }
+                        }
+                        
+                        .palette-card[data-card-id="${cardId}"]::before {
+                            animation: ${fadeBackId} 0.15s linear forwards;
+                        }
+                    `;
+                    document.head.appendChild(fadeBackStyle);
+                    
+                    // Remove both animations after fade-back completes
+                    setTimeout(() => {
+                        if (animationStyle && document.head.contains(animationStyle)) {
+                            document.head.removeChild(animationStyle);
+                            animationStyle = null;
+                        }
+                        if (document.head.contains(fadeBackStyle)) {
+                            document.head.removeChild(fadeBackStyle);
+                        }
+                        currentStartPoint = null;
+                    }, 150);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

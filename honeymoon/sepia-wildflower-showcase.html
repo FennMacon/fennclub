@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepia Sunburnt Wildflower Palette</title>
+    <link rel="stylesheet" href="sepia-wildflower-palette.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, var(--sepia-cream), var(--sepia-ivory));
+            color: var(--aged-charcoal);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--sepia-ivory);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(107, 91, 71, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: var(--vintage-brown);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--sepia-shadow);
+            font-style: italic;
+        }
+
+        .palette-section {
+            margin-bottom: 3rem;
+            background: rgba(244, 241, 232, 0.7);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(107, 91, 71, 0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--vintage-brown);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--sepia-tan);
+            padding-bottom: 0.5rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .color-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(107, 91, 71, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .color-swatch {
+            height: 120px;
+            position: relative;
+        }
+
+        .color-info {
+            padding: 1rem;
+        }
+
+        .color-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--vintage-brown);
+            margin-bottom: 0.5rem;
+        }
+
+        .color-hex {
+            font-family: 'Courier New', monospace;
+            color: var(--sepia-shadow);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .color-description {
+            font-size: 0.85rem;
+            color: var(--aged-charcoal);
+            font-style: italic;
+        }
+
+        .inspiration {
+            background: linear-gradient(45deg, var(--sepia-cream), var(--warm-honey));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 3rem;
+            border: 2px solid var(--sepia-tan);
+        }
+
+        .inspiration h2 {
+            color: var(--vintage-brown);
+            margin-bottom: 1rem;
+        }
+
+        .inspiration p {
+            font-size: 1.1rem;
+            color: var(--sepia-shadow);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .usage-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .example-card {
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .vintage-combo {
+            background: linear-gradient(135deg, var(--sepia-parchment), var(--burnt-sienna));
+        }
+
+        .wildflower-combo {
+            background: linear-gradient(135deg, var(--faded-lupine), var(--vintage-poppy));
+        }
+
+        .golden-combo {
+            background: linear-gradient(135deg, var(--golden-hour), var(--sun-kissed-amber));
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sepia Sunburnt Wildflower Palette</h1>
+            <p>A vintage-inspired color story of sun-weathered blooms and golden memories</p>
+        </div>
+
+        <div class="palette-section">
+            <h2 class="section-title">Sepia Base Tones</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #f4f1e8;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sepia Cream</div>
+                        <div class="color-hex">#f4f1e8</div>
+                        <div class="color-description">Soft, warm base like vintage photograph paper</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #f0ead2;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sepia Ivory</div>
+                        <div class="color-hex">#f0ead2</div>
+                        <div class="color-description">Aged ivory with golden undertones</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #ddb892;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sepia Parchment</div>
+                        <div class="color-hex">#ddb892</div>
+                        <div class="color-description">Weathered parchment with warm brown notes</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #bc9a6a;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sepia Tan</div>
+                        <div class="color-hex">#bc9a6a</div>
+                        <div class="color-description">Rich, sun-soaked tan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <h2 class="section-title">Sunburnt Earth</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #a0522d;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Burnt Sienna</div>
+                        <div class="color-hex">#a0522d</div>
+                        <div class="color-description">Deep, earthy red-brown like desert clay</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #cd853f;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Dusty Terracotta</div>
+                        <div class="color-hex">#cd853f</div>
+                        <div class="color-description">Weathered terracotta pot in afternoon sun</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #d2691e;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Weathered Clay</div>
+                        <div class="color-hex">#d2691e</div>
+                        <div class="color-description">Sun-baked clay with orange warmth</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #daa520;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sun-Kissed Amber</div>
+                        <div class="color-hex">#daa520</div>
+                        <div class="color-description">Golden amber catching late sunlight</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <h2 class="section-title">Muted Wildflower Colors</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #8a7ca8;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Faded Lupine</div>
+                        <div class="color-hex">#8a7ca8</div>
+                        <div class="color-description">Muted purple-blue like sun-faded lupines</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #b19cd9;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Dusty Lavender</div>
+                        <div class="color-hex">#b19cd9</div>
+                        <div class="color-description">Soft lavender touched by desert dust</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #9caf88;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Weathered Sage</div>
+                        <div class="color-hex">#9caf88</div>
+                        <div class="color-description">Muted sage green like dried wildflower stems</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #e6a756;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Burnt Marigold</div>
+                        <div class="color-hex">#e6a756</div>
+                        <div class="color-description">Sun-scorched marigold petals</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #cc7a6b;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Vintage Poppy</div>
+                        <div class="color-hex">#cc7a6b</div>
+                        <div class="color-description">Faded poppy red with dusty pink undertones</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #f2d774;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Sun-Bleached Yellow</div>
+                        <div class="color-hex">#f2d774</div>
+                        <div class="color-description">Pale yellow like sun-bleached wildflower petals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <h2 class="section-title">Golden Hour Accents</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #ffd700;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Golden Hour</div>
+                        <div class="color-hex">#ffd700</div>
+                        <div class="color-description">Pure golden light of magic hour</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #ffb347;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Warm Honey</div>
+                        <div class="color-hex">#ffb347</div>
+                        <div class="color-description">Rich honey dripping with warmth</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #c08081;"></div>
+                    <div class="color-info">
+                        <div class="color-name">Desert Rose</div>
+                        <div class="color-hex">#c08081</div>
+                        <div class="color-description">Soft dusty rose like desert evening sky</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="usage-examples">
+            <div class="example-card vintage-combo">
+                <h3>Vintage Combination</h3>
+                <p>Sepia Parchment + Burnt Sienna</p>
+            </div>
+            <div class="example-card wildflower-combo">
+                <h3>Wildflower Dream</h3>
+                <p>Faded Lupine + Vintage Poppy</p>
+            </div>
+            <div class="example-card golden-combo">
+                <h3>Golden Sunset</h3>
+                <p>Golden Hour + Sun-Kissed Amber</p>
+            </div>
+        </div>
+
+        <div class="inspiration">
+            <h2>Inspiration</h2>
+            <p>
+                This palette captures the nostalgic beauty of wildflowers preserved in vintage photographs—
+                colors softened by time and sun, evoking memories of golden summer days in mountain meadows. 
+                Each shade tells a story of natural beauty weathered by time, creating a palette that feels 
+                both timeless and deeply romantic.
+            </p>
+        </div>
+    </div>
+</body>
+</html> 

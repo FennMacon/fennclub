@@ -1,0 +1,59 @@
+/* Salt Flats - Minimalist Infinite Palette */
+/* Inspired by endless white expanses, mirror reflections, and infinite skies */
+
+:root {
+  /* Pure Salt */
+  --salt-white: #ffffff;
+  --crystal-pure: #fafafa;
+  --mineral-cream: #fffef7;
+  --snow-bright: #fffafa;
+  
+  /* Infinite Sky */
+  --endless-blue: #87ceeb;
+  --horizon-cyan: #e0ffff;
+  --deep-azure: #4682b4;
+  --celestial-white: #f0f8ff;
+  
+  /* Mirror Reflections */
+  --mirror-silver: #c0c0c0;
+  --reflection-blue: #b0e0e6;
+  --water-clear: #f0ffff;
+  --glass-shine: #f5f5f5;
+  
+  /* Minimal Accents */
+  --sunset-blush: #ffb6c1;
+  --golden-rim: #ffd700;
+  --violet-edge: #ee82ee;
+  --pearl-glow: #fdf5e6;
+  
+  /* Structural Elements */
+  --rail-rust: #b22222;
+  --tire-track: #696969;
+  --fence-brown: #8b4513;
+  --road-grey: #a9a9a9;
+}
+
+/* Salt Flats Color Families */
+.infinite-white {
+  --primary: var(--salt-white);
+  --secondary: var(--crystal-pure);
+  --accent: var(--mineral-cream);
+}
+
+.endless-sky {
+  --primary: var(--endless-blue);
+  --secondary: var(--horizon-cyan);
+  --accent: var(--celestial-white);
+}
+
+.mirror-world {
+  --primary: var(--mirror-silver);
+  --secondary: var(--reflection-blue);
+  --accent: var(--water-clear);
+}
+
+.subtle-beauty {
+  --primary: var(--sunset-blush);
+  --secondary: var(--golden-rim);
+  --accent: var(--violet-edge);
+} 

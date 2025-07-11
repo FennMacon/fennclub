@@ -1,0 +1,59 @@
+/* Pictured Rocks - Sandstone Cliffs Palette */
+/* Inspired by layered sandstone, Superior blues, and mineral deposits */
+
+:root {
+  /* Sandstone Layers */
+  --sandstone-deep: #d2691e;
+  --sandstone-warm: #f4a460;
+  --sandstone-light: #ffd4a3;
+  --sandstone-cream: #fff8dc;
+  
+  /* Lake Superior Blues */
+  --superior-deep: #003366;
+  --superior-blue: #4682b4;
+  --superior-foam: #b0e0e6;
+  --superior-mist: #f0f8ff;
+  
+  /* Mineral Streaks */
+  --iron-red: #cd5c5c;
+  --copper-green: #48a999;
+  --quartz-white: #f5f5f5;
+  --lichen-yellow: #daa520;
+  
+  /* Forest Depths */
+  --pine-dark: #2f4f4f;
+  --forest-green: #228b22;
+  --birch-bark: #f5f5dc;
+  --autumn-gold: #cd853f;
+  
+  /* Kayak Adventure */
+  --adventure-orange: #ff7f50;
+  --paddle-blue: #4169e1;
+  --spray-white: #ffffff;
+  --cliff-shadow: #696969;
+}
+
+/* Sandstone Color Families */
+.sandstone-layers {
+  --primary: var(--sandstone-warm);
+  --secondary: var(--sandstone-light);
+  --accent: var(--sandstone-cream);
+}
+
+.superior-waters {
+  --primary: var(--superior-blue);
+  --secondary: var(--superior-foam);
+  --accent: var(--superior-mist);
+}
+
+.mineral-deposits {
+  --primary: var(--iron-red);
+  --secondary: var(--copper-green);
+  --accent: var(--lichen-yellow);
+}
+
+.kayak-adventure {
+  --primary: var(--adventure-orange);
+  --secondary: var(--paddle-blue);
+  --accent: var(--spray-white);
+} 

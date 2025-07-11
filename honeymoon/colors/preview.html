@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Tetons Wildflower Palette</title>
+    <link rel="stylesheet" href="palette.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 2rem; }
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
+        .color-card { 
+            border-radius: 8px; 
+            padding: 1rem; 
+            text-align: center; 
+            color: white; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .color-info { background: rgba(255,255,255,0.9); color: #333; padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; }
+        h1 { color: var(--wildflower-1); }
+    </style>
+</head>
+<body>
+    <h1>🌸 Grand Tetons Wildflower Color Palette</h1>
+    <p>Extracted from your honeymoon wildflower photo</p>
+    
+    <div class="palette-grid">
+        <div class="color-card" style="background-color: #84846c;">
+            <h3>Wildflower 1</h3>
+            <div class="color-info">
+                <strong>#84846c</strong><br>
+                RGB: 132, 132, 108<br>
+                HSL: 60°, 10%, 47%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #041119;">
+            <h3>Wildflower 2</h3>
+            <div class="color-info">
+                <strong>#041119</strong><br>
+                RGB: 4, 17, 25<br>
+                HSL: 202°, 72%, 5%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #05121a;">
+            <h3>Wildflower 3</h3>
+            <div class="color-info">
+                <strong>#05121a</strong><br>
+                RGB: 5, 18, 26<br>
+                HSL: 202°, 67%, 6%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #8d9073;">
+            <h3>Wildflower 4</h3>
+            <div class="color-info">
+                <strong>#8d9073</strong><br>
+                RGB: 141, 144, 115<br>
+                HSL: 66°, 11%, 50%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #888c73;">
+            <h3>Wildflower 5</h3>
+            <div class="color-info">
+                <strong>#888c73</strong><br>
+                RGB: 136, 140, 115<br>
+                HSL: 69°, 9%, 50%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #848870;">
+            <h3>Wildflower 6</h3>
+            <div class="color-info">
+                <strong>#848870</strong><br>
+                RGB: 132, 136, 112<br>
+                HSL: 69°, 9%, 48%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #7e8066;">
+            <h3>Wildflower 7</h3>
+            <div class="color-info">
+                <strong>#7e8066</strong><br>
+                RGB: 126, 128, 102<br>
+                HSL: 64°, 11%, 45%
+            </div>
+        </div>
+        <div class="color-card" style="background-color: #878a6f;">
+            <h3>Wildflower 8</h3>
+            <div class="color-info">
+                <strong>#878a6f</strong><br>
+                RGB: 135, 138, 111<br>
+                HSL: 66°, 10%, 48%
+            </div>
+        </div>
+    </div>
+    
+    <h2>Usage Examples</h2>
+    <div style="padding: 1rem; background: var(--wildflower-2); color: var(--wildflower-7); border-radius: 8px;">
+        <h3>CSS Variables:</h3>
+        <code>background: var(--wildflower-1);</code><br>
+        <code>color: var(--wildflower-3);</code>
+    </div>
+</body>
+</html>

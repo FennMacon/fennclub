@@ -1,0 +1,59 @@
+/* Yellowstone - Geothermal Wonder Palette */
+/* Inspired by hot springs, geysers, wildlife, and thermal features */
+
+:root {
+  /* Geothermal Features */
+  --sulfur-yellow: #ffff00;
+  --thermal-orange: #ff8c00;
+  --mineral-rust: #cd853f;
+  --steam-white: #f5f5f5;
+  
+  /* Hot Spring Blues */
+  --spring-deep: #0000cd;
+  --thermal-blue: #4169e1;
+  --mineral-turquoise: #40e0d0;
+  --prismatic-rainbow: #9370db;
+  
+  /* Geyser Colors */
+  --eruption-white: #ffffff;
+  --steam-grey: #d3d3d3;
+  --mineral-crust: #f5deb3;
+  --silica-blue: #87ceeb;
+  
+  /* Wildlife Browns */
+  --bison-brown: #8b4513;
+  --elk-tan: #d2b48c;
+  --bear-black: #2f2f2f;
+  --wolf-grey: #696969;
+  
+  /* Forest & Mountain */
+  --lodgepole-green: #228b22;
+  --aspen-gold: #ffd700;
+  --mountain-purple: #663399;
+  --canyon-red: #dc143c;
+}
+
+/* Yellowstone Color Families */
+.geothermal-wonders {
+  --primary: var(--sulfur-yellow);
+  --secondary: var(--thermal-orange);
+  --accent: var(--mineral-rust);
+}
+
+.hot-spring-blues {
+  --primary: var(--spring-deep);
+  --secondary: var(--thermal-blue);
+  --accent: var(--mineral-turquoise);
+}
+
+.geyser-eruption {
+  --primary: var(--eruption-white);
+  --secondary: var(--steam-grey);
+  --accent: var(--silica-blue);
+}
+
+.wildlife-kingdom {
+  --primary: var(--bison-brown);
+  --secondary: var(--elk-tan);
+  --accent: var(--wolf-grey);
+} 

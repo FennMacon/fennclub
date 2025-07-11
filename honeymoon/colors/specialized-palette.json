@@ -1,0 +1,372 @@
+{
+  "source_image": "IMG_0965.heic",
+  "description": "Specialized Wildflower Palette - Targeting Blues, Purples, Oranges & Vibrant Colors",
+  "extraction_method": "targeted color family extraction",
+  "total_colors": 14,
+  "colors": [
+    {
+      "name": "specialized-1",
+      "descriptive_name": "sky-blue",
+      "rgb": [
+        185,
+        222,
+        246
+      ],
+      "hex": "#b9def6",
+      "hsl": [
+        203,
+        77,
+        84
+      ],
+      "hsv": [
+        203,
+        24,
+        96
+      ],
+      "css_var": "--specialized-1",
+      "family": "blues",
+      "frequency": 661,
+      "total_family_pixels": 863
+    },
+    {
+      "name": "specialized-2",
+      "descriptive_name": "blue-gray",
+      "rgb": [
+        69,
+        83,
+        92
+      ],
+      "hex": "#45535c",
+      "hsl": [
+        203,
+        14,
+        31
+      ],
+      "hsv": [
+        203,
+        25,
+        36
+      ],
+      "css_var": "--specialized-2",
+      "family": "blues",
+      "frequency": 75,
+      "total_family_pixels": 863
+    },
+    {
+      "name": "specialized-3",
+      "descriptive_name": "powder-blue",
+      "rgb": [
+        139,
+        164,
+        181
+      ],
+      "hex": "#8ba4b5",
+      "hsl": [
+        204,
+        22,
+        62
+      ],
+      "hsv": [
+        204,
+        23,
+        70
+      ],
+      "css_var": "--specialized-3",
+      "family": "blues",
+      "frequency": 127,
+      "total_family_pixels": 863
+    },
+    {
+      "name": "specialized-4",
+      "descriptive_name": "butter-yellow",
+      "rgb": [
+        122,
+        121,
+        86
+      ],
+      "hex": "#7a7956",
+      "hsl": [
+        58,
+        17,
+        40
+      ],
+      "hsv": [
+        58,
+        29,
+        47
+      ],
+      "css_var": "--specialized-4",
+      "family": "bright_yellows",
+      "frequency": 6050,
+      "total_family_pixels": 9737
+    },
+    {
+      "name": "specialized-5",
+      "descriptive_name": "butter-yellow",
+      "rgb": [
+        188,
+        182,
+        135
+      ],
+      "hex": "#bcb687",
+      "hsl": [
+        53,
+        28,
+        63
+      ],
+      "hsv": [
+        53,
+        28,
+        73
+      ],
+      "css_var": "--specialized-5",
+      "family": "bright_yellows",
+      "frequency": 623,
+      "total_family_pixels": 9737
+    },
+    {
+      "name": "specialized-6",
+      "descriptive_name": "butter-yellow",
+      "rgb": [
+        146,
+        142,
+        104
+      ],
+      "hex": "#928e68",
+      "hsl": [
+        54,
+        16,
+        49
+      ],
+      "hsv": [
+        54,
+        28,
+        57
+      ],
+      "css_var": "--specialized-6",
+      "family": "bright_yellows",
+      "frequency": 3064,
+      "total_family_pixels": 9737
+    },
+    {
+      "name": "specialized-7",
+      "descriptive_name": "cream-yellow",
+      "rgb": [
+        172,
+        170,
+        139
+      ],
+      "hex": "#acaa8b",
+      "hsl": [
+        56,
+        16,
+        60
+      ],
+      "hsv": [
+        56,
+        19,
+        67
+      ],
+      "css_var": "--specialized-7",
+      "family": "pale_yellows",
+      "frequency": 3611,
+      "total_family_pixels": 6457
+    },
+    {
+      "name": "specialized-8",
+      "descriptive_name": "cream-yellow",
+      "rgb": [
+        222,
+        218,
+        183
+      ],
+      "hex": "#dedab7",
+      "hsl": [
+        53,
+        37,
+        79
+      ],
+      "hsv": [
+        53,
+        17,
+        87
+      ],
+      "css_var": "--specialized-8",
+      "family": "pale_yellows",
+      "frequency": 807,
+      "total_family_pixels": 6457
+    },
+    {
+      "name": "specialized-9",
+      "descriptive_name": "cream-yellow",
+      "rgb": [
+        193,
+        190,
+        158
+      ],
+      "hex": "#c1be9e",
+      "hsl": [
+        54,
+        22,
+        68
+      ],
+      "hsv": [
+        54,
+        18,
+        75
+      ],
+      "css_var": "--specialized-9",
+      "family": "pale_yellows",
+      "frequency": 2039,
+      "total_family_pixels": 6457
+    },
+    {
+      "name": "specialized-10",
+      "descriptive_name": "terracotta",
+      "rgb": [
+        180,
+        166,
+        141
+      ],
+      "hex": "#b4a68d",
+      "hsl": [
+        38,
+        20,
+        62
+      ],
+      "hsv": [
+        38,
+        21,
+        70
+      ],
+      "css_var": "--specialized-10",
+      "family": "oranges",
+      "frequency": 6363,
+      "total_family_pixels": 27685
+    },
+    {
+      "name": "specialized-11",
+      "descriptive_name": "terracotta",
+      "rgb": [
+        146,
+        132,
+        108
+      ],
+      "hex": "#92846c",
+      "hsl": [
+        37,
+        14,
+        49
+      ],
+      "hsv": [
+        37,
+        26,
+        57
+      ],
+      "css_var": "--specialized-11",
+      "family": "oranges",
+      "frequency": 11891,
+      "total_family_pixels": 27685
+    },
+    {
+      "name": "specialized-12",
+      "descriptive_name": "terracotta",
+      "rgb": [
+        113,
+        100,
+        78
+      ],
+      "hex": "#71644e",
+      "hsl": [
+        37,
+        18,
+        37
+      ],
+      "hsv": [
+        37,
+        30,
+        44
+      ],
+      "css_var": "--specialized-12",
+      "family": "oranges",
+      "frequency": 9431,
+      "total_family_pixels": 27685
+    },
+    {
+      "name": "specialized-13",
+      "descriptive_name": "rose",
+      "rgb": [
+        140,
+        113,
+        101
+      ],
+      "hex": "#8c7165",
+      "hsl": [
+        18,
+        16,
+        47
+      ],
+      "hsv": [
+        18,
+        27,
+        54
+      ],
+      "css_var": "--specialized-13",
+      "family": "reds",
+      "frequency": 43,
+      "total_family_pixels": 43
+    },
+    {
+      "name": "specialized-14",
+      "descriptive_name": "purple-gray",
+      "rgb": [
+        169,
+        155,
+        174
+      ],
+      "hex": "#a99bae",
+      "hsl": [
+        284,
+        10,
+        64
+      ],
+      "hsv": [
+        284,
+        10,
+        68
+      ],
+      "css_var": "--specialized-14",
+      "family": "purples",
+      "frequency": 14,
+      "total_family_pixels": 14
+    }
+  ],
+  "families": {
+    "blues": [
+      "specialized-1",
+      "specialized-2",
+      "specialized-3"
+    ],
+    "bright_yellows": [
+      "specialized-4",
+      "specialized-5",
+      "specialized-6"
+    ],
+    "pale_yellows": [
+      "specialized-7",
+      "specialized-8",
+      "specialized-9"
+    ],
+    "oranges": [
+      "specialized-10",
+      "specialized-11",
+      "specialized-12"
+    ],
+    "reds": [
+      "specialized-13"
+    ],
+    "purples": [
+      "specialized-14"
+    ]
+  }
+}

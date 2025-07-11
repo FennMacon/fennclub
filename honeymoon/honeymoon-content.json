@@ -1,0 +1,684 @@
+{
+  "days": [
+    {
+      "day": 1,
+      "date": "Wed 6/18",
+      "location": "Chicago",
+      "activity": "Almost missed our flight but made it! Monks picked us up",
+      "journal": {
+        "title": "Wed 6/18",
+        "content": "almost missed our flight thanks to car that broke down in the tunnel. we had to decide to either\n-- go home + rebook our flights for the 12:40 the next day, or\n-- late check our bags, run through logan to get to our gate in time, and hope that our bags arrive in Chicago before we had to leave for Michigan\n- we chose the latter. we made it onto the plane and were shocked to find out when we landed that our bags made it on too! a honeymoon miracle!\n- Monks picked us up from the airport and we got our first feeling for how the truck would work"
+      },
+      "photos": {
+        "title": "Miracle Flight Day",
+        "description": "From near disaster to honeymoon miracle - our bags made it and our adventure officially began!",
+        "highlights": [
+          "Last-minute dash through Logan Airport",
+          "Relief upon landing in Chicago", 
+          "Reunion with our miraculously delivered luggage",
+          "Meeting Monks and the truck"
+        ]
+      },
+      "album": {
+        "title": "No album today"
+      },
+      "map": {
+        "title": "Boston Logan to Chicago",
+        "description": "A dramatic start - from car breakdown to flight miracle, landing safely in Chicago for pickup by Monks.",
+        "coordinates": "41.9742, -87.9073",
+        "highlights": [
+          "Logan Airport sprint",
+          "Chicago O'Hare arrival",
+          "Baggage claim miracle",
+          "Meeting point with Monks"
+        ]
+      }
+    },
+    {
+      "day": 2,
+      "date": "Thu 6/19", 
+      "location": "St. Ignace",
+      "activity": "Morning with Monks, drive north with cider stop and close call",
+      "journal": {
+        "title": "Thurs 6/19",
+        "content": "- nice morning with Monks\n- Fenn saw Nardwuar\n- stopped in Fennville for a cider (thanks to a tip from Monks)\n- Fenn narrowly avoided a dog that wandered onto the highway by our motel (scary! another thing that could've derailed the whole trip right at the start!)\n- the sun seems reluctant to set up here. darkness doesn't really roll in till ~ 10:15 PM"
+      },
+      "photos": {
+        "title": "Road Trip North", 
+        "description": "Morning with Monks, celebrity sightings, cider tasting, and dramatic northern Michigan landscapes.",
+        "highlights": [
+          "Quality time with Monks",
+          "Nardwuar sighting excitement",
+          "Fennville cider stop", 
+          "Long northern twilight"
+        ]
+      },
+      "album": {
+        "title": "Sufjan Stevens - Illinois"
+      },
+      "map": {
+        "title": "Journey to Northern Michigan",
+        "description": "From Chicago through Michigan, including Fennville cider stop and arrival in the Upper Peninsula.",
+        "coordinates": "45.8647, -84.7277",
+        "highlights": [
+          "Fennville cider stop",
+          "Highway dog encounter site", 
+          "Upper Peninsula border",
+          "St. Ignace arrival"
+        ]
+      }
+    },
+    {
+      "day": 3,
+      "date": "Fri 6/20",
+      "location": "Mackinac Island", 
+      "activity": "Ferry to island, fort exploration, fine dining at Grand Hotel",
+      "journal": {
+        "title": "Fri 6/20",
+        "content": "- took scenic ferry under Mackinaw Bridge to Mackinac Island\n- hiked up to fort, saw rifle display\n- both Fenn + I were struck by the East Coast feel of the island\n- if it weren't for the lack of salt in the air, you would think we were at the ocean\n- tried a pastie for the first time (yooper delicacy)\n- hiked around to arch rock, skull cave, sugar loaf, etc\n- had an amazing meal (thanks Noni!) at the Jockey Club at the Grand Hotel. The prime rib, short rib, and rye sour were so good!\n- the island was deceptively small - we kept over estimating how long our hikes would take\n- the decorations at the Grand Hotel were out of this world/of another time. the germanium rug was a stand out"
+      },
+      "photos": {
+        "title": "Mackinac Island Adventures",
+        "description": "Ferry rides, fort exploration, natural wonders, and Grand Hotel elegance.",
+        "highlights": [
+          "Scenic ferry under Mackinaw Bridge",
+          "Fort Mackinac rifle display", 
+          "Arch Rock and natural formations",
+          "Grand Hotel's stunning decorations"
+        ]
+      },
+      "album": {
+        "title": "Mariah Carey - The Emancipation of MiMi"
+      },
+      "map": {
+        "title": "Mackinac Island Exploration",
+        "description": "Car-free island paradise reached by scenic ferry, featuring historic fort and natural wonders.",
+        "coordinates": "45.8509, -84.6178",
+        "highlights": [
+          "Mackinaw Bridge ferry route",
+          "Fort Mackinac historic site",
+          "Arch Rock and Skull Cave",
+          "Grand Hotel and Jockey Club"
+        ]
+      }
+    },
+    {
+      "day": 4,
+      "date": "Sat 6/21",
+      "location": "Pictured Rocks & Marquette", 
+      "activity": "Heat wave begins, cruise substitutes for canceled kayaking, Marquette exploration",
+      "journal": {
+        "title": "Sat 6/21",
+        "content": "- start of the heat wave (~90º today)\n- thunderstorms + wind advisory in the morning led to the cancellation of our kayak tour. To cope with the disappointment I booked us on a cruise around the Pictured Rocks. Thye were beautiful but I imagine they're more magical via kayak\n- Presque Isle Park, watched the jumpers at Black Rock Cove (Fenn thinks this is where they took the album cover picture for the most recent Charmer album)\n- experienced downtown Marquette, very cute town, big thing in water\n- stopped at Au Train beach, very sandy + beautiful\n- Michigan is the most New England-coded state in the midwest"
+      },
+      "photos": {
+        "title": "Heat Wave Adventures",
+        "description": "Cruise around Pictured Rocks, Marquette town exploration, and beautiful Lake Superior beaches.",
+        "highlights": [
+          "Pictured Rocks cruise views",
+          "Black Rock Cove jumpers", 
+          "Charming downtown Marquette",
+          "Sandy Au Train beach"
+        ]
+      },
+      "album": {
+        "title": "Liquid Mike - Paul Bunyan's Slingshot"
+      },
+      "map": {
+        "title": "Upper Peninsula Heat Wave Tour",
+        "description": "From Pictured Rocks cruise to Marquette exploration, making the best of hot weather and plan changes.",
+        "coordinates": "46.4619, -86.4822",
+        "highlights": [
+          "Pictured Rocks cruise route",
+          "Presque Isle Park",
+          "Black Rock Cove (potential Charmer album cover site)",
+          "Au Train beach"
+        ]
+      }
+    },
+    {
+      "day": 5,
+      "date": "Sun 6/22",
+      "location": "Drive to SD", 
+      "activity": "Epic drive, Culver's, Porter's Sculpture Garden, thunderstorms",
+      "journal": {
+        "title": "Sun 6/22",
+        "content": "- \"Pancakes in Heaven Thrift Shop\"\n- Big drive (~14 hours) from Marquette to Kadoka, SD\n- My first trip to Culver's, two thumbs up\n- Stopped at Porter's Sculpture Garden outside Sioux Falls, SD. Larger than life metal sculptures done by 1 man over 40ish years. Many are accompanied by poems. Both Fenn + I were very moved, they cried and I sobbed.\n- went to a pizza place somewhere in SD + I got sauerkraut on a pizza. genius.\n- there was about 2 hours between the pizza place and Kadoka. There was a thunderstorm warning + we could see it off in the distance. Eventually we were engulfed by the storm. The rain came down so hard we couldn't see. We pulled over and waited it out. I was scared cause it reminded me of all those storm chaser videos + I was convinced we were gonna be sucked up by a tornado. It was really beautiful though\n-- we later learned that this area gets ~11 inches of rain per year"
+      },
+      "photos": {
+        "title": "Cross-Country Journey",
+        "description": "Epic 13-14 hour drive across the changing American landscape toward South Dakota.",
+        "highlights": [
+          "[Highway stretches]",
+          "[Changing landscapes]", 
+          "[Road trip selfies]",
+          "[Kadoka overnight stop]"
+        ]
+      },
+      "album": {
+        "title": "True Names compilation"
+      },
+      "map": {
+        "title": "Michigan to South Dakota",
+        "description": "Epic 13-14 hour cross-country drive with overnight stop in Kadoka, SD.",
+        "coordinates": "43.8366, -101.5062",
+        "highlights": [
+          "[Major highway routes]",
+          "[State border crossings]",
+          "[Rest stops]",
+          "[Kadoka overnight]"
+        ]
+      }
+    },
+    {
+      "day": 6,
+      "date": "Mon 6/23",
+      "location": "Badlands", 
+      "activity": "Badlands exploration, Wall Drug, tent camping",
+      "journal": {
+        "title": "Mon 6/23",
+        "content": "- Badlands National Park\n- Hiked the \"Door\" + \"Window\"\n- Hiked part of the Castle Trail with Medicine Loop. Intellectually, we knew there would be no shade - it's a prairie. But also, we hiked in the heat (~2 PM) with no hats. We're looking and feeling crispy.\n- We're able to climb on anything here. It feels like it shouldn't be allowed but everyone is doing it + there's no signs saying not to.\n- Finally made it to Wall Drug after 100s of miles of billboards building anticipation\n-- food was mid, stores were fun but overwhelming\n-- we got free donuts + coffee for being honeymooners\n- went to the overlooks for sunset. stunning!\n- we also saw big horned sheep :)\n- a woman almost fell to her death taking a photo :O\n- first night in tent, drank wine + stargazed"
+      },
+      "photos": {
+        "title": "Badlands Majesty",
+        "description": "Exploring the dramatic and otherworldly landscape of Badlands National Park.",
+        "highlights": [
+          "[Dramatic rock formations]",
+          "[Camping setup]", 
+          "[Hiking adventures]",
+          "[Stark landscape beauty]"
+        ]
+      },
+      "album": {
+        "title": "Bruce Springsteen - Darkness on the Edge of Town (cuz of Badlands, duh)"
+      },
+      "map": {
+        "title": "Badlands National Park",
+        "description": "Exploring the dramatic rock formations and camping in South Dakota's Badlands.",
+        "coordinates": "43.8554, -102.3397",
+        "highlights": [
+          "[Visitor center]",
+          "[Best viewpoints]",
+          "[Camping area]",
+          "[Hiking trails]"
+        ]
+      }
+    },
+    {
+      "day": 7,
+      "date": "Tue 6/24",
+      "location": "Badlands", 
+      "activity": "Saddle Pass hike, Yellow Mound, Airbnb near Devil's Tower",
+      "journal": {
+        "title": "Tues 6/24",
+        "content": "- did Saddle Pass to Castle Trail -> Fossil Exhibit\n-- weird lack of benches\n-- _amazing_ rock field with incredible colors of quartz + petrified wood, I didn't take any\n-- Saddle Pass was SO steep, I looked so stupid coming down 2 inches at a time. tons of loose rocks, you could slip and just keep going\n- climbed around Yellow Mound (yellow from the ocean creatures that were there ~600 million years ago)\n- ate good BBQ in Wall\n- decided to change plans + get an airbnb for the night a couple hours west due to thunderstorms in Badlands\n-- Deadwood Pit Stop - Hilarious tourist trap\n--- Bullock hardware store turns into a hotel? is this a spoiler??\n- stayed in an airbnb near Devil's Tower. Dawn made blueberry banana bread\n-- neighbor gave directions for a scenic from from Glacier"
+      },
+      "photos": {
+        "title": "Badlands to Devil's Tower",
+        "description": "Final Badlands exploration and the journey toward Wyoming's iconic Devil's Tower.",
+        "highlights": [
+          "[Morning Badlands views]",
+          "[Breaking camp]", 
+          "[Journey to Wyoming]",
+          "[First glimpse of Devil's Tower]"
+        ]
+      },
+      "album": {
+        "title": "The Beatles - Sgt Pepper's Lonely Hearts Club Band"
+      },
+      "map": {
+        "title": "Badlands to Devil's Tower",
+        "description": "Final Badlands exploration and drive to Wyoming's Devil's Tower National Monument.",
+        "coordinates": "44.5902, -104.7146",
+        "highlights": [
+          "[Badlands exit route]",
+          "[South Dakota to Wyoming]",
+          "[Black Hills region]",
+          "[Devil's Tower approach]"
+        ]
+      }
+    },
+    {
+      "day": 8,
+      "date": "Wed 6/25",
+      "location": "Devil's Tower", 
+      "activity": "Devil's Tower hike, long drive to Glacier Park Lodge",
+      "journal": {
+        "title": "Wed 6/25",
+        "content": "- arrived at Devil's Tower. Did a short hike around the base. Amazing geology + beautiful surrounding area\n- long drive to Glacier National Park. Basically did a long diagonal across Montana\n- the \"Big Sky\" nickname is well earned\n- I drove for _5_ hours! Yuck.\n- We found probably the only McDonalds desert in America\n- Remembered at 6:52 to get Going to the Sun Road tickets at 7 - Fenn got them since I was driving\n- arrived at Glacier Park Lodge. Front desk was a bit chaotic + wrong. Told us the restaurant was open until 10 PM but they were closing up when we got there at 9. The drinks we got at the bar were good - lots of huckleberry drinks. We got food to go + ate in the room."
+      },
+      "photos": {
+        "title": "Devil's Tower and Journey North",
+        "description": "Exploring the iconic Devil's Tower and beginning the long drive to Glacier National Park.",
+        "highlights": [
+          "[Devil's Tower views]",
+          "[Monument exploration]", 
+          "[Prairie dog towns]",
+          "[Long drive north]"
+        ]
+      },
+      "album": {
+        "title": "Explosions in the Sky - The Earth is Not a Cold Dead Place"
+      },
+      "map": {
+        "title": "Devil's Tower to Glacier",
+        "description": "Visiting Devil's Tower National Monument and epic 12-hour drive to Glacier National Park.",
+        "coordinates": "48.7596, -113.7870",
+        "highlights": [
+          "[Devil's Tower trails]",
+          "[Wyoming to Montana route]",
+          "[Major highway segments]",
+          "[Glacier park approach]"
+        ]
+      }
+    },
+    {
+      "day": 9,
+      "date": "Thu 6/26",
+      "location": "Glacier National Park", 
+      "activity": "Park exploration & camping",
+      "journal": {
+        "title": "Thurs 6/26",
+        "content": "- Started Going-to-the-Sun Road at ~ 9:30 AM\n- Couldn't get parking for Avalanche Lake Trail, continued on up mountains. Pulled over at every turn out available\n- Got to Hidden Lake Overlook Trailhead. Much of the trail was covered in snow so it was very slow + slippery going up. We got to the lake + it was beautiful. On the way down it was very tricky cause if you slipped on the snow, you basically kept sliding down the mountain. Everyone was scared + going super slow, except Fenn, who was using their ski training to essentially ski down the mountain. I've never seen them so giddy.\n- had diet coke + granola bars at the most gorgous overlook on the planet\n- hiked through a dead forest (fire) to Benny Falls + Sun Point. There was a wedding happening at Sun Point! Finished Going-to-the-Sun Road @ 7:30 PM. Incredible day\n- Trevor at GPL gave horrible advice: speed throu GTTS road so we can play mini golf in West Glacier\n- kept running into 'Safety Mom' + her crew\n- had a fun night hanging by the lake and camping"
+      },
+      "photos": {
+        "title": "Glacier National Park Arrival",
+        "description": "First day exploring the stunning alpine wilderness of Glacier National Park.",
+        "highlights": [
+          "[Mountain vistas]",
+          "[Alpine lakes]", 
+          "[Camping in the wilderness]",
+          "[First glacier sightings]"
+        ]
+      },
+      "album": {
+        "title": "Sigur Ros - Untitled"
+      },
+      "map": {
+        "title": "Glacier National Park Entry",
+        "description": "Arriving and setting up camp in the spectacular alpine wilderness of Glacier National Park.",
+        "coordinates": "48.7596, -113.7870",
+        "highlights": [
+          "[Park entrance]",
+          "[Camping areas]",
+          "[Visitor centers]",
+          "[Initial trails]"
+        ]
+      }
+    },
+    {
+      "day": 10,
+      "date": "Fri 6/27",
+      "location": "Glacier National Park", 
+      "activity": "More park adventures & camping",
+      "journal": {
+        "title": "Fri 6/27",
+        "content": "- got up early so we could get to Going-to-the-Sun road without a ticket - made it just in time (6:50 AM)\n- got parking at Avalanche Lake Trail (last spot!)\n- cool + drizzly weather, great for hiking. Lake was beautiful\n- Fenn got a new outfit at Logan Pass. 'Explorer Fenn' has been unlocked\n- tried to get to Many Glacier but construction/road closure made it impossible. still a pretty drive\n- rented a kayak on Lake MacDonald, great view of the mountains\n- got back to the camping site early + chilled / read books for a few hours + then went to bed early. After going non-stop for days, it was nice to rest"
+      },
+      "photos": {
+        "title": "Glacier Adventures Continue",
+        "description": "Second day of exploration in Glacier's pristine alpine wilderness and continued camping.",
+        "highlights": [
+          "[Going-to-the-Sun Road]",
+          "[Alpine meadows]", 
+          "[Wildlife encounters]",
+          "[Mountain camping life]"
+        ]
+      },
+      "album": {
+        "title": "Turnstile - Never Enough"
+      },
+      "map": {
+        "title": "Glacier National Park Exploration",
+        "description": "Deep exploration of Glacier's trails, Going-to-the-Sun Road, and alpine wilderness.",
+        "coordinates": "48.7596, -113.7870",
+        "highlights": [
+          "[Going-to-the-Sun Road]",
+          "[Major hiking trails]",
+          "[Alpine lakes and meadows]",
+          "[Wildlife viewing areas]"
+        ]
+      }
+    },
+    {
+      "day": 11,
+      "date": "Sat 6/28",
+      "location": "Yellowstone", 
+      "activity": "Drive to Yellowstone & Old Faithful Inn",
+      "journal": {
+        "title": "Sat 6/28",
+        "content": "- packed up early + left Glacier via the scenic route (past Seely Lake) that had been recommended to us\n- drove to Garnet Ghost Town and learned about the gold rush. This looks more like Deadwood™ than Deadwood, SD did.\n- tried to take a shortcut to I-90, got stuck on a very bumpy dirt road on the side of a clif. At one point, we had to back up and let another car through. I almost puked. We asked the ladies in the car if we were close to I-90 and they laughed in our faces. We had miles left to go. In hindsight, it was very funny and those ladies had every right to laugh at us. Fenn handled it well. If left to my own devices I'd still be stuck there\n- vegan lunch in Missoula, thanks to James for the rec!\n- Drove to Old Faithful Inn in Yellowstone. So amazing to see the geysers on the way in. We arrived just in time to see Old Faithful do her thing"
+      },
+      "photos": {
+        "title": "Yellowstone Arrival",
+        "description": "Journey from Glacier to Yellowstone and checking into the historic Old Faithful Inn.",
+        "highlights": [
+          "[Drive to Yellowstone]",
+          "[Old Faithful Inn exterior]", 
+          "[Historic lodge interior]",
+          "[First Yellowstone sights]"
+        ]
+      },
+      "album": {
+        "title": "Carly Rae Jepsen - E•MO•TION"
+      },
+      "map": {
+        "title": "Glacier to Yellowstone",
+        "description": "Drive from Glacier National Park to Yellowstone and check-in at Old Faithful Inn.",
+        "coordinates": "44.4280, -110.8281",
+        "highlights": [
+          "[Glacier to Yellowstone route]",
+          "[Park entrance]",
+          "[Old Faithful Inn location]",
+          "[Initial park roads]"
+        ]
+      }
+    },
+    {
+      "day": 12,
+      "date": "Sun 6/29",
+      "location": "Yellowstone", 
+      "activity": "Park exploration (staying at inn)",
+      "journal": {
+        "title": "Sun 6/29",
+        "content": "- started day with Mammoth Hot Springs\n- drove to Lamar Valley (one of my favorite stops). In the east corner of the park, much less foot traffic than other places. Huge herds of bison, other wildlife. I loved this place, it felt more wild than anywhere I've ever been, like a reminder that we were wild before + can be again. But also we were told that some guy was eaten by a bear here a week before, so...\n- Then we went to grab hot dog + chili + a 'huckleberry float'. It was so good.\n- Also saw Artist Point at 'The Grand Canyon of Yellowstone'. Beautiful but crowded. Preferred the earlier turnout with amazing views + less people.\n- Had dinner + drinks at Old Faithful Inn, got to watch Old Faithful blow again from the balcony bar. Tried to get to 5th Floor treefort area but was closed after an earthquake in the 1950s. Listened to violin player instead."
+      },
+      "photos": {
+        "title": "Yellowstone Exploration",
+        "description": "Full day exploring Yellowstone's geysers, hot springs, and wildlife while staying at Old Faithful Inn.",
+        "highlights": [
+          "[Old Faithful eruptions]",
+          "[Colorful hot springs]", 
+          "[Wildlife sightings]",
+          "[Historic inn moments]"
+        ]
+      },
+      "album": {
+        "title": "Fenn's Top Apple Music Streams 2024 (lots of Hotline TNT, Smog, Charli XCX, MJ Lenderman)"
+      },
+      "map": {
+        "title": "Yellowstone National Park",
+        "description": "Full exploration of Yellowstone's geysers, hot springs, and wildlife from Old Faithful Inn base.",
+        "coordinates": "44.4280, -110.8281",
+        "highlights": [
+          "[Old Faithful area]",
+          "[Grand Prismatic Spring]",
+          "[Wildlife viewing spots]",
+          "[Major geyser basins]"
+        ]
+      }
+    },
+    {
+      "day": 13,
+      "date": "Mon 6/30",
+      "location": "Grand Teton", 
+      "activity": "Morning Yellowstone, drive to Tetons",
+      "journal": {
+        "title": "Mon 6/30",
+        "content": "- I got up early to go to the geysers before the crowds (6:30) I knew Grand Prismatic Spring would be packed later. It was so amazing to experience in solitude. The plumes of steam from the geysers was massive.\n- got breakfast at Old Faithful Inn. Walked through the geyser basin at the hotel. Saw Old Faithful blow for a third time.\n- went back to the geysers from this morning with Fenn. Grand Prismatic was _packed_. Fenn told some guy that it was illegal to be off the boardwalk (there were signs _everywhere_). I was proud of my little Mother Earth cop.\n- Went to West Thumb geysers. _So_ pretty and way less crowded\n- Drove into Grand Tetons. Gorgeous drive. Got to our campground and was told that there was a bear in the camp 10 days ago and he's been seen pacing outside the campsite. also there were 3 wolves on the other side of camp. also our site was literally too small for a tent. We looked up local hotels, saw it would cost $700 for 2 nights (lol, Jackson Hole), and decided to get a can of bear spray instead"
+      },
+      "photos": {
+        "title": "Yellowstone to Tetons",
+        "description": "Final Yellowstone morning and the scenic drive to the dramatic peaks of Grand Teton National Park.",
+        "highlights": [
+          "[Final Yellowstone moments]",
+          "[Leaving Old Faithful Inn]", 
+          "[First Teton Range views]",
+          "[Dramatic mountain peaks]"
+        ]
+      },
+      "album": {
+        "title": "Kurt Vile - Waking on a Pretty Daze"
+      },
+      "map": {
+        "title": "Yellowstone to Grand Teton",
+        "description": "Final Yellowstone exploration and drive to Grand Teton National Park's dramatic mountain peaks.",
+        "coordinates": "43.7904, -110.6818",
+        "highlights": [
+          "[Yellowstone exit route]",
+          "[John D. Rockefeller Jr. Memorial Parkway]",
+          "[Grand Teton park entrance]",
+          "[First Teton viewpoints]"
+        ]
+      }
+    },
+    {
+      "day": 14,
+      "date": "Tue 7/1",
+      "location": "Grand Teton", 
+      "activity": "River rafting & wildflower photos!",
+      "journal": {
+        "title": "Tues 7/1",
+        "content": "- hiked to Taggert Lake. Way harder than Alltrails claimed, but the view of mountains + lake were worth it\n- did scenic drive\n- easy hike at String + Leigh Lake. Pretty but didn't make it to the end. we passed a man on the trail and he said \"hello\" and kept walking. The woman he was with was a few paces behind and when we crossed paths she warned us there was a bear up ahead, I guess the man would have just let us get eaten.\n- got lunch/dinner in Jackson Hole\n- Did scenic float on Snake River at sunset. It was incredibly fun + beautiful. Fenn saw the first moose! Our guide said Fenn had a \"good eye!\" (Fenn asked that I include this detail). It was a magical way to end our Teton Day"
+      },
+      "photos": {
+        "title": "Tetons River and Wildflowers",
+        "description": "River rafting adventure and wildflower photography in the spectacular Grand Teton National Park.",
+        "highlights": [
+          "[Snake River rafting]",
+          "[Teton Range backdrop]", 
+          "[Wildflower meadows]",
+          "[Adventure together moments]"
+        ]
+      },
+      "album": {
+        "title": "Black Country, New Road - For the First Time"
+      },
+      "map": {
+        "title": "Grand Teton Adventures",
+        "description": "River rafting on the Snake River and wildflower photography in Grand Teton National Park.",
+        "coordinates": "43.7904, -110.6818",
+        "highlights": [
+          "[Snake River launch points]",
+          "[Wildflower meadow locations]",
+          "[Best Teton viewpoints]",
+          "[Photography spots]"
+        ]
+      }
+    },
+    {
+      "day": 15,
+      "date": "Wed 7/2",
+      "location": "Drive to Moab", 
+      "activity": "Drive to Moab via Dinosaur Monument",
+      "journal": {
+        "title": "Wed 7/2",
+        "content": "- woke up early. relieved to have had two uneventful nights in the campground sans bear or wolf attacks\n- drove south to Flaming Gorge, UT, stopped for lunch + scenic views\n- drove to Dinosaur National Monument\n-- first stop in Jensen to go to awesome Fossil Museum with 2 story fossil wall. Did short but hot walk through fossil quarry -> super fun\n-- drove to Colorado side (Dinosaur, CO) to drive scenic road w/ overlooks\n- I drove the rest of the way to Moab, including up + over a mountain. The drive was very strange + beautiful through western CO\n- Fenn thinks that Forrest Fenn hid his treasure somewhere near here"
+      },
+      "photos": {
+        "title": "Tetons to Desert",
+        "description": "Epic drive from Grand Teton to Moab via Dinosaur National Monument, transitioning from mountains to desert.",
+        "highlights": [
+          "[Leaving the Tetons]",
+          "[Dinosaur National Monument]", 
+          "[Changing landscapes]",
+          "[Approaching Utah desert]"
+        ]
+      },
+      "album": {
+        "title": "The Best of Sam Cooke"
+      },
+      "map": {
+        "title": "Tetons to Moab",
+        "description": "Long drive from Grand Teton to Moab, Utah, with stop at Dinosaur National Monument.",
+        "coordinates": "38.5733, -109.5498",
+        "highlights": [
+          "[Teton departure route]",
+          "[Dinosaur National Monument]",
+          "[Wyoming to Utah crossing]",
+          "[Moab approach]"
+        ]
+      }
+    },
+    {
+      "day": 16,
+      "date": "Thu 7/3",
+      "location": "Arches", 
+      "activity": "Lucky weather at Arches, Lin Ottinger's Rock Shop",
+      "journal": {
+        "title": "Thurs 7/3",
+        "content": "- First day in Arches - had timed entry ticket for 8am. Got amazingly lucky with the weather, typically in July it is 100º + sunny, today was ~70º and overcast. We even had a little rain! Since it is supposed to heat up again tomorrow, we moved all our hikes today. we did:\n-- Delicate Arch - so fun, so gorgeous, lived up to the hype. Fenn found it easier than I did, my lungs don't like this environment\n-- Landscape Arch in Devil's Garden - so fun to walk through all the slabs\n-- Sand Arch & Broken Arch - a little crowded but still fun\n-- Park Avenue - started to heat up by this time but this hike was stunning\n- After Arches, ate a big meal at Moab brewing, chilled that night\n- Wen to Lin Ottinger's Rock Shop - most magical store in the world!"
+      },
+      "photos": {
+        "title": "Arches National Park Arrival",
+        "description": "First day exploring the incredible red rock arches and setting up camp in the Utah desert.",
+        "highlights": [
+          "[Famous arch formations]",
+          "[Red rock landscapes]", 
+          "[Desert camping setup]",
+          "[Utah desert beauty]"
+        ]
+      },
+      "album": {
+        "title": "Gil Scott-Heron & Jamie XX - We're New Here"
+      },
+      "map": {
+        "title": "Arches National Park",
+        "description": "Arriving and camping at Arches National Park with its incredible red rock formations.",
+        "coordinates": "38.7331, -109.5925",
+        "highlights": [
+          "[Park entrance and visitor center]",
+          "[Fiery Furnace area]",
+          "[Delicate Arch trail]",
+          "[Camping areas]"
+        ]
+      }
+    },
+    {
+      "day": 17,
+      "date": "Fri 7/4",
+      "location": "Arches", 
+      "activity": "Double Arches, Canyonlands sunset, Moab fireworks",
+      "journal": {
+        "title": "Fri 7/4",
+        "content": "- Spent the morning in Arches doing all the overlooks + short hikes we didn't do yesterday. Our favorite was the Double Arches.\n- Got lunch at the court of food trucks\n- Chilled at the campsite during during the hottest part of the day (>90º)\n- That night we did a bunch of overlooks in Canyonland National Park, it was golden hour then sunset. We were in the 'Island in the Sky' part of the park. Much less crowded than Arches today, then chased the sunset for awhile. The canyons turned an incredible purple color.\n- Then we got some late night Mexican food back in Moab. People were setting off fireworks all over town for the 4th"
+      },
+      "photos": {
+        "title": "July 4th Desert Celebration",
+        "description": "Celebrating Independence Day exploring Arches National Park and camping in the red rock desert.",
+        "highlights": [
+          "[July 4th in the desert]",
+          "[Arch hiking adventures]", 
+          "[Independence Day moments]",
+          "[Desert camping celebration]"
+        ]
+      },
+      "album": {
+        "title": "The Smashing Pumpkins - Mellon Collie and the Infinite Sadness"
+      },
+      "map": {
+        "title": "July 4th Arches Exploration",
+        "description": "Independence Day exploration of Arches National Park's most famous formations.",
+        "coordinates": "38.7331, -109.5925",
+        "highlights": [
+          "[Delicate Arch (Utah's symbol)]",
+          "[Windows Section]",
+          "[Courthouse Towers]",
+          "[July 4th viewpoints]"
+        ]
+      }
+    },
+    {
+      "day": 18,
+      "date": "Sat 7/5",
+      "location": "Salt Flats", 
+      "activity": "Salt Flats, In N Out, Hyatt luxury, Handle restaurant with Sam",
+      "journal": {
+        "title": "Sat 7/5",
+        "content": "- Drove from Moab to the Bonneville Salt Flats. Not much to do out there but the scenery was beautiful + strange + it was fun to take photos out there.\n- We both agreed that the 5 hours felt longer than the 8, 10, 12 hour driving days we have been doing. Must mean its time for this road trip to come to an end.\n- Surprised to find In N Out here, grabbed some animal style burgers + fries while on the road\n- checked into the Hyatt in SLC. After camping + random airbnbs, it felt so luxurious\n- notable weird encounter: the aggro man in the elevator who somehow grabbed his wife's ass at us?\n- Drove to Park City to eat at 'Handle', Fenn's friend Sam (aka Taters) from high school is the head chef there. The food + service was _amazing_. We had personalized menus with our names on them. Sam brought out _5_ free apps for us (sour cream + onion dip with caviar, scallops in a lime curry sauce, soft shell crab, duck confit, and bok choy with pork belly)! It was all incredible and we ate til we almost exploded."
+      },
+      "photos": {
+        "title": "Bonneville Salt Flats",
+        "description": "Exploring the otherworldly white expanse of the Bonneville Salt Flats and drive to Salt Lake City.",
+        "highlights": [
+          "[Endless white landscape]",
+          "[Salt flat exploration]", 
+          "[Surreal desert views]",
+          "[Journey to Salt Lake City]"
+        ]
+      },
+      "album": {
+        "title": "Ian Whitcomb's Mod, Mod Music Hall!"
+      },
+      "map": {
+        "title": "Bonneville Salt Flats",
+        "description": "Exploring the Bonneville Salt Flats and drive to Salt Lake City for final Utah night.",
+        "coordinates": "40.7608, -111.8910",
+        "highlights": [
+          "[Bonneville Salt Flats location]",
+          "[Best viewing areas]",
+          "[Salt Lake City approach]",
+          "[Utah's western desert]"
+        ]
+      }
+    },
+    {
+      "day": 19,
+      "date": "Sun 7/6",
+      "location": "Salt Lake City", 
+      "activity": "Laundry, couples massage, Lake Effect, Temple Square, Grizzlies players",
+      "journal": {
+        "title": "Sun 7/6",
+        "content": "- Our final day! Mixed feelings cause we're so tired and we miss home, but also have had an unbelievable journey.\n- Today we got up, did a bunch of laundry at the laundromat, took Monks' car to the car wash + cleaned + vacuumed the inside. Then we did a couple's massage to treat ourselves. We both had a lot of knots to work out after sleeping on the ground, excercising, and driving for 10 hours at a a time.\n- Dinner was at the bar that Sam recommended, 'Lake Effect'. The place was built in 1910 and they have a crazy cocktail menu + floor to ceiling shelves of booze with a Beauty and the Beast style ladder\n- Went to Temple Square. The Mormon Temple was covered in scaffolding but we got to see the admin building, Relief Society, and the controversial City Creek Mall that houses Desert Books, among other things\n- rode in the elevator with 2 players from the NBA team the Memphis Grizzlies! they were very polite!"
+      },
+      "photos": {
+        "title": "Salt Lake City Farewell",
+        "description": "Final day exploring Salt Lake City and preparing for the journey home after 20 incredible days.",
+        "highlights": [
+          "[Salt Lake City sights]",
+          "[Final adventure photos]", 
+          "[Packing and prep]",
+          "[Reflection moments]"
+        ]
+      },
+      "album": {
+        "title": "Whatever the calming music at the spa was"
+      },
+      "map": {
+        "title": "Salt Lake City",
+        "description": "Final day exploring Salt Lake City and preparing for departure after the 20-day adventure.",
+        "coordinates": "40.7608, -111.8910",
+        "highlights": [
+          "[Temple Square]",
+          "[Downtown Salt Lake City]",
+          "[Airport area]",
+          "[Final Utah moments]"
+        ]
+      }
+    },
+    {
+      "day": 20,
+      "date": "Mon 7/7",
+      "location": "Home", 
+      "activity": "Monks key handoff, flying home after 20 amazing days",
+      "journal": {
+        "title": "Mon 7/7",
+        "content": "- Coming Home! Had breakfast at the hotel, packed all our stuff (4 bags each!!) + headed to the airport\n- The key handoff to Monks went very smoothly. Amazingly nice of him to let us borrow the truck AND fly to SLC to drive it back to Chicago"
+      },
+      "photos": {
+        "title": "Journey Complete",
+        "description": "Flying home after completing our incredible 20-day cross-country honeymoon adventure.",
+        "highlights": [
+          "[Airport departure]",
+          "[Final travel photos]", 
+          "[Coming home moments]",
+          "[Journey completion celebration]"
+        ]
+      },
+      "album": {
+        "title": "Diarrhea Planet - I'm Rich Beyond Your Wildest Dreams"
+      },
+      "map": {
+        "title": "Salt Lake City to Home",
+        "description": "Final flight home, completing the incredible 20-day cross-country honeymoon journey.",
+        "coordinates": "[Your home coordinates]",
+        "highlights": [
+          "[Salt Lake City Airport]",
+          "[Flight path home]",
+          "[Journey completion]",
+          "[Home arrival]"
+        ]
+      }
+    }
+  ]
+} 

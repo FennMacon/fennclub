@@ -1,0 +1,323 @@
+{
+  "source_image": "IMG_0965.heic",
+  "description": "Enhanced Wildflowers in Grand Tetons - Diverse Color Palette",
+  "extraction_method": "k-means clustering for color diversity",
+  "total_colors": 16,
+  "colors": [
+    {
+      "name": "wildflower-1",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        147,
+        142,
+        116
+      ],
+      "hex": "#938e74",
+      "hsl": [
+        50,
+        12,
+        51
+      ],
+      "css_var": "--wildflower-1",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-2",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        124,
+        123,
+        97
+      ],
+      "hex": "#7c7b61",
+      "hsl": [
+        57,
+        12,
+        43
+      ],
+      "css_var": "--wildflower-2",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-3",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        116,
+        113,
+        86
+      ],
+      "hex": "#747156",
+      "hsl": [
+        54,
+        14,
+        39
+      ],
+      "css_var": "--wildflower-3",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-4",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        133,
+        135,
+        110
+      ],
+      "hex": "#85876e",
+      "hsl": [
+        64,
+        10,
+        48
+      ],
+      "css_var": "--wildflower-4",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-5",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        157,
+        153,
+        128
+      ],
+      "hex": "#9d9980",
+      "hsl": [
+        51,
+        12,
+        55
+      ],
+      "css_var": "--wildflower-5",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-6",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        104,
+        102,
+        78
+      ],
+      "hex": "#68664e",
+      "hsl": [
+        55,
+        14,
+        35
+      ],
+      "css_var": "--wildflower-6",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-7",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        92,
+        91,
+        67
+      ],
+      "hex": "#5c5b43",
+      "hsl": [
+        57,
+        15,
+        31
+      ],
+      "css_var": "--wildflower-7",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-8",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        170,
+        164,
+        140
+      ],
+      "hex": "#aaa48c",
+      "hsl": [
+        48,
+        14,
+        60
+      ],
+      "css_var": "--wildflower-8",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-9",
+      "descriptive_name": "dark-orange",
+      "rgb": [
+        139,
+        129,
+        100
+      ],
+      "hex": "#8b8164",
+      "hsl": [
+        44,
+        16,
+        46
+      ],
+      "css_var": "--wildflower-9",
+      "category": "orange"
+    },
+    {
+      "name": "wildflower-10",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        76,
+        77,
+        59
+      ],
+      "hex": "#4c4d3b",
+      "hsl": [
+        63,
+        13,
+        26
+      ],
+      "css_var": "--wildflower-10",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-11",
+      "descriptive_name": "dark-other",
+      "rgb": [
+        57,
+        60,
+        49
+      ],
+      "hex": "#393c31",
+      "hsl": [
+        76,
+        10,
+        21
+      ],
+      "css_var": "--wildflower-11",
+      "category": "other"
+    },
+    {
+      "name": "wildflower-12",
+      "descriptive_name": "muted-brown",
+      "rgb": [
+        10,
+        22,
+        28
+      ],
+      "hex": "#0a161c",
+      "hsl": [
+        199,
+        47,
+        7
+      ],
+      "css_var": "--wildflower-12",
+      "category": "brown"
+    },
+    {
+      "name": "wildflower-13",
+      "descriptive_name": "dark-dark-gray",
+      "rgb": [
+        34,
+        42,
+        39
+      ],
+      "hex": "#222a27",
+      "hsl": [
+        157,
+        10,
+        14
+      ],
+      "css_var": "--wildflower-13",
+      "category": "dark-gray"
+    },
+    {
+      "name": "wildflower-14",
+      "descriptive_name": "dark-yellow",
+      "rgb": [
+        186,
+        180,
+        156
+      ],
+      "hex": "#bab49c",
+      "hsl": [
+        48,
+        17,
+        67
+      ],
+      "css_var": "--wildflower-14",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-15",
+      "descriptive_name": "vibrant-yellow",
+      "rgb": [
+        209,
+        203,
+        176
+      ],
+      "hex": "#d1cbb0",
+      "hsl": [
+        49,
+        26,
+        75
+      ],
+      "css_var": "--wildflower-15",
+      "category": "yellow"
+    },
+    {
+      "name": "wildflower-16",
+      "descriptive_name": "vibrant-other",
+      "rgb": [
+        199,
+        229,
+        245
+      ],
+      "hex": "#c7e5f5",
+      "hsl": [
+        200,
+        69,
+        87
+      ],
+      "css_var": "--wildflower-16",
+      "category": "other"
+    }
+  ],
+  "categories": {
+    "oranges": {
+      "count": 1,
+      "colors": [
+        "wildflower-9"
+      ]
+    },
+    "yellows": {
+      "count": 11,
+      "colors": [
+        "wildflower-1",
+        "wildflower-2",
+        "wildflower-3",
+        "wildflower-4",
+        "wildflower-5",
+        "wildflower-6",
+        "wildflower-7",
+        "wildflower-8",
+        "wildflower-10",
+        "wildflower-14",
+        "wildflower-15"
+      ]
+    },
+    "browns": {
+      "count": 1,
+      "colors": [
+        "wildflower-12"
+      ]
+    },
+    "grays": {
+      "count": 1,
+      "colors": [
+        "wildflower-13"
+      ]
+    },
+    "others": {
+      "count": 2,
+      "colors": [
+        "wildflower-11",
+        "wildflower-16"
+      ]
+    }
+  }
+}
