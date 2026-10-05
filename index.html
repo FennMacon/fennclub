@@ -376,6 +376,29 @@
       const items=sections[activeSection].links,index=items.findIndex(item=>item.id===activeLink),step=event.key==='ArrowRight'?1:-1;
       event.preventDefault();navigate(activeSection,items[(index+step+items.length)%items.length].id);main.focus({preventScroll:true});
     });
+    // Horizontal touch gestures follow the same item order as the arrow keys.
+    let swipe=null;
+    const swipeControls='a,button,input,textarea,select,iframe,video,audio,[contenteditable]:not([contenteditable="false"]),[role="slider"],[role="combobox"]';
+    main.addEventListener('pointerdown',event=>{
+      if(event.pointerType!=='touch')return;
+      swipe=null;
+      if(!event.isPrimary||activeSection==='home'||event.target.closest(swipeControls)||event.clientX<20||event.clientX>innerWidth-20)return;
+      swipe={pointerId:event.pointerId,x:event.clientX,y:event.clientY,time:event.timeStamp,section:activeSection,item:activeLink};
+    });
+    main.addEventListener('pointermove',event=>{
+      if(!swipe||swipe.pointerId!==event.pointerId)return;
+      const dx=Math.abs(event.clientX-swipe.x),dy=Math.abs(event.clientY-swipe.y);
+      if(dy>12&&dy>dx)swipe=null;
+    });
+    main.addEventListener('pointercancel',()=>{swipe=null});
+    main.addEventListener('pointerup',event=>{
+      if(!swipe||swipe.pointerId!==event.pointerId)return;
+      const start=swipe;swipe=null;
+      const dx=event.clientX-start.x,dy=event.clientY-start.y;
+      if(activeSection!==start.section||activeLink!==start.item||event.timeStamp-start.time>800||Math.abs(dx)<56||Math.abs(dx)<Math.abs(dy)*1.5||window.getSelection()?.toString())return;
+      const items=sections[activeSection].links,index=items.findIndex(item=>item.id===activeLink),step=dx<0?1:-1;
+      navigate(activeSection,items[(index+step+items.length)%items.length].id);
+    });
     window.addEventListener('popstate',readRoute);window.addEventListener('hashchange',readRoute);readRoute();
   </script>
 </body></html>
