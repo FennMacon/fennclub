@@ -3,18 +3,29 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Fenn Macon — Personal site</title>
+  <title>Fenn Macon — Music, art, web &amp; systems</title>
+  <meta name="description" content="Fenn Macon: musician, digital artist, and systems engineer in Jamaica Plain, Massachusetts. Explore music, artwork, web projects, and professional experience.">
+  <meta property="og:title" content="Fenn Macon">
+  <meta property="og:description" content="Music, digital art, web projects, and systems engineering.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fenn.club/">
+  <meta property="og:image" content="https://fenn.club/android-chrome-512x512.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="site-shell">
     <nav class="icon-rail" aria-label="Primary navigation"><button class="wordmark" data-section="home" aria-label="Fenn Macon home"><span class="favicon-face" aria-hidden="true">FM</span></button><div class="rail-links" id="rail-links"></div><div class="rail-rule"></div><a class="rail-contact" href="mailto:fennmacon@gmail.com" aria-label="Email Fenn"><i class="fa-regular fa-envelope"></i></a></nav>
     <aside class="context-sidebar"><div class="context-heading"><span class="section-kicker" id="section-kicker">Welcome</span><h1 id="section-title">Home</h1></div><div class="context-links" id="context-links"></div><div class="sidebar-note" id="sidebar-note">Jamaica Plain, Massachusetts</div></aside>
-    <main class="main-content" id="main-content"></main>
+    <main class="main-content" id="main-content" tabindex="-1"></main>
   </div>
+  <noscript><p class="noscript-note">Enable JavaScript to browse this portfolio, or <a href="mailto:fennmacon@gmail.com">contact Fenn by email</a>.</p></noscript>
   <script>
     const music=[
       {title:'Opposable',description:'Drums',url:'https://opposablelovesyou.bandcamp.com/',kind:'bandcamp',bandcampId:'863328915'},
@@ -42,36 +53,238 @@
       ['VIDEOJAMZ #2: Datamosh','Live video performance with Max/MSP','https://player.vimeo.com/video/87136458'],
       ['VIDEOJAMZ #3: Kuh-Lida','Live video performance with Max/MSP','https://player.vimeo.com/video/91120251'],
       ['VIDEOJAMZ #4: Worcester','Live video performance with Max/MSP','https://player.vimeo.com/video/93085292'],
-      ['VIDEOJAMZ #5: Since Sixteen','Live video performance with Max/MSP','https://player.vimeo.com/video/94020153'],
       ['Tartan Variations: JPG','Three Variations on a Tartan: JPG','https://fennmacon.files.wordpress.com/2015/04/tartan-jpg-final.jpg'],
       ['Tartan Variations: TIFF','Three Variations on a Tartan: TIFF','https://fennmacon.files.wordpress.com/2015/04/tartan-tiff-final.jpg'],
       ['Tartan Variations: PNG','Three Variations on a Tartan: PNG','https://fennmacon.files.wordpress.com/2015/04/tartan-png-final-jpg1.jpg'],
       ['Pixel Drifter','Self Portrait and glitch art experiments','https://fennmaconscrn210.files.wordpress.com/2014/04/out_artist-picture1.jpg'],
-      ['Other Work','Created using Pixel Drifter and various notepad based glitch techniques','https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg'],
+      ['Notepad Glitch Experiments','Glitch artwork created with Pixel Drifter and text-editor experiments','https://fennmaconscrn210.files.wordpress.com/2014/01/7f3a.jpg'],
       ['Glitch Art Collection','A series of glitch art experiments and digital manipulations','https://fennmaconscrn210.files.wordpress.com/2014/03/img_1256_1.png'],
       ['Tartan Glitch Series','Digital manipulation of tartan patterns','https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-tiff-3fstfd.jpg'],
       ['Tartan Glitch JPG','JPG compression glitch experiments','https://fennmaconscrn210.files.wordpress.com/2014/03/tartan-glitch-jpg-4.jpg'],
-      ['Digital Art #4','Digital art experiment','https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg'],
+      ['Glitch Study #4','An experiment in digital image manipulation','https://fennmaconscrn210.files.wordpress.com/2014/02/4.jpg'],
       ['Moonish Brute Split Digital Cover','A collaboration with Louis Roe for our split tape, I designed the background and Louis drew the little guys','https://f4.bcbits.com/img/a3015512650_10.jpg'],
-      ['Album Art','Album artwork design','https://f4.bcbits.com/img/a1435416564_10.jpg']
+      ['Album Artwork','Album artwork design','https://f4.bcbits.com/img/a1435416564_10.jpg']
     ].map(([title,description,url])=>({title,description,url}));
     const experience=[
-      {id:'rockpoint',company:'Rockpoint',period:'Nov 2025 - Present',location:'Boston, Massachusetts, United States · On-site',summary:'Own hybrid infrastructure, cloud operations, identity, endpoint management, automation, and technical resilience across a complex enterprise environment.',roles:[{title:'Senior Associate, Systems Administration',period:'Nov 2025 - Present',points:['Hybrid Infrastructure, Cloud & Automation Engineering','Own hybrid infrastructure across Microsoft Azure, AWS, VMware vSphere, Microsoft 365, and on-prem enterprise systems, supporting cloud migration and AD-to-Entra modernization.','Engineer Microsoft 365 and Entra ID operations across Exchange Online, Teams, Intune, SharePoint, OneDrive, app registrations, enterprise applications, SSO/MFA, access controls, and dynamic/security groups.','Build production internal tooling with Python/FastAPI, PowerShell, Microsoft Graph, Azure Container Apps, and Azure DevOps pipelines, including PR validation, approval-gated releases, and smoke testing.','Design and automate employee lifecycle workflows for onboarding/offboarding, access removal, group cleanup, mailbox/calendar administration, profile updates, and audit-ready completion reporting.','Manage Intune endpoint operations including app deployment, device/user assignment, compliance workflows, complex troubleshooting, and cloud-only endpoint scenarios.','Modernize data operations with Zyte/Scrapy Cloud, Azure Blob, Event Grid, Snowpipe/Snowflake staging, validation alerts, and scrape-quality controls for recurring real estate data pipelines.','Administer VMware vSphere/vCenter, storage, DNS, switching, firewalls, monitoring, backup infrastructure, and distributed office systems while reducing on-prem dependencies.','Security, Compliance & Technical Leadership','Serve as a senior escalation point for complex identity, endpoint, messaging, network, cloud, and infrastructure incidents, performing cross-platform root-cause analysis.','Lead infrastructure resilience, backup/recovery, DNS migration, monitoring modernization, and business continuity initiatives aligned with corporate compliance requirements.','Translate recurring operational problems into repeatable scripts, diagnostic tooling, runbooks, data-quality checks, and documented procedures while mentoring junior technical staff.']}]},
-      {id:'agm',company:'AGM Consulting LLC.',period:'Aug 2025 - Nov 2025',location:'Boston, Massachusetts, United States · On-site',summary:'Managed Microsoft 365, Azure, Active Directory, Intune, networking, virtualization, backups, client support, and IT service delivery.',roles:[{title:'Information Technology Administrator',period:'Aug 2025 - Nov 2025',points:['Infrastructure & Cloud Administration','Managed full-suite IT infrastructure, including Active Directory, Azure, SharePoint, and Exchange.','Administered Microsoft 365 environments across standalone and hybrid cloud architectures.','Deployed endpoint management and mobile device policies using Microsoft Intune.','Configured core network security, managing firewalls, load balancers, and email filters.','Provisioned cloud accounts and managed user permissions across multiple platforms.','Maintained data integrity by monitoring systems and executing corporate backup protocols.','Virtualised server environments utilizing Hyper-V, WSUS, and WDS deployment technologies.','Supported multi-generation OS environments, specializing in Windows Server and Windows 10.','Client Support & Service Delivery','Resolved high-volume helpdesk requests via phone, in-person, and remote software channels.','Advised external corporate clients on strategic IT positioning to meet business objectives.','Diagnosed complex system issues through proactive data gathering and network analysis.','Coordinated project lifecycles alongside management teams from scoping to deployment.','Authored technical documentation, updating change management logs and process workflows.','Delivered progress reports and strategic solution presentations to technical stakeholders.','Facilitated customer training sessions to accelerate end-user adoption of new software.']}]},
-      {id:'enel-x',company:'Enel X',period:'Oct 2021 - Apr 2025',location:'Boston, Massachusetts, United States',summary:'Progressed from Senior Information Technology Specialist to Systems Engineer, supporting enterprise IT, endpoint operations, Linux systems, IoT migrations, Salesforce, and automation.',roles:[{title:'Systems Engineer',period:'Jul 2022 - Apr 2025',points:['Utilized PuTTY and WinSCP for remote troubleshooting and repair of Linux-based systems in green energy devices, enhancing system reliability and performance for demand response.','Designed and maintained Salesforce dashboards to efficiently track and prioritize cases.','Spearheaded documentation on Confluence and managed project timelines and tasks using Asana.','Played a key role in the successful migration of over 10,000 devices to a new firmware version and IoT environment, leading to enhanced system stability and functionality.','Led a project utilizing UIPath, the Salesforce API, and Python to automate site retirement cases, saving 1/3 of a full-time employee’s workload.','Developed and maintained internal tools in an AWS EC2 environment.']},{title:'Senior Information Technology Specialist',period:'Oct 2021 - Jul 2022',points:['Delivered timely communication and displayed an understanding of the needs of end users. Provided tangible results from service delivery activities.','Maintained and demonstrated strong technical expertise in key technologies in use within the different offices of Enel North America. This included areas such as: supporting both Windows and Mac operating systems, new hire hardware configurations, quality assurance while delivering services, Active Directory, Office / Exchange 365, Teams, SCCM and others.','Oversaw 100% of daily desktop-related tickets and escalations for the North American teams including all incidents, requests, and inquiries. Demonstrated a broad, top-down approach to operational effectiveness.','Coordinated and performed hands-on support within the team and as needed when an incident, request, or inquiry was urgent in nature or any ticket escalation; including resolving password issues, installing and upgrading software and hardware.','Acted as an escalation point for advanced or difficult incidents, requests, and inquiries. Escalated emerging trends in incidents, including VIP-related situations to the Help Desk Services Managers. Escalated tickets proactively to other IT support teams, process or system owners and management as required.','Assessed need for any system reconfigurations (minor or significant) based on request trends and made recommendations.','Responsible for documenting and communicating current issues to team members and management. Provided training and resource documentation on relevant systems, processes, and technology as needed.','Worked with external support staff (ATOS) for the procurement of new systems technologies, oversaw installations, and resolved adaptation issues.','Assumed other accountabilities and duties as required with ability to effectively follow processes, conduct gap analysis, and recommend CSI with the internal teams where needed.']}]},
-      {id:'cbt',company:'CBT Architects',period:'Dec 2019 - Sep 2021',location:'Boston, Massachusetts, United States',summary:'Supported remote work, endpoint deployment, Active Directory, security tooling, inventory, automation, documentation, and user training.',roles:[{title:'Senior IT Help Desk',period:'Dec 2019 - Sep 2021',points:['Set up remote access for users to work from home with personal devices.','Monitored and responded effectively to requests received through Zendesk.','Installed, tested, and configured new workstations, peripheral equipment, and software tools.','Managed inventory, created images, scripts, and deployment packages using Quest/KBOX system.','Identified and evaluated productivity gains to be made with automation and customization.','Managed users and security groups in Active Directory.','Managed all security, antivirus, patches, updates, and monitoring tools.','Updated and created documentation and instructions in the ticketing system and intranet.','Participated in new employee orientation.','Planned group and one-on-one training sessions for Skype migration.']}]},
-      {id:'avid',company:'Avid',period:'Sep 2018 - Dec 2019',location:'Burlington, Massachusetts',summary:'Provided Tier II support across end-user hardware, software, networking, audio/visual equipment, security issues, documentation, and asset operations.',roles:[{title:'Desktop Systems Specialist II',period:'Sep 2018 - Dec 2019',points:['Addresses and manages Tier II level questions, service requests, incidents, and monitors their status through resolution.','Installing, configuring, testing, maintaining, monitoring, and troubleshooting end user networked peripheral devices, workstation hardware, and networking hardware products.','Set up, configure, and operate audio/visual, recording, and sound equipment at various locations and instruct other operators in the proper use of the equipment.','Install, update, and troubleshoot various company software in Microsoft O/S environment.','Configure PC clients for e-mail.','Quickly researched solutions to new and unfamiliar technical problems and updated the internal knowledge base with issue resolution details.','Routed advanced support requests to the appropriate support tier.','Identified and quarantined security-related issues such as computer viruses, malware, and spyware.','Trained end users on new equipment and software.','Created user documentation for IT-supported software.','Completed fixed asset transfers, deployment forms, and installation or uninstallation documentation for devices and hardware.']}]},
-      {id:'ap-staffing',company:'AP Staffing',period:'Nov 2016 - Sep 2018',location:'Boston, Massachusetts',summary:'Delivered help desk support, Zendesk implementation, asset management, security tooling, Intune rollout, AWS migration, and multi-site upgrades.',roles:[{title:'Help Desk Technician',period:'Nov 2016 - Sep 2018',points:['Implemented ZenDesk ticketing system for 150+ users across 5 locations, part of a team that reduced response times and resolution of issues by 8x and 3x, respectively.','Set up and deployed Malwarebytes across the system using remote installation.','Utilized Windows AD and multiple managed servers for onboarding and termination of all new and leaving users.','Maintained the inventory for all company assets.','Pushed Cisco Umbrella OpenDNS web filtering system across to all users.','Took lead on troubleshooting and assisting with Microsoft Intune rollout across all users.','Created documentation and put together resource guides for policies and procedures.','Migrated over 1TB of previous user data to AWS.','Maintained cloud services such as Microsoft Azure and AWS.','Coordinated and executed computer upgrades for 150+ users across all locations.']}]},
-      {id:'clark',company:'Clark University',period:'Jan 2012 - May 2015',location:'ITS Help Desk',summary:'Assisted faculty and staff with computer problems, advanced installs and repairs, connectivity issues, ticket documentation, and technical troubleshooting.',roles:[{title:'IT Technician',period:'Jan 2012 - May 2015',points:['Assisted faculty and staff with computer problems.','Performed advanced installs and repairs by appointment.','Diagnosed, troubleshot, and resolved a range of software, hardware, and connectivity issues.','Excelled in researching, analyzing, and rectifying problems.','Documented problems and solutions with ticketing software.']}]}
-    ];
-    const resumeProjects=[{title:'Employee Lifecycle Automation',company:'Rockpoint',description:'Designed and automated onboarding/offboarding workflows covering access removal, group cleanup, mailbox and calendar administration, profile updates, and audit-ready completion reporting using Python, PowerShell, Microsoft Graph, and Azure services.'},{title:'Real Estate Data Pipeline Modernization',company:'Rockpoint',description:'Modernized recurring real estate data operations with Zyte/Scrapy Cloud, Azure Blob, Event Grid, Snowpipe/Snowflake staging, validation alerts, and scrape-quality controls.'},{title:'Hybrid Infrastructure Modernization',company:'Rockpoint',description:'Supported cloud migration and AD-to-Entra modernization across Microsoft Azure, AWS, VMware vSphere, Microsoft 365, and on-premises enterprise systems while reducing on-premises dependencies.'},{title:'Japan DR Automation',company:'Enel X',description:"Bolstered Japan's grid stability during peak demand, delivering 7GW energy via VPP over 19 days. Co-owned project end-to-end (3-person team): developed Python automation for complex energy data processing (Excel interval data, form generation, Outlook integration), deployed with a Flask front-end on AWS EC2. Saved equivalent of 6 FTEs annually."},{title:'Onboarding Automation',company:'Avid',description:'Developed PowerShell automation linking Workday, ServiceNow, and Active Directory to streamline new hire provisioning. Enabled HR to trigger automated user creation and AD provisioning via Workday entry, bridging HR/IT systems.'}];
-    const education=[{degree:'Master of Science in IT Management',institution:'University of Massachusetts Boston, Boston, MA',year:'2023',details:'Certification in Business Analytics',coursework:'Relevant Coursework: Info Storage Mgmt, Systems Analysis & Design, Project Mgmt, Business Data Comms'},{degree:'Bachelor of Arts in Music Technology',institution:'Clark University, Worcester, MA',year:'2017'}];
-    const skills=[['Cloud/DevOps','Microsoft Azure, AWS, Terraform, Ansible, Docker, Kubernetes, Azure Container Apps, Azure DevOps, Azure Blob, Event Grid, Snowpipe/Snowflake, IaC'],['Systems Administration','Active Directory, Entra ID, Microsoft 365, Exchange Online, Teams, SharePoint, OneDrive, Windows Server, VMware vSphere/vCenter, Linux, SCCM/MECM, Intune'],['Automation/Programming','Python, FastAPI, PowerShell, Microsoft Graph, Bash Scripting, REST APIs, UiPath'],['Networking/Resilience','DNS, switching, firewalls, monitoring, backup and recovery, business continuity'],['Database/Web','SQL, Data Warehousing/Mining; HTML, CSS, JavaScript, Node.js, Flask'],['Data Operations','Zyte/Scrapy Cloud, Azure Blob, Event Grid, Snowpipe/Snowflake staging, validation alerts, scrape-quality controls']];
+  {
+    "id": "rockpoint",
+    "company": "Rockpoint",
+    "period": "Nov 2025 – Present",
+    "location": "Boston, Massachusetts, United States · On-site",
+    "summary": "Lead systems administration for an enterprise real estate environment, with a focus on reliability, modernization, and automation.",
+    "roles": [
+      {
+        "title": "Senior Associate, Systems Administration",
+        "period": "Nov 2025 – Present",
+        "points": [
+          "Manage hybrid infrastructure across Azure, AWS, VMware, and on-premises systems, including cloud migration and identity modernization.",
+          "Administer Microsoft 365 messaging and collaboration, Entra ID access controls, and Intune endpoint management.",
+          "Build and maintain internal tools with tested changes, documented procedures, and controlled releases.",
+          "Automate recurring employee lifecycle and data operations, with validation and audit records.",
+          "Lead incident escalation, backup and recovery, and business continuity planning.",
+          "Document operational practices and mentor technical staff."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "agm",
+    "company": "AGM Consulting LLC.",
+    "period": "Aug 2025 – Nov 2025",
+    "location": "Boston, Massachusetts, United States · On-site",
+    "summary": "Administered client IT environments and coordinated infrastructure changes and support delivery.",
+    "roles": [
+      {
+        "title": "Information Technology Administrator",
+        "period": "Aug 2025 – Nov 2025",
+        "points": [
+          "Managed Microsoft 365, Azure, Active Directory, Exchange, and SharePoint across standalone and hybrid environments.",
+          "Deployed and troubleshot Intune endpoint policies, applications, and compliance workflows.",
+          "Administered network security, Hyper-V virtualization, backups, and Windows Server infrastructure.",
+          "Resolved escalated client issues and coordinated infrastructure projects from scoping through delivery.",
+          "Maintained change records and technical documentation, and trained users."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "enel-x",
+    "company": "Enel X",
+    "period": "Oct 2021 – Apr 2025",
+    "location": "Boston, Massachusetts, United States",
+    "summary": "Advanced from enterprise IT support to systems engineering for demand response operations.",
+    "roles": [
+      {
+        "title": "Systems Engineer",
+        "period": "Jul 2022 – Apr 2025",
+        "points": [
+          "Troubleshot Linux-based energy devices remotely to support reliable demand response operations.",
+          "Helped migrate more than 10,000 devices to new firmware and an updated IoT environment.",
+          "Automated site retirement workflows with UiPath, Salesforce, and Python, saving one-third of a full-time employee’s workload.",
+          "Built Salesforce dashboards to prioritize cases and maintained internal tools on AWS EC2.",
+          "Documented systems in Confluence and coordinated project work in Asana."
+        ]
+      },
+      {
+        "title": "Senior Information Technology Specialist",
+        "period": "Oct 2021 – Jul 2022",
+        "points": [
+          "Managed daily desktop support for North American teams across Windows, macOS, and Microsoft 365.",
+          "Supported employee onboarding, endpoint configuration, Active Directory, SCCM, and collaboration tools.",
+          "Coordinated urgent incidents and escalated recurring issues to infrastructure and service owners.",
+          "Created troubleshooting guides and training materials, and coordinated equipment procurement with external support teams."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cbt",
+    "company": "CBT Architects",
+    "period": "Dec 2019 – Sep 2021",
+    "location": "Boston, Massachusetts, United States",
+    "summary": "Supported workplace technology and the transition to remote work for an architecture firm.",
+    "roles": [
+      {
+        "title": "Senior IT Help Desk",
+        "period": "Dec 2019 – Sep 2021",
+        "points": [
+          "Configured remote access and deployed endpoints to support the transition to remote work.",
+          "Managed device inventory, images, scripts, and deployment packages with Quest/KBOX.",
+          "Administered Active Directory accounts and security groups, endpoint protection, patches, and monitoring.",
+          "Resolved Zendesk tickets, maintained support documentation, and trained users during onboarding and a Skype migration."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "avid",
+    "company": "Avid",
+    "period": "Sep 2018 – Dec 2019",
+    "location": "Burlington, Massachusetts",
+    "summary": "Delivered Tier II desktop and audiovisual support in a professional technology environment.",
+    "roles": [
+      {
+        "title": "Desktop Systems Specialist II",
+        "period": "Sep 2018 – Dec 2019",
+        "points": [
+          "Resolved Tier II issues involving endpoints, networking, software, and audiovisual systems.",
+          "Configured workstations, peripherals, email, and security tools, and escalated specialist issues.",
+          "Maintained asset records and technical documentation, and trained users on equipment and software."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ap-staffing",
+    "company": "AP Staffing",
+    "period": "Nov 2016 – Sep 2018",
+    "location": "Boston, Massachusetts",
+    "summary": "Supported users across five locations and contributed to service desk and infrastructure improvements.",
+    "roles": [
+      {
+        "title": "Help Desk Technician",
+        "period": "Nov 2016 – Sep 2018",
+        "points": [
+          "Implemented Zendesk for more than 150 users across five locations as part of a team that reduced response and resolution times by 8× and 3×, respectively.",
+          "Migrated more than 1 TB of data to AWS and maintained AWS and Azure services.",
+          "Managed Active Directory access, endpoint protection, and network filtering, and supported Intune adoption.",
+          "Coordinated computer upgrades for more than 150 users and documented support procedures."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "clark",
+    "company": "Clark University",
+    "period": "Jan 2012 – May 2015",
+    "location": "ITS Help Desk",
+    "summary": "Provided help desk support for university faculty and staff.",
+    "roles": [
+      {
+        "title": "IT Technician",
+        "period": "Jan 2012 – May 2015",
+        "points": [
+          "Diagnosed and resolved hardware, software, network, and installation issues for faculty and staff.",
+          "Recorded troubleshooting steps and resolutions in the help desk ticketing system."
+        ]
+      }
+    ]
+  }
+];
+    const resumeProjects=[
+  {
+    "title": "Employee Lifecycle Automation",
+    "company": "Rockpoint",
+    "description": "Employee lifecycle tooling built with Python, PowerShell, Microsoft Graph, and Azure services. Coordinates access changes, mailbox and calendar administration, group cleanup, and audit records for onboarding and offboarding."
+  },
+  {
+    "title": "Real Estate Data Pipeline Modernization",
+    "company": "Rockpoint",
+    "description": "Recurring real estate data pipelines connecting Zyte/Scrapy Cloud to Azure Blob, Event Grid, and Snowflake. Includes staged ingestion, validation alerts, and scrape quality checks."
+  },
+  {
+    "title": "Hybrid Infrastructure Modernization",
+    "company": "Rockpoint",
+    "description": "Cloud migration and Active Directory-to-Entra modernization across Azure, AWS, VMware, and Microsoft 365. Reduces dependencies on on-premises infrastructure."
+  },
+  {
+    "title": "Japan DR Automation",
+    "company": "Enel X",
+    "description": "Co-developed a demand response automation platform as part of a three-person team. Used Python, a Flask frontend, and AWS EC2 to process interval data, generate forms, and integrate Outlook workflows. Supported a 19-day program and saved the equivalent of six full-time employees’ annual workload."
+  },
+  {
+    "title": "Onboarding Automation",
+    "company": "Avid",
+    "description": "Developed employee provisioning workflows using PowerShell, Workday, ServiceNow, and Active Directory. Connected HR requests to account creation and access assignment."
+  }
+];
+    const education=[{degree:'Master of Science in IT Management',institution:'University of Massachusetts Boston, Boston, MA',year:'2023',details:'Certification in Business Analytics'},{degree:'Bachelor of Arts in Music Technology',institution:'Clark University, Worcester, MA',year:'2017'}];
+    const skills=[
+  [
+    "Cloud & Infrastructure",
+    "Azure, AWS, VMware vSphere/vCenter, Hyper-V, Windows Server, Linux"
+  ],
+  [
+    "Identity & Endpoints",
+    "Active Directory, Entra ID, Intune, SCCM/MECM, Microsoft 365, Exchange Online, SharePoint, Teams"
+  ],
+  [
+    "Automation & Development",
+    "Python, PowerShell, Bash, Microsoft Graph, REST APIs, UiPath, FastAPI, Flask, Node.js"
+  ],
+  [
+    "Deployment & Configuration",
+    "Azure DevOps, Azure Container Apps, Docker, Kubernetes, Terraform, Ansible"
+  ],
+  [
+    "Data & Integration",
+    "SQL, Snowflake, Snowpipe, Azure Blob, Event Grid, Zyte/Scrapy Cloud, data warehousing"
+  ],
+  [
+    "Networking & Reliability",
+    "DNS, switching, firewalls, monitoring, backup and recovery, business continuity"
+  ],
+  [
+    "Web",
+    "HTML, CSS, JavaScript"
+  ]
+];
     music.forEach((item,index)=>item.id='music-'+index);web.forEach((item,index)=>item.id='web-'+index);digital.forEach((item,index)=>item.id='digital-'+index);
     const contact={address:'Jamaica Plain, Massachusetts',phone:'978-886-7128',email:'fennmacon@gmail.com',linkedin:'https://www.linkedin.com/in/fenn-macon',website:'https://fenn.club'};
-    const sections={home:{label:'Home',kicker:'Welcome',icon:'fa-house',note:'Jamaica Plain, Massachusetts',links:[{id:'intro',label:'Introduction'}]},music:{label:'Music',kicker:'Selected work',icon:'fa-music',note:'Songs, records, and sound',links:music},web:{label:'Web',kicker:'Selected work',icon:'fa-globe',note:'Sites and experiments',links:web},digital:{label:'Digital',kicker:'Selected work',icon:'fa-wand-magic-sparkles',note:'Images, objects, and ideas',links:digital},resume:{label:'Resume',kicker:'Experience',icon:'fa-file-lines',note:'Systems, technology, and care',links:[{id:'contact',title:'Contact'},{id:'objective',title:'Objective'},{id:'experience',title:'Experience'},{id:'education',title:'Education'},{id:'skills',title:'Skills'},{id:'projects',title:'Projects'},...experience.map(company=>({id:'company-'+company.id,title:company.company}))]}};
+    const sections={home:{label:'Home',kicker:'Welcome',icon:'fa-house',note:'Jamaica Plain, Massachusetts',links:[{id:'intro',label:'Introduction'}]},music:{label:'Music',kicker:'Selected work',icon:'fa-music',note:'Songs, records, and sound',links:music},web:{label:'Web',kicker:'Selected work',icon:'fa-globe',note:'Sites and experiments',links:web},digital:{label:'Digital Art',kicker:'Selected work',icon:'fa-wand-magic-sparkles',note:'Images, objects, and ideas',links:digital},resume:{label:'Resume',kicker:'Experience',icon:'fa-file-lines',note:'Systems, technology, and care',links:[{id:'profile',title:'Profile'},{id:'experience',title:'Experience'},...experience.map(company=>({id:'company-'+company.id,title:company.company})),{id:'projects',title:'Projects'},{id:'skills',title:'Skills'},{id:'education',title:'Education'},{id:'contact',title:'Contact'}]}};
+    const slug=title=>title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    [music,web,digital].forEach(items=>items.forEach(item=>item.route=slug(item.title)));
+    function routeFor(section,id){const item=sections[section].links.find(x=>x.id===id);return '#'+section+(section==='home'?'':'/'+(item.route||item.id))}
+    function navigate(section,id){
+      const focused=document.activeElement,focusId=focused?.id,focusLabel=focused?.getAttribute('aria-label'),focusLink=focused?.dataset.link;
+      const hash=routeFor(section,id);if(location.hash!==hash)history.pushState(null,'',hash);
+      activeSection=section;activeLink=id;render();
+      const target=focusId?document.getElementById(focusId):focusLink?[...contextLinks.querySelectorAll('[data-link]')].find(x=>x.dataset.link===focusLink):focusLabel?[...document.querySelectorAll('[aria-label]')].find(x=>x.getAttribute('aria-label')===focusLabel):null;
+      target?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
+    }
+    function readRoute(){if(location.hash==='#main-content'){main.focus();return}const [section,route]=location.hash.slice(1).split('/');activeSection=sections[section]?section:'home';const items=sections[activeSection].links;activeLink=(items.find(x=>(x.route||x.id)===route)||items[0]).id;render()}
     let activeSection='home',activeLink='intro';const rail=document.querySelector('#rail-links'),contextLinks=document.querySelector('#context-links'),main=document.querySelector('#main-content');
-    const twinkleColors=['#ffffff','#f7c948','#ff7b72','#8bd3dd','#b8a0ff','#ffa657','#7ee787','#ff8fbc','#79b8ff','#d2e884','#e6b8a2','#c4b5fd'];
+    const twinkleColors=['#ffe600','#ff6333','#ff4081','#00e5ff','#b36bff','#ff9f1c','#39ff88','#ff62d5','#4da6ff','#c6ff00','#ff5050','#00ffd0','#e85dff','#00c8ff'];
     const navColors=new Map(),navTimers=new Map();
     function stopNavTwinkle(key){clearInterval(navTimers.get(key));navTimers.delete(key)}
     function nextNavColor(key){
@@ -89,7 +302,7 @@
       function start(){
         if(navTimers.has(key))return;
         function paint(){const index=nextNavColor(key);if(index>=0)icon.style.color=twinkleColors[index]}
-        paint();navTimers.set(key,setInterval(paint,260));
+        paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)navTimers.set(key,setInterval(paint,260));
       }
       function stop(){if(!button.matches(':hover')&&document.activeElement!==button)stopNavTwinkle(key)}
       button.addEventListener('mouseenter',start);button.addEventListener('mouseleave',stop);
@@ -97,9 +310,44 @@
     }
     setupNavTwinkle(document.querySelector('.wordmark'),'home');
     setupNavTwinkle(document.querySelector('.rail-contact'),'contact');
-    function renderRail(){Object.keys(sections).filter(key=>key!=='home').forEach(stopNavTwinkle);rail.innerHTML=Object.entries(sections).filter(([key])=>key!=='home').map(([key,item])=>`<button class="rail-button ${key===activeSection?'is-active':''}" aria-label="${item.label}" title="${item.label}" data-label="${item.label}" data-section="${key}"><i class="fa-solid ${item.icon}"></i></button>`).join('');document.querySelector('.wordmark').classList.toggle('is-active',activeSection==='home');document.querySelector('.wordmark').onclick=()=>{activeSection='home';activeLink='intro';render()};rail.querySelectorAll('[data-section]').forEach(b=>{setupNavTwinkle(b,b.dataset.section);b.onclick=()=>{activeSection=b.dataset.section;activeLink=sections[activeSection].links[0].id;render()}})}
-    function renderContext(){const section=sections[activeSection];document.querySelector('#section-kicker').textContent=section.kicker;document.querySelector('#section-title').textContent=section.label;document.querySelector('#sidebar-note').textContent=section.note;contextLinks.innerHTML=section.links.map((link,index)=>{const label=link.label||link.title;return `<button class="context-link ${link.id===activeLink?'is-active':''}" data-link="${link.id}"><span class="link-index">${String(index+1).padStart(2,'0')}</span><span>${label}</span></button>`}).join('');contextLinks.querySelectorAll('[data-link]').forEach(b=>b.onclick=()=>{activeLink=b.dataset.link;renderContext();renderMain()});contextLinks.querySelector('.context-link.is-active')?.scrollIntoView({block:'nearest'});}
-    function renderHome(){main.innerHTML=`<div class="hero-page"><p class="eyebrow">Fenn Macon</p><h2><span>I solve tech problems</span><span>and prevent future issues</span><span>for tranquility.</span></h2><div class="hero-rule"></div><p class="intro-copy">Hi, I'm Fenn Macon, a musician and digital artist living in Jamaica Plain, Massachusetts.</p><p class="intro-copy intro-copy-tight">During the day, I am a systems engineer with a masters in IT management.</p></div>`}
+    function renderRail(){
+      Object.keys(sections).filter(key=>key!=='home').forEach(stopNavTwinkle);
+      rail.innerHTML=Object.entries(sections).filter(([key])=>key!=='home').map(([key,item])=>`<button class="rail-button ${key===activeSection?'is-active':''}" aria-label="${item.label}" ${key===activeSection?'aria-current="page"':''} data-label="${item.label}" data-section="${key}"><i class="fa-solid ${item.icon}" aria-hidden="true"></i></button>`).join('');
+      const home=document.querySelector('.wordmark');home.classList.toggle('is-active',activeSection==='home');home.onclick=()=>navigate('home','intro');
+      rail.querySelectorAll('[data-section]').forEach(b=>{setupNavTwinkle(b,b.dataset.section);b.onclick=()=>navigate(b.dataset.section,sections[b.dataset.section].links[0].id)});
+    }
+    function renderContext(){
+      const section=sections[activeSection],isResume=activeSection==='resume',expanded=isResume&&(activeLink==='experience'||activeLink.startsWith('company-'));
+      document.querySelector('#section-kicker').textContent=section.kicker;document.querySelector('#section-title').textContent=section.label;
+      const topLinks=section.links.filter(link=>!isResume||!link.id.startsWith('company-'));
+      function button(link,index,sub=false){return `<button class="context-link ${sub?'company-link':''} ${link.id===activeLink?'is-active':''}" data-link="${link.id}" ${link.id===activeLink?'aria-current="page"':''} ${link.id==='experience'?`aria-expanded="${expanded}" aria-controls="experience-submenu"`:''}>${sub?'':`<span class="link-index">${String(index+1).padStart(2,'0')}</span>`}<span>${link.label||link.title}</span></button>`}
+      contextLinks.innerHTML=topLinks.map((link,index)=>button(link,index)+(link.id==='experience'?`<div id="experience-submenu" class="experience-submenu" ${expanded?'':'hidden'}>${section.links.filter(x=>x.id.startsWith('company-')).map(x=>button(x,0,true)).join('')}</div>`:'')).join('');
+      contextLinks.querySelectorAll('[data-link]').forEach(b=>b.onclick=()=>navigate(activeSection,b.dataset.link));
+      document.querySelector('.mobile-picker')?.remove();
+      if(activeSection!=='home'){
+        const picker=document.createElement('div');picker.className='mobile-picker';
+        picker.innerHTML=`<label for="item-picker">${section.label==='Resume'?'Resume section':'Browse '+section.label.toLowerCase()}</label><select id="item-picker">${topLinks.map(x=>`<option value="${x.id}" ${x.id===activeLink?'selected':''}>${x.label||x.title}</option>`).join('')}${isResume?`<optgroup label="Experience">${section.links.filter(x=>x.id.startsWith('company-')).map(x=>`<option value="${x.id}" ${x.id===activeLink?'selected':''}>${x.title}</option>`).join('')}</optgroup>`:''}</select>`;
+        main.before(picker);picker.querySelector('select').onchange=e=>navigate(activeSection,e.target.value);
+      }
+    }
+    const homeWordColors=new Map(),homeWordTimers=new Map();
+    function stopHomeWordTimers(){homeWordTimers.forEach(clearInterval);homeWordTimers.clear()}
+    function renderHome(){
+      let wordIndex=0;
+      const words=text=>text.replace(/\S+/g,word=>`<span class="home-word" data-word="${wordIndex++}">${word}</span>`);
+      main.innerHTML=`<div class="hero-page"><p class="eyebrow">${words('Fenn Macon')}</p><h2><span>${words('I solve tech problems')}</span><span>${words('and prevent future issues')}</span><span>${words('for tranquility.')}</span></h2><div class="hero-rule"></div><p class="intro-copy">${words("Hi, I'm Fenn Macon, a musician and digital artist living in Jamaica Plain, Massachusetts.")}</p><p class="intro-copy intro-copy-tight">${words('During the day, I am a systems engineer with a masters in IT management.')}</p></div>`;
+      main.querySelectorAll('.home-word').forEach(word=>{
+        const key=Number(word.dataset.word);
+        if(homeWordColors.has(key))word.style.color=twinkleColors[homeWordColors.get(key)];
+        function paint(){const index=((homeWordColors.get(key)??(key-1))+1)%twinkleColors.length;homeWordColors.set(key,index);word.style.color=twinkleColors[index]}
+        word.addEventListener('pointerenter',event=>{
+          if(event.pointerType==='touch'||homeWordTimers.has(key))return;
+          paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)homeWordTimers.set(key,setInterval(paint,260));
+        });
+        word.addEventListener('pointerleave',()=>{clearInterval(homeWordTimers.get(key));homeWordTimers.delete(key)});
+        word.addEventListener('pointerdown',event=>{if(event.pointerType==='touch')paint()});
+      });
+    }
     function youtubeVideoId(url){try{const parsed=new URL(url);if(['www.youtube.com','youtube.com','www.youtube-nocookie.com'].includes(parsed.hostname))return parsed.pathname.startsWith('/embed/')?parsed.pathname.split('/')[2]:parsed.searchParams.get('v');if(parsed.hostname==='youtu.be')return parsed.pathname.slice(1)}catch{}return null}
     function openUrl(item){const id=youtubeVideoId(item.url);return id?`https://www.youtube.com/watch?v=${id}`:item.url}
     function renderMedia(item,section){
@@ -108,16 +356,26 @@
       if(item.kind==='bandcamp')return `<div class="media-frame audio-frame"><iframe title="${item.title} on Bandcamp" src="https://bandcamp.com/EmbeddedPlayer/album=${item.bandcampId}/size=large/bgcol=333333/linkcol=e32c14/tracklist=false/transparent=true/" loading="lazy" seamless></iframe></div>`;
       if(youtubeId)return `<div class="media-frame video-frame"><iframe title="${item.title} on YouTube" src="https://www.youtube.com/embed/${youtubeId}?controls=1&playsinline=1&rel=0&origin=${encodeURIComponent(playerOrigin)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div>`;
       if(url.includes('player.vimeo.com'))return `<div class="media-frame video-frame"><iframe title="${item.title}" src="${url}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;
-      if(section.label==='Digital'&&/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url))return `<div class="media-frame image-frame"><img src="${url}" alt="${item.title}" loading="lazy"></div>`;
+      if(section.label==='Digital Art'&&/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url))return `<div class="media-frame image-frame"><img src="${url}" alt="${item.title}" loading="lazy"></div>`;
       // These legacy domains need valid HTTPS before browsers can embed them on fenn.club.
       if(section.label==='Web'&&item.previewImage)return `<a class="media-frame image-frame site-preview" href="${url}" target="_blank" rel="noopener" aria-label="Visit ${item.title}"><img src="${item.previewImage}" alt="Screenshot of ${item.title}" loading="lazy"><span>Visit website <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>`;
       if(section.label==='Web')return `<div class="media-frame site-frame"><iframe title="Preview of ${item.title}" src="${url}" loading="lazy"></iframe></div>`;
       return '';
     }
-    function renderGallery(items,section){const item=items.find(x=>x.id===activeLink)||items[0],index=items.indexOf(item);main.innerHTML=`<div class="content-header"><div><p class="eyebrow">${section.label}</p><h2>${item.title}</h2></div><div class="gallery-nav"><span class="content-count">${index+1} / ${items.length}</span><div class="nav-arrows"><button data-prev aria-label="Previous ${section.label} work"><i class="fa-solid fa-arrow-left"></i></button><a class="nav-open" href="${openUrl(item)}" target="_blank" rel="noopener" aria-label="Open ${item.title}" title="Open ${item.title}"><i class="fa-solid fa-arrow-up-right-from-square"></i></a><button data-next aria-label="Next ${section.label} work"><i class="fa-solid fa-arrow-right"></i></button></div></div></div>${renderMedia(item,section)}<div class="item-detail"><p>${item.description}</p></div>`;main.querySelector('[data-prev]')?.addEventListener('click',()=>{activeLink=items[(index-1+items.length)%items.length].id;renderContext();renderMain()});main.querySelector('[data-next]')?.addEventListener('click',()=>{activeLink=items[(index+1)%items.length].id;renderContext();renderMain()})}
+    function renderGallery(items,section){const item=items.find(x=>x.id===activeLink)||items[0],index=items.indexOf(item);main.innerHTML=`<div class="content-header"><div><p class="eyebrow">${section.label}</p><h2>${item.title}</h2></div><div class="gallery-nav"><span class="content-count">${index+1} / ${items.length}</span><div class="nav-arrows"><button data-prev aria-label="Previous ${section.label} work"><i class="fa-solid fa-arrow-left"></i></button><a class="nav-open" href="${openUrl(item)}" target="_blank" rel="noopener" aria-label="Open ${item.title}" title="Open ${item.title}"><i class="fa-solid fa-arrow-up-right-from-square"></i></a><button data-next aria-label="Next ${section.label} work"><i class="fa-solid fa-arrow-right"></i></button></div></div></div>${renderMedia(item,section)}<div class="item-detail"><p>${item.description}</p>${activeSection==='web'?`<a class="external-link" href="${openUrl(item)}" target="_blank" rel="noopener">Open project <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>`:''}</div>`;main.querySelector('[data-prev]')?.addEventListener('click',()=>{navigate(activeSection,items[(index-1+items.length)%items.length].id)});main.querySelector('[data-next]')?.addEventListener('click',()=>{navigate(activeSection,items[(index+1)%items.length].id)})}
+    function shortLocation(location){return location.replace('Boston, Massachusetts, United States · On-site','Boston, MA').replace('Boston, Massachusetts, United States','Boston, MA').replace('Boston, Massachusetts','Boston, MA').replace('Burlington, Massachusetts','Burlington, MA')}
     const resumeSubheadings=new Set(['Hybrid Infrastructure, Cloud & Automation Engineering','Security, Compliance & Technical Leadership','Infrastructure & Cloud Administration','Client Support & Service Delivery']);
     function formatResumeBody(body){const parts=body.split('|').filter(Boolean);return parts.length>1?`<ul class="resume-points">${parts.map(point=>resumeSubheadings.has(point)?`<li class="resume-subheading">${point}</li>`:`<li>${point}</li>`).join('')}</ul>`:`<p>${body}</p>`}
-    function renderResume(){const id=activeLink,resumeItems=sections.resume.links,resumeIndex=resumeItems.findIndex(item=>item.id===id);let title='',body='',meta='',list=[];if(id==='contact'){title='Contact';list=[{title:'Address',meta:'',body:contact.address},{title:'Phone',meta:'',body:contact.phone},{title:'Email',meta:'',body:contact.email},{title:'LinkedIn',meta:'',body:contact.linkedin},{title:'Website',meta:'',body:contact.website}]}else if(id==='objective'){title='Objective';body='Experienced Systems Engineer with a background in IT support, data engineering, systems administration, DevOps, and the energy sector. Skilled in managing and automating complex cloud environments (Azure, AWS) with infrastructure automation (Python, PowerShell, Terraform, Ansible) and large-scale deployments. Seeking to leverage cloud and operational excellence for impactful results.'}else if(id==='experience'){title='Experience';list=experience.map(x=>({title:x.company,meta:[x.period,x.location].filter(Boolean).join(' · '),body:x.summary,id:'company-'+x.id}))}else if(id==='education'){title='Education';list=education.map(x=>({title:x.degree,meta:`${x.institution} · ${x.year}`,body:[x.details,x.coursework].filter(Boolean).join('|')}))}else if(id==='skills'){title='Skills';list=skills.map(x=>({title:x[0],meta:'',body:x[1]}))}else if(id==='projects'){title='Projects';list=resumeProjects.map(x=>({title:x.title,meta:x.company,body:x.description}))}else if(id.startsWith('company-')){const company=experience.find(x=>'company-'+x.id===id);title=company.company;meta=[company.period,company.location].filter(Boolean).join(' · ');list=company.roles.map(role=>({title:role.title,meta:role.period,body:role.points.join('|')}))}main.innerHTML=`<div class="content-header"><div><p class="eyebrow">Resume</p><h2>${title}</h2></div><div class="gallery-nav"><span class="content-count">${resumeIndex+1} / ${resumeItems.length}</span><div class="nav-arrows"><button data-resume-prev aria-label="Previous resume item"><i class="fa-solid fa-arrow-left"></i></button><a class="nav-open" href="mailto:${contact.email}" aria-label="Email Fenn" title="Email Fenn"><i class="fa-regular fa-envelope"></i></a><button data-resume-next aria-label="Next resume item"><i class="fa-solid fa-arrow-right"></i></button></div></div></div>${body?`<div class="item-detail"><p>${body}</p></div>`:''}${list.length?`<div class="resume-list">${list.map(x=>`<article class="resume-row"><div><h3>${x.title}</h3><span>${x.meta}</span></div>${formatResumeBody(x.body)}</article>`).join('')}</div>`:''}`;main.querySelector('[data-resume-prev]').onclick=()=>{activeLink=resumeItems[(resumeIndex-1+resumeItems.length)%resumeItems.length].id;renderContext();renderMain()};main.querySelector('[data-resume-next]').onclick=()=>{activeLink=resumeItems[(resumeIndex+1)%resumeItems.length].id;renderContext();renderMain()}}
-    function renderMain(){if(activeSection==='home')return renderHome();if(activeSection==='resume')return renderResume();renderGallery(sections[activeSection].links,sections[activeSection])}function render(){document.querySelector('.site-shell').classList.toggle('home-active',activeSection==='home');renderRail();renderContext();renderMain()}const sectionOrder=['home','music','web','digital','resume'];document.addEventListener('keydown',event=>{if(['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))return;if(['ArrowLeft','ArrowRight'].includes(event.key)&&['music','web','digital','resume'].includes(activeSection)){event.preventDefault();const items=sections[activeSection].links,index=items.findIndex(item=>item.id===activeLink),step=event.key==='ArrowRight'?1:-1;activeLink=items[(index+step+items.length)%items.length].id;renderContext();renderMain()}else if(['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();const index=sectionOrder.indexOf(activeSection),step=event.key==='ArrowDown'?1:-1;activeSection=sectionOrder[(index+step+sectionOrder.length)%sectionOrder.length];activeLink=sections[activeSection].links[0].id;render()}});render();
+    function renderResume(){const id=activeLink,resumeItems=sections.resume.links,resumeIndex=resumeItems.findIndex(item=>item.id===id);let title='',body='',meta='',list=[];if(id==='contact'){title='Contact';list=[{title:'Location',meta:'',body:contact.address},{title:'Phone',meta:'',body:contact.phone,href:'tel:'+contact.phone.replace(/-/g,'')},{title:'Email',meta:'',body:contact.email,href:'mailto:'+contact.email},{title:'LinkedIn',meta:'',body:contact.linkedin,href:contact.linkedin},{title:'Website',meta:'',body:contact.website,href:contact.website}]}else if(id==='profile'){title='Profile';body='Systems engineer working across hybrid infrastructure, cloud operations, identity, and automation. I build internal tools, simplify recurring workflows, and keep enterprise systems reliable. My background spans enterprise IT, data operations, and demand response systems.'}else if(id==='experience'){title='Experience';list=experience.map(x=>({title:x.company,meta:[x.period,shortLocation(x.location)].filter(Boolean).join(' · '),body:x.summary,id:'company-'+x.id}))}else if(id==='education'){title='Education';list=education.map(x=>({title:x.degree,meta:`${x.institution} · ${x.year}`,body:x.details||''}))}else if(id==='skills'){title='Skills';list=skills.map(x=>({title:x[0],meta:'',body:x[1]}))}else if(id==='projects'){title='Projects';list=resumeProjects.map(x=>({title:x.title,meta:x.company,body:x.description}))}else if(id.startsWith('company-')){const company=experience.find(x=>'company-'+x.id===id);title=company.company;meta=[company.period,company.location].filter(Boolean).join(' · ');list=company.roles.map(role=>({title:role.title,meta:role.period,body:role.points.join('|')}))}main.innerHTML=`<div class="content-header"><div><p class="eyebrow">Resume</p><h2>${title}</h2></div><div class="gallery-nav"><span class="content-count">${resumeIndex+1} / ${resumeItems.length}</span><div class="nav-arrows"><button data-resume-prev aria-label="Previous resume item"><i class="fa-solid fa-arrow-left"></i></button><a class="nav-open" href="mailto:${contact.email}" aria-label="Email Fenn" title="Email Fenn"><i class="fa-regular fa-envelope"></i></a><button data-resume-next aria-label="Next resume item"><i class="fa-solid fa-arrow-right"></i></button></div></div></div>${body?`<div class="item-detail"><p>${body}</p></div>`:''}${list.length?`<div class="resume-list ${id==='education'?'education-list':''}">${list.map(x=>`<article class="resume-row"><div><h3>${x.id?`<a href="${routeFor('resume',x.id)}" data-company="${x.id}">${x.title} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>`:x.title}</h3><span>${x.meta}</span></div>${x.href?`<p><a href="${x.href}">${x.body}</a></p>`:x.body?formatResumeBody(x.body):''}</article>`).join('')}</div>`:''}`;main.querySelectorAll('[data-company]').forEach(a=>a.onclick=e=>{e.preventDefault();navigate('resume',a.dataset.company)});main.querySelector('[data-resume-prev]').onclick=()=>{navigate('resume',resumeItems[(resumeIndex-1+resumeItems.length)%resumeItems.length].id)};main.querySelector('[data-resume-next]').onclick=()=>{navigate('resume',resumeItems[(resumeIndex+1)%resumeItems.length].id)}}
+    function renderMain(){stopHomeWordTimers();if(activeSection==='home')return renderHome();if(activeSection==='resume')return renderResume();renderGallery(sections[activeSection].links,sections[activeSection])}function render(){document.querySelector('.site-shell').classList.toggle('home-active',activeSection==='home');renderRail();renderContext();renderMain()}document.addEventListener('keydown',event=>{
+      if(event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+      const target=event.target;
+      if(target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="slider"],[role="combobox"],[role="textbox"]'))return;
+      if(target?.closest?.('.icon-rail,.context-sidebar,.nav-arrows'))main.focus({preventScroll:true});
+      if(['ArrowUp','ArrowDown'].includes(event.key)||activeSection==='home')return;
+      const items=sections[activeSection].links,index=items.findIndex(item=>item.id===activeLink),step=event.key==='ArrowRight'?1:-1;
+      event.preventDefault();navigate(activeSection,items[(index+step+items.length)%items.length].id);main.focus({preventScroll:true});
+    });
+    window.addEventListener('popstate',readRoute);window.addEventListener('hashchange',readRoute);readRoute();
   </script>
 </body></html>
