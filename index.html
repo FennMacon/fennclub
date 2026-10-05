@@ -346,8 +346,38 @@
           paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)homeWordTimers.set(key,setInterval(paint,260));
         });
         word.addEventListener('pointerleave',()=>{clearInterval(homeWordTimers.get(key));homeWordTimers.delete(key)});
-        word.addEventListener('pointerdown',event=>{if(event.pointerType==='touch')paint()});
+
       });
+      const hero=main.querySelector('.hero-page');
+      let finger=null,currentWord=null;
+      function colorUnderFinger(x,y){
+        const word=document.elementFromPoint(x,y)?.closest('.home-word');
+        if(word===currentWord)return;
+        if(currentWord){const key=Number(currentWord.dataset.word);clearInterval(homeWordTimers.get(key));homeWordTimers.delete(key)}
+        currentWord=word&&hero.contains(word)?word:null;
+        if(!currentWord)return;
+        const target=currentWord,key=Number(target.dataset.word);
+        function paint(){const index=((homeWordColors.get(key)??(key-1))+1)%twinkleColors.length;homeWordColors.set(key,index);target.style.color=twinkleColors[index]}
+        paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)homeWordTimers.set(key,setInterval(paint,260));
+      }
+      function endFinger(){
+        const released=finger;finger=null;
+        if(released&&hero.hasPointerCapture(released.id))hero.releasePointerCapture(released.id);
+        if(currentWord){const key=Number(currentWord.dataset.word);clearInterval(homeWordTimers.get(key));homeWordTimers.delete(key)}currentWord=null;
+      }
+      hero.addEventListener('pointerdown',event=>{
+        if(event.pointerType!=='touch')return;
+        if(!event.isPrimary){endFinger();return}
+        finger={id:event.pointerId,x:event.clientX,y:event.clientY};hero.setPointerCapture(event.pointerId);colorUnderFinger(event.clientX,event.clientY);
+      });
+      hero.addEventListener('pointermove',event=>{
+        if(!finger||finger.id!==event.pointerId)return;
+        const dx=event.clientX-finger.x,dy=event.clientY-finger.y,steps=Math.ceil(Math.hypot(dx,dy)/8);
+        // Sample between events so fast finger movements still color each crossed word.
+        for(let step=1;step<=steps;step++)colorUnderFinger(finger.x+dx*step/steps,finger.y+dy*step/steps);
+        finger.x=event.clientX;finger.y=event.clientY;
+      });
+      hero.addEventListener('pointerup',endFinger);hero.addEventListener('pointercancel',endFinger);hero.addEventListener('lostpointercapture',endFinger);
     }
     function youtubeVideoId(url){try{const parsed=new URL(url);if(['www.youtube.com','youtube.com','www.youtube-nocookie.com'].includes(parsed.hostname))return parsed.pathname.startsWith('/embed/')?parsed.pathname.split('/')[2]:parsed.searchParams.get('v');if(parsed.hostname==='youtu.be')return parsed.pathname.slice(1)}catch{}return null}
     function openUrl(item){const id=youtubeVideoId(item.url);return id?`https://www.youtube.com/watch?v=${id}`:item.url}
