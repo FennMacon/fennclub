@@ -25,3 +25,7 @@
 .resume-row .resume-points{color:#aaa7a0;font-size:13px;line-height:1.6;margin:0;padding-left:18px}.resume-row .resume-points li{margin:0 0 10px}.resume-row .resume-points li:last-child{margin-bottom:0}
 .audio-frame{background:transparent;max-width:350px}.audio-frame iframe{height:470px;width:350px}
 .resume-row .resume-points .resume-subheading{color:var(--text);font-size:12px;font-weight:600;letter-spacing:.04em;list-style:none;margin:22px 0 10px -18px;text-transform:uppercase}.resume-row .resume-points .resume-subheading:first-child{margin-top:0}
+
+.site-preview{display:block;color:var(--text);text-decoration:none}.site-preview span{display:block;padding:14px 0;font:11px 'DM Mono',monospace;text-transform:uppercase}.site-preview i{margin-left:7px;font-size:9px}.site-preview:hover span{color:var(--muted)}
+
+.wordmark{letter-spacing:0}.wordmark .favicon-face{font:500 24px/1 'DM Mono',monospace;letter-spacing:-.06em;transition:color .2s ease}.rail-button i,.rail-contact i{transition:color .2s ease}

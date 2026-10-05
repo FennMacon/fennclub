@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Fenn Macon — Personal site</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,7 +11,7 @@
 </head>
 <body>
   <div class="site-shell">
-    <nav class="icon-rail" aria-label="Primary navigation"><button class="wordmark" data-section="home" aria-label="Fenn Macon home"><span class="favicon-face" aria-hidden="true">✦</span></button><div class="rail-links" id="rail-links"></div><div class="rail-rule"></div><a class="rail-contact" href="mailto:fennmacon@gmail.com" aria-label="Email Fenn"><i class="fa-regular fa-envelope"></i></a></nav>
+    <nav class="icon-rail" aria-label="Primary navigation"><button class="wordmark" data-section="home" aria-label="Fenn Macon home"><span class="favicon-face" aria-hidden="true">FM</span></button><div class="rail-links" id="rail-links"></div><div class="rail-rule"></div><a class="rail-contact" href="mailto:fennmacon@gmail.com" aria-label="Email Fenn"><i class="fa-regular fa-envelope"></i></a></nav>
     <aside class="context-sidebar"><div class="context-heading"><span class="section-kicker" id="section-kicker">Welcome</span><h1 id="section-title">Home</h1></div><div class="context-links" id="context-links"></div><div class="sidebar-note" id="sidebar-note">Jamaica Plain, Massachusetts</div></aside>
     <main class="main-content" id="main-content"></main>
   </div>
@@ -30,13 +31,13 @@
       {title:'Bass Master',description:'Interactive music theory tool for learning scales and the CAGED system.',url:'https://fennmacon.github.io/bass-master/scales-interactive.html'},
       {title:'The VEC Letters',description:'A digital humanities project of folk art and conspiracies',url:'https://fennmacon.github.io/VEC-Letters/'},
       {title:'Suburban Adventure',description:'An online text adventure game',url:'suburban-adventure/'},
-      {title:'Edwords Creative',description:'Portfolio website for a freelance copywriter',url:'http://edwordscreative.com/'},
-      {title:'The Boulders Cookbook',description:'Family recipe website',url:'http://boulderscookbook.com/'}
+      {title:'Edwords Creative',description:'Portfolio website for a freelance copywriter',url:'http://edwordscreative.com/',previewImage:'img/edwords.png'},
+      {title:'The Boulders Cookbook',description:'Family recipe website',url:'http://boulderscookbook.com/',previewImage:'img/boulderscookbook.png'}
     ];
     const digital=[
-      ['FPR: The Avenue','Music video for Flowerpot Records and The You Suck Flying Circus using Max/MSP and Adobe Premiere','https://www.youtube.com/embed/vrOCFoAH29k?autoplay=0&mute=0&controls=1&loop=1&playlist=vrOCFoAH29k&modestbranding=1&rel=0&showinfo=0&fs=0'],
-      ['FPR: Learn To Swim','Music video for Flowerpot Records and The You Suck Flying Circus','https://www.youtube.com/embed/6HADmfWSb3w?autoplay=0&mute=0&controls=1&loop=1&playlist=6HADmfWSb3w&modestbranding=1&rel=0&showinfo=0&fs=0'],
-      ['FPR: Yr Heart Is Breaking','Music video for Flowerpot Records and Jack David','https://www.youtube.com/embed/kGzELnSiOKk?autoplay=0&mute=0&controls=1&loop=1&playlist=kGzELnSiOKk&modestbranding=1&rel=0&showinfo=0&fs=0'],
+      ['FPR: The Avenue','Music video for Flowerpot Records and The You Suck Flying Circus using Max/MSP and Adobe Premiere','https://www.youtube.com/watch?v=vrOCFoAH29k'],
+      ['FPR: Learn To Swim','Music video for Flowerpot Records and The You Suck Flying Circus','https://www.youtube.com/watch?v=6HADmfWSb3w'],
+      ['FPR: Yr Heart Is Breaking','Music video for Flowerpot Records and Jack David','https://www.youtube.com/watch?v=kGzELnSiOKk'],
       ['VIDEOJAMZ #1: Leaftype','Leaftype - Dingus Friends. Live video performance with Max/MSP','https://player.vimeo.com/video/81901545'],
       ['VIDEOJAMZ #2: Datamosh','Live video performance with Max/MSP','https://player.vimeo.com/video/87136458'],
       ['VIDEOJAMZ #3: Kuh-Lida','Live video performance with Max/MSP','https://player.vimeo.com/video/91120251'],
@@ -70,15 +71,49 @@
     const contact={address:'Jamaica Plain, Massachusetts',phone:'978-886-7128',email:'fennmacon@gmail.com',linkedin:'https://www.linkedin.com/in/fenn-macon',website:'https://fenn.club'};
     const sections={home:{label:'Home',kicker:'Welcome',icon:'fa-house',note:'Jamaica Plain, Massachusetts',links:[{id:'intro',label:'Introduction'}]},music:{label:'Music',kicker:'Selected work',icon:'fa-music',note:'Songs, records, and sound',links:music},web:{label:'Web',kicker:'Selected work',icon:'fa-globe',note:'Sites and experiments',links:web},digital:{label:'Digital',kicker:'Selected work',icon:'fa-wand-magic-sparkles',note:'Images, objects, and ideas',links:digital},resume:{label:'Resume',kicker:'Experience',icon:'fa-file-lines',note:'Systems, technology, and care',links:[{id:'contact',title:'Contact'},{id:'objective',title:'Objective'},{id:'experience',title:'Experience'},{id:'education',title:'Education'},{id:'skills',title:'Skills'},{id:'projects',title:'Projects'},...experience.map(company=>({id:'company-'+company.id,title:company.company}))]}};
     let activeSection='home',activeLink='intro';const rail=document.querySelector('#rail-links'),contextLinks=document.querySelector('#context-links'),main=document.querySelector('#main-content');
-    const wordmark=document.querySelector('.wordmark'),faviconFace=document.querySelector('.favicon-face'),twinkleColors=['#ffffff','#f7c948','#ff7b72','#8bd3dd','#b8a0ff','#ffffff'];let twinkleTimer=null,colorIndex=0;
-    function startTwinkle(){if(twinkleTimer)return;faviconFace.style.color=twinkleColors[colorIndex];twinkleTimer=setInterval(()=>{colorIndex=(colorIndex+1)%twinkleColors.length;faviconFace.style.color=twinkleColors[colorIndex]},260)}
-    function stopTwinkle(){clearInterval(twinkleTimer);twinkleTimer=null}
-    wordmark.addEventListener('mouseenter',startTwinkle);wordmark.addEventListener('mouseleave',stopTwinkle);wordmark.addEventListener('focus',startTwinkle);wordmark.addEventListener('blur',stopTwinkle);
-    function renderRail(){rail.innerHTML=Object.entries(sections).filter(([key])=>key!=='home').map(([key,item])=>`<button class="rail-button ${key===activeSection?'is-active':''}" aria-label="${item.label}" title="${item.label}" data-label="${item.label}" data-section="${key}"><i class="fa-solid ${item.icon}"></i></button>`).join('');document.querySelector('.wordmark').classList.toggle('is-active',activeSection==='home');document.querySelector('.wordmark').onclick=()=>{activeSection='home';activeLink='intro';render()};rail.querySelectorAll('[data-section]').forEach(b=>b.onclick=()=>{activeSection=b.dataset.section;activeLink=sections[activeSection].links[0].id;render()})}
+    const twinkleColors=['#ffffff','#f7c948','#ff7b72','#8bd3dd','#b8a0ff','#ffa657','#7ee787','#ff8fbc','#79b8ff','#d2e884','#e6b8a2','#c4b5fd'];
+    const navColors=new Map(),navTimers=new Map();
+    function stopNavTwinkle(key){clearInterval(navTimers.get(key));navTimers.delete(key)}
+    function nextNavColor(key){
+      const current=navColors.get(key)??-1;
+      const occupied=new Set([...navColors].filter(([other])=>other!==key).map(([,color])=>color));
+      for(let step=1;step<=twinkleColors.length;step++){
+        const candidate=(current+step)%twinkleColors.length;
+        if(!occupied.has(candidate)){navColors.set(key,candidate);return candidate}
+      }
+      return current; // Keep the existing color if the palette is ever exhausted.
+    }
+    function setupNavTwinkle(button,key){
+      const icon=button.querySelector('span,i');
+      if(navColors.has(key))icon.style.color=twinkleColors[navColors.get(key)];
+      function start(){
+        if(navTimers.has(key))return;
+        function paint(){const index=nextNavColor(key);if(index>=0)icon.style.color=twinkleColors[index]}
+        paint();navTimers.set(key,setInterval(paint,260));
+      }
+      function stop(){if(!button.matches(':hover')&&document.activeElement!==button)stopNavTwinkle(key)}
+      button.addEventListener('mouseenter',start);button.addEventListener('mouseleave',stop);
+      button.addEventListener('focus',start);button.addEventListener('blur',stop);
+    }
+    setupNavTwinkle(document.querySelector('.wordmark'),'home');
+    setupNavTwinkle(document.querySelector('.rail-contact'),'contact');
+    function renderRail(){Object.keys(sections).filter(key=>key!=='home').forEach(stopNavTwinkle);rail.innerHTML=Object.entries(sections).filter(([key])=>key!=='home').map(([key,item])=>`<button class="rail-button ${key===activeSection?'is-active':''}" aria-label="${item.label}" title="${item.label}" data-label="${item.label}" data-section="${key}"><i class="fa-solid ${item.icon}"></i></button>`).join('');document.querySelector('.wordmark').classList.toggle('is-active',activeSection==='home');document.querySelector('.wordmark').onclick=()=>{activeSection='home';activeLink='intro';render()};rail.querySelectorAll('[data-section]').forEach(b=>{setupNavTwinkle(b,b.dataset.section);b.onclick=()=>{activeSection=b.dataset.section;activeLink=sections[activeSection].links[0].id;render()}})}
     function renderContext(){const section=sections[activeSection];document.querySelector('#section-kicker').textContent=section.kicker;document.querySelector('#section-title').textContent=section.label;document.querySelector('#sidebar-note').textContent=section.note;contextLinks.innerHTML=section.links.map((link,index)=>{const label=link.label||link.title;return `<button class="context-link ${link.id===activeLink?'is-active':''}" data-link="${link.id}"><span class="link-index">${String(index+1).padStart(2,'0')}</span><span>${label}</span></button>`}).join('');contextLinks.querySelectorAll('[data-link]').forEach(b=>b.onclick=()=>{activeLink=b.dataset.link;renderContext();renderMain()});contextLinks.querySelector('.context-link.is-active')?.scrollIntoView({block:'nearest'});}
     function renderHome(){main.innerHTML=`<div class="hero-page"><p class="eyebrow">Fenn Macon</p><h2><span>I solve tech problems</span><span>and prevent future issues</span><span>for tranquility.</span></h2><div class="hero-rule"></div><p class="intro-copy">Hi, I'm Fenn Macon, a musician and digital artist living in Jamaica Plain, Massachusetts.</p><p class="intro-copy intro-copy-tight">During the day, I am a systems engineer with a masters in IT management.</p></div>`}
-    function openUrl(item){const match=(item.url||'').match(/youtube\.com\/embed\/([^?]+)/);return match?`https://www.youtube.com/watch?v=${match[1]}`:item.url}
-    function renderMedia(item,section){const url=item.url||'',youtubeId=(url.match(/youtube\.com\/embed\/([^?]+)/)||[])[1]||(item.kind==='external-video'?(url.match(/[?&]v=([^&]+)/)||[])[1]:null);if(item.kind==='bandcamp')return `<div class="media-frame audio-frame"><iframe title="${item.title} on Bandcamp" src="https://bandcamp.com/EmbeddedPlayer/album=${item.bandcampId}/size=large/bgcol=333333/linkcol=e32c14/tracklist=false/transparent=true/" loading="lazy" seamless></iframe></div>`;if(youtubeId)return `<div class="external-preview youtube-preview"><a href="https://www.youtube.com/watch?v=${youtubeId}" target="_blank" rel="noopener"><img src="https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg" alt="${item.title} on YouTube"><span>Watch on YouTube <i class="fa-solid fa-arrow-up-right-from-square"></i></span></a></div>`;if(url.includes('player.vimeo.com'))return `<div class="media-frame video-frame"><iframe title="${item.title}" src="${url}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;if(section.label==='Digital'&&/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url))return `<div class="media-frame image-frame"><img src="${url}" alt="${item.title}" loading="lazy"></div>`;if(section.label==='Web')return `<div class="media-frame site-frame"><iframe title="Preview of ${item.title}" src="${url}" loading="lazy"></iframe></div>`;return ''}
+    function youtubeVideoId(url){try{const parsed=new URL(url);if(['www.youtube.com','youtube.com','www.youtube-nocookie.com'].includes(parsed.hostname))return parsed.pathname.startsWith('/embed/')?parsed.pathname.split('/')[2]:parsed.searchParams.get('v');if(parsed.hostname==='youtu.be')return parsed.pathname.slice(1)}catch{}return null}
+    function openUrl(item){const id=youtubeVideoId(item.url);return id?`https://www.youtube.com/watch?v=${id}`:item.url}
+    function renderMedia(item,section){
+      const url=item.url||'',youtubeId=youtubeVideoId(url);
+      const playerOrigin=/^https?:$/.test(location.protocol)?location.origin:'https://fenn.club';
+      if(item.kind==='bandcamp')return `<div class="media-frame audio-frame"><iframe title="${item.title} on Bandcamp" src="https://bandcamp.com/EmbeddedPlayer/album=${item.bandcampId}/size=large/bgcol=333333/linkcol=e32c14/tracklist=false/transparent=true/" loading="lazy" seamless></iframe></div>`;
+      if(youtubeId)return `<div class="media-frame video-frame"><iframe title="${item.title} on YouTube" src="https://www.youtube.com/embed/${youtubeId}?controls=1&playsinline=1&rel=0&origin=${encodeURIComponent(playerOrigin)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div>`;
+      if(url.includes('player.vimeo.com'))return `<div class="media-frame video-frame"><iframe title="${item.title}" src="${url}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;
+      if(section.label==='Digital'&&/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url))return `<div class="media-frame image-frame"><img src="${url}" alt="${item.title}" loading="lazy"></div>`;
+      // These legacy domains need valid HTTPS before browsers can embed them on fenn.club.
+      if(section.label==='Web'&&item.previewImage)return `<a class="media-frame image-frame site-preview" href="${url}" target="_blank" rel="noopener" aria-label="Visit ${item.title}"><img src="${item.previewImage}" alt="Screenshot of ${item.title}" loading="lazy"><span>Visit website <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>`;
+      if(section.label==='Web')return `<div class="media-frame site-frame"><iframe title="Preview of ${item.title}" src="${url}" loading="lazy"></iframe></div>`;
+      return '';
+    }
     function renderGallery(items,section){const item=items.find(x=>x.id===activeLink)||items[0],index=items.indexOf(item);main.innerHTML=`<div class="content-header"><div><p class="eyebrow">${section.label}</p><h2>${item.title}</h2></div><div class="gallery-nav"><span class="content-count">${index+1} / ${items.length}</span><div class="nav-arrows"><button data-prev aria-label="Previous ${section.label} work"><i class="fa-solid fa-arrow-left"></i></button><a class="nav-open" href="${openUrl(item)}" target="_blank" rel="noopener" aria-label="Open ${item.title}" title="Open ${item.title}"><i class="fa-solid fa-arrow-up-right-from-square"></i></a><button data-next aria-label="Next ${section.label} work"><i class="fa-solid fa-arrow-right"></i></button></div></div></div>${renderMedia(item,section)}<div class="item-detail"><p>${item.description}</p></div>`;main.querySelector('[data-prev]')?.addEventListener('click',()=>{activeLink=items[(index-1+items.length)%items.length].id;renderContext();renderMain()});main.querySelector('[data-next]')?.addEventListener('click',()=>{activeLink=items[(index+1)%items.length].id;renderContext();renderMain()})}
     const resumeSubheadings=new Set(['Hybrid Infrastructure, Cloud & Automation Engineering','Security, Compliance & Technical Leadership','Infrastructure & Cloud Administration','Client Support & Service Delivery']);
     function formatResumeBody(body){const parts=body.split('|').filter(Boolean);return parts.length>1?`<ul class="resume-points">${parts.map(point=>resumeSubheadings.has(point)?`<li class="resume-subheading">${point}</li>`:`<li>${point}</li>`).join('')}</ul>`:`<p>${body}</p>`}
