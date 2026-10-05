@@ -300,12 +300,13 @@
       const icon=button.querySelector('span,i');
       if(navColors.has(key))icon.style.color=twinkleColors[navColors.get(key)];
       function start(){
-        if(navTimers.has(key))return;
+        if(!matchMedia('(hover: hover) and (pointer: fine)').matches||navTimers.has(key))return;
         function paint(){const index=nextNavColor(key);if(index>=0)icon.style.color=twinkleColors[index]}
         paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)navTimers.set(key,setInterval(paint,260));
       }
       function stop(){if(!button.matches(':hover')&&document.activeElement!==button)stopNavTwinkle(key)}
-      button.addEventListener('mouseenter',start);button.addEventListener('mouseleave',stop);
+      button.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')start()});button.addEventListener('pointerleave',stop);
+      button.addEventListener('pointerdown',event=>{if(event.pointerType==='touch'){stopNavTwinkle(key);const index=nextNavColor(key);if(index>=0)icon.style.color=twinkleColors[index]}});
       button.addEventListener('focus',start);button.addEventListener('blur',stop);
     }
     setupNavTwinkle(document.querySelector('.wordmark'),'home');
