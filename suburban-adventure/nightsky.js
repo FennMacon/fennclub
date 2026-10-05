@@ -1,0 +1,425 @@
+// nightsky.js - Night sky with stars and moon
+
+import * as THREE from 'three';
+
+// Create a starry night sky with a large yellow moon
+const createNightSky = (scene) => {
+    // Generate a random moon phase (1-7, excluding New Moon)
+    // 1: Waxing Crescent, 2: First Quarter, 3: Waxing Gibbous
+    // 4: Full Moon, 5: Waning Gibbous, 6: Last Quarter, 7: Waning Crescent
+    const moonPhase = Math.floor(Math.random() * 7) + 1; // Now generates 1-7 instead of 0-7
+    console.log(`Moon phase: ${getMoonPhaseName(moonPhase)}`);
+    
+    // Create the moon based on phase
+    let moon, moonGlow;
+    
+    // New moon is now removed from random selection
+    if (moonPhase === 4) {
+        // Full moon
+        moon = createFullMoon();
+        moonGlow = createMoonGlow(0.3);
+    } else {
+        // Partial moon phases
+        moon = createPhasedMoon(moonPhase);
+        moonGlow = createMoonGlow(0.25);
+    }
+    
+    // Scale moon for 1000x1000 unified map (radius 5 -> 20)
+    moon.scale.setScalar(4);
+    moonGlow.scale.setScalar(4);
+    
+    // Initial position (will be updated by updateNightSky based on dayProgress)
+    moon.position.set(80, 40, -120);
+    scene.add(moon);
+    
+    // Position the glow at the same position
+    moonGlow.position.copy(moon.position);
+    scene.add(moonGlow);
+    
+    // Create stars using particles - scaled for 1000x1000 unified map
+    const starsGeometry = new THREE.BufferGeometry();
+    const starCount = 1500;
+    const starsPositions = new Float32Array(starCount * 3);
+    const starsSizes = new Float32Array(starCount);
+    
+    // Distribute stars in the sky dome
+    for (let i = 0; i < starCount; i++) {
+        // Create a hemispherical distribution for stars
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI * 0.6; // Limit to upper hemisphere
+        const radius = 450 + Math.random() * 100; // Scaled for 1000x1000 world
+        
+        const x = radius * Math.sin(phi) * Math.cos(theta);
+        const y = radius * Math.cos(phi) + 10; // Keep stars above horizon
+        const z = radius * Math.sin(phi) * Math.sin(theta);
+        
+        starsPositions[i * 3] = x;
+        starsPositions[i * 3 + 1] = y;
+        starsPositions[i * 3 + 2] = z;
+        
+        // Vary star sizes slightly
+        starsSizes[i] = 0.5 + Math.random() * 1.5;
+    }
+    
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+    starsGeometry.setAttribute('size', new THREE.BufferAttribute(starsSizes, 1));
+    
+    // Custom shader material for stars with twinkling effect
+    const starsMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 },
+            pixelRatio: { value: window.devicePixelRatio }
+        },
+        vertexShader: `
+            uniform float time;
+            uniform float pixelRatio;
+            attribute float size;
+            varying float vAlpha;
+            
+            void main() {
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                
+                // Create smoother twinkling by combining multiple sine waves
+                // Each star gets a unique twinkling pattern based on its position
+                float uniqueOffset = position.x * 0.017 + position.y * 0.031 + position.z * 0.013;
+                float slowTwinkle = sin(time * 0.0003 + uniqueOffset * 10.0) * 0.5 + 0.5;
+                float mediumTwinkle = sin(time * 0.0007 + uniqueOffset * 5.0) * 0.3 + 0.7;
+                float fastTwinkle = sin(time * 0.001 + uniqueOffset * 15.0) * 0.2 + 0.8;
+                
+                // Combine the different frequencies for a more natural look
+                float twinkleEffect = slowTwinkle * mediumTwinkle * fastTwinkle;
+                
+                // Apply smoother variation to alpha and size (more subtle for sunset)
+                vAlpha = 0.4 + 0.2 * twinkleEffect;
+                gl_PointSize = size * pixelRatio * (0.8 + 0.2 * twinkleEffect);
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `,
+        fragmentShader: `
+            varying float vAlpha;
+            
+            void main() {
+                // Calculate distance from center for a circular point
+                vec2 center = gl_PointCoord - vec2(0.5);
+                float dist = length(center);
+                
+                // Create a soft circular star with feathered edges
+                float alpha = vAlpha * smoothstep(0.5, 0.3, dist);
+                
+                // Star color - slightly warm white for sunset sky
+                gl_FragColor = vec4(1.0, 0.95, 0.9, alpha);
+            }
+        `,
+        transparent: true,
+        depthWrite: false,
+        fog: false // Exclude from distance fog so stars stay visible
+    });
+    
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    stars.name = "stars";
+    scene.add(stars);
+    
+    // Create sun (opposite phase to moon - visible during day)
+    const sunGeometry = new THREE.SphereGeometry(25, 16, 16);
+    const sunMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFFACD,
+        wireframe: false,
+        fog: false // Exclude from distance fog so sun stays bright
+    });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.visible = false; // Start hidden, updated by updateNightSky
+    sun.name = 'sun';
+    scene.add(sun);
+    
+    // Store references to night sky elements for animation
+    scene.userData.nightSky = {
+        moon: moon,
+        moonGlow: moonGlow,
+        stars: stars,
+        moonPhase: moonPhase,
+        sun: sun
+    };
+    
+    return {
+        moon,
+        moonGlow,
+        stars,
+        moonPhase,
+        sun
+    };
+};
+
+// Helper functions for moon phases
+
+// Get descriptive name for moon phase
+const getMoonPhaseName = (phase) => {
+    const phaseNames = [
+        "Waxing Crescent",
+        "First Quarter", 
+        "Waxing Gibbous",
+        "Full Moon",
+        "Waning Gibbous",
+        "Last Quarter",
+        "Waning Crescent"
+    ];
+    return phaseNames[phase - 1];
+};
+
+// Create a full moon
+const createFullMoon = () => {
+    // Group to hold the moon elements
+    const moonGroup = new THREE.Group();
+    
+    // Base moon sphere
+    const moonGeometry = new THREE.SphereGeometry(5, 16, 16);
+    const moonMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFFCE0, // Creamy yellow color
+        wireframe: false,
+        fog: false // Exclude from distance fog so moon stays bright
+    });
+    const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+    moonGroup.add(moon);
+    
+    // Add some subtle crater circles for texture - no face
+    const addCrater = (x, y, z, size, color = 0xEEEAC0, opacity = 0.7) => {
+        const craterGeometry = new THREE.CircleGeometry(size, 12);
+        const craterMaterial = new THREE.MeshBasicMaterial({ 
+            color: color, 
+            transparent: true,
+            opacity: opacity,
+            fog: false
+        });
+        const crater = new THREE.Mesh(craterGeometry, craterMaterial);
+        
+        // Position the crater
+        crater.position.set(x, y, z);
+        
+        // Rotate to face outward from center
+        const normal = new THREE.Vector3(x, y, z).normalize();
+        crater.lookAt(normal.multiplyScalar(10).add(crater.position));
+        
+        moonGroup.add(crater);
+    };
+    
+    // Add a collection of craters across the moon's surface
+    // Main large craters
+    addCrater(-2.5, 2.5, 4.3, 1.2, 0xEEEAC0, 0.6);
+    addCrater(3.0, 1.5, 3.8, 0.9, 0xEEEAC0, 0.7);
+    addCrater(0.5, -3.0, 4.0, 1.4, 0xEEEAC0, 0.5);
+    addCrater(-3.5, -1.0, 3.5, 0.8, 0xEEEAC0, 0.6);
+    
+    // Smaller craters
+    addCrater(2.0, 3.5, 2.8, 0.5, 0xEEEAC0, 0.7);
+    addCrater(-1.5, -2.5, 4.1, 0.6, 0xEEEAC0, 0.6);
+    addCrater(1.8, -0.5, 4.7, 0.4, 0xEEEAC0, 0.5);
+    addCrater(-3.8, 0.7, 3.2, 0.7, 0xE8E4B0, 0.6); 
+    addCrater(3.5, -2.0, 3.0, 0.5, 0xE8E4B0, 0.7);
+    
+    // Smallest detail craters
+    for (let i = 0; i < 15; i++) {
+        // Create random position on sphere
+        const phi = Math.random() * Math.PI * 2;
+        const theta = Math.random() * Math.PI;
+        const radius = 4.9; // Just below the surface
+        
+        const x = radius * Math.sin(theta) * Math.cos(phi);
+        const y = radius * Math.sin(theta) * Math.sin(phi);
+        const z = radius * Math.cos(theta);
+        
+        addCrater(x, y, z, 0.1 + Math.random() * 0.3, 0xEEEAC0, 0.4 + Math.random() * 0.3);
+    }
+    
+    return moonGroup;
+};
+
+// Create a phased moon (crescent or quarter)
+const createPhasedMoon = (phase) => {
+    // For cartoon effect, we'll use a direct visual approach rather than shaders
+    const moonGroup = new THREE.Group();
+    
+    // Base moon sphere - grayish for the shadowed part
+    const moonShadowGeometry = new THREE.SphereGeometry(5, 16, 16);
+    const moonShadowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x555566, // Gray with blue tint
+        wireframe: false,
+        fog: false
+    });
+    const moonShadow = new THREE.Mesh(moonShadowGeometry, moonShadowMaterial);
+    moonGroup.add(moonShadow);
+    
+    // Create the illuminated part
+    const illuminatedGeometry = new THREE.SphereGeometry(5.05, 16, 16, 0, Math.PI, 0, Math.PI);
+    const illuminatedMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFFCE0, // Creamy yellow color
+        wireframe: false,
+        side: THREE.FrontSide,
+        fog: false
+    });
+    
+    const illuminatedPart = new THREE.Mesh(illuminatedGeometry, illuminatedMaterial);
+    
+    // Position and rotate based on phase
+    // Convert phase to angle (0-7 -> 0-2π)
+    const phaseAngle = (phase / 4) * Math.PI;
+    illuminatedPart.rotation.y = phaseAngle;
+    
+    // For waxing phases (1-3), show right side
+    // For waning phases (5-7), show left side
+    if (phase > 4) {
+        illuminatedPart.rotation.y = Math.PI - phaseAngle;
+        illuminatedPart.scale.z = -1; // Flip to show other side
+    }
+    
+    moonGroup.add(illuminatedPart);
+    
+    // Add cartoon eyes depending on the phase - only visible during certain phases
+    if (phase !== 0) { // Not new moon
+        // Eyes - smaller and simpler for partial phases
+        const eyeSize = (phase === 4) ? 0.4 : 0.3; // Bigger for full moon
+        const eyeColor = (phase === 4) ? 0x333333 : 0x444444; // Darker for full moon
+        
+        const eyeGeometry = new THREE.CircleGeometry(eyeSize, 8);
+        const eyeMaterial = new THREE.MeshBasicMaterial({ color: eyeColor, fog: false });
+        
+        // Position eyes based on phase
+        let eyeXOffset = 1.5;
+        if (phase > 4) eyeXOffset *= -1; // Flip for waning
+        
+        // Only show eyes that would be in the illuminated part
+        if ((phase < 4 && phase > 1) || phase === 4) {
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(eyeXOffset, 1, 4.8);
+            rightEye.rotation.set(-0.2, 0, 0);
+            moonGroup.add(rightEye);
+        }
+        
+        if ((phase > 4 && phase < 7) || phase === 4) {
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-eyeXOffset, 1, 4.8);
+            leftEye.rotation.set(-0.2, 0, 0);
+            moonGroup.add(leftEye);
+        }
+    }
+    
+    return moonGroup;
+};
+
+// Create the moon glow - dreamy effect
+const createMoonGlow = (opacity = 0.3) => {
+    // Create multiple layers of glow with different sizes and opacities
+    const glowGroup = new THREE.Group();
+    
+    // Inner glow
+    const innerGlowGeometry = new THREE.SphereGeometry(5.5, 16, 16);
+    const innerGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFFFC0, // Yellow-white
+        transparent: true,
+        opacity: opacity * 1.3,
+        wireframe: false,
+        depthWrite: false,
+        depthTest: true, // Occluded by ground when below horizon
+        fog: false
+    });
+    const innerGlow = new THREE.Mesh(innerGlowGeometry, innerGlowMaterial);
+    innerGlow.renderOrder = 999; // Render last
+    glowGroup.add(innerGlow);
+    
+    // Middle glow layer
+    const middleGlowGeometry = new THREE.SphereGeometry(6.0, 12, 12);
+    const middleGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xE6FFFF, // Slight blue tint
+        transparent: true,
+        opacity: opacity * 0.7,
+        wireframe: false,
+        depthWrite: false,
+        depthTest: true, // Occluded by ground when below horizon
+        fog: false
+    });
+    const middleGlow = new THREE.Mesh(middleGlowGeometry, middleGlowMaterial);
+    middleGlow.renderOrder = 999; // Render last
+    glowGroup.add(middleGlow);
+    
+    // Outer dreamy glow
+    const outerGlowGeometry = new THREE.SphereGeometry(7.0, 8, 8);
+    const outerGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xDDEEFF, // Blue-white
+        transparent: true,
+        opacity: opacity * 0.4,
+        wireframe: false,
+        depthWrite: false,
+        depthTest: true, // Occluded by ground when below horizon
+        fog: false
+    });
+    const outerGlow = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
+    outerGlow.renderOrder = 999; // Render last
+    glowGroup.add(outerGlow);
+    
+    // Set render order on the group as well
+    glowGroup.renderOrder = 999;
+    
+    return glowGroup;
+};
+
+// Moon arc: dayProgress 0 = east/horizon, 0.5 = zenith, 1 = west/horizon
+// Sun: opposite phase (dayProgress 0.5 = sun at zenith)
+// Extended arc: bodies dip below horizon at rise/set instead of popping in/out
+const updateNightSky = (scene, time, dayProgress = 0) => {
+    if (!scene.userData.nightSky) return;
+    
+    const { moon, moonGlow, sun, stars } = scene.userData.nightSky;
+    if (!moon) return;
+    
+    // Extended arc: -DIP to (PI + DIP), so bodies dip below horizon at rise/set
+    // Arc goes from NE corner to SW corner of sky - rise/set at map corners (1000x1000)
+    const DIP = Math.PI / 6;
+    const angleSpan = Math.PI + 2 * DIP;
+    const arcRadius = 200;
+    const horizonY = 50;
+    const mapHalf = 500; // Map is 1000x1000; corners at (±500, ±500)
+    const moonRadius = 20; // base 5 * scale 4
+    const moonGlowRadius = 28; // outer glow sphere 7 * scale 4
+    const sunRadius = 25;
+    
+    // Moon: dayProgress 0→1 maps to -DIP → (PI + DIP)
+    const moonAngle = -DIP + dayProgress * angleSpan;
+    const moonElevation = Math.sin(moonAngle);
+    
+    // Sun: same range, phase shifted by 0.5
+    const sunAngle = -DIP + ((dayProgress + 0.5) % 1) * angleSpan;
+    const sunElevation = Math.sin(sunAngle);
+    
+    // Update star twinkling; dim stars during daytime
+    if (stars?.material?.uniforms) {
+        stars.material.uniforms.time.value = time * 500;
+        stars.visible = sunElevation <= 0.15; // Hide stars when sun is up
+    }
+    
+    // X/Z: NE corner (500, 500) to SW corner (-500, -500) - map corners
+    const moonZProgress = (moonAngle + DIP) / angleSpan; // 0 at rise, 1 at set
+    const moonX = mapHalf - moonZProgress * (2 * mapHalf); // 500 → -500
+    const moonY = horizonY + arcRadius * Math.sin(moonAngle);
+    const moonZ = mapHalf - moonZProgress * (2 * mapHalf); // 500 → -500
+    
+    moon.position.set(moonX, moonY, moonZ);
+    moonGlow.position.copy(moon.position);
+    
+    // Hide when top edge passes below horizon (Y=0)
+    moon.visible = moonY > -moonRadius;
+    moonGlow.visible = moonY > -moonGlowRadius;
+    
+    const sunZProgress = (sunAngle + DIP) / angleSpan;
+    const sunX = mapHalf - sunZProgress * (2 * mapHalf);
+    const sunY = horizonY + arcRadius * Math.sin(sunAngle);
+    const sunZ = mapHalf - sunZProgress * (2 * mapHalf);
+    
+    if (sun) {
+        sun.position.set(sunX, sunY, sunZ);
+        sun.visible = sunY > -sunRadius;
+    }
+    
+    // Slight rotation of moon
+    moon.rotation.y += 0.001;
+    moonGlow.rotation.y += 0.001;
+};
+
+export { createNightSky, updateNightSky }; 
