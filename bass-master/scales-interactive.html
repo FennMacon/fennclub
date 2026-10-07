@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Interactive Scales - Bass Master 64</title>
+    <link rel="stylesheet" type="text/css" href="output.css">
+    <link href='https://fonts.googleapis.com/css?family=Covered+By+Your+Grace|Patua+One|Raleway' rel='stylesheet' type='text/css'>
+    <script src="vendor/jquery-4.0.0.min.js"></script>
+    <link rel="stylesheet" href="scales-interactive.css">
+</head>
+<body>
+<div id="wrapper">
+    <header>
+        <a href="index.html"><h1>Scales and the CAGED system</h1></a>
+        <p></p>
+    </header>
+
+    <div class="scale-page-container">
+
+
+        <div class="visualization-container">
+            <!-- Piano Visualization -->
+            <div class="piano-visual active" id="piano-viz"></div>
+
+            <!-- Bass Visualization -->
+            <div class="bass-visual" id="bass-viz"></div>
+
+            <!-- Guitar Visualization -->
+            <div class="guitar-visual" id="guitar-viz"></div>
+
+            <!-- Treble Clef Visualization -->
+            <div class="treble-visual" id="treble-viz"></div>
+
+            <!-- Bass Clef Visualization -->
+            <div class="bass-clef-visual" id="bass-clef-viz"></div>
+                    </div>
+        <div class="note-details" id="note-details" role="status" aria-live="polite">Select a note to see its details.</div>
+        <div class="controls-container">
+
+            <!-- Visualization in its own row -->
+                    <div class="btn-group visualizations" role="group" aria-label="Instrument">
+                <span class="control-label">Instrument</span>
+                        <button class="viz-btn active" data-viz="piano">Piano</button>
+                        <button class="viz-btn" data-viz="bass">Bass</button>
+                        <button class="viz-btn" data-viz="guitar">Guitar</button>
+                        <button class="viz-btn" data-viz="treble">Treble Clef</button>
+                        <button class="viz-btn" data-viz="bass-clef">Bass Clef</button>
+            </div>
+
+            <!-- Root Notes in their own row -->
+                <div class="btn-group root-notes" role="group" aria-label="Root">
+                <span class="control-label">Root</span>
+                <button class="note-btn active" data-note="C" data-sharp="C" data-flat="C" data-label="C">C</button>
+                <button class="note-btn" data-note="C#" data-sharp="C♯" data-flat="D♭" data-label="C♯/D♭">C♯/D♭</button>
+                <button class="note-btn" data-note="D" data-sharp="D" data-flat="D" data-label="D">D</button>
+                <button class="note-btn" data-note="D#" data-sharp="D♯" data-flat="E♭" data-label="D♯/E♭">D♯/E♭</button>
+                <button class="note-btn" data-note="E" data-sharp="E" data-flat="E" data-label="E">E</button>
+                <button class="note-btn" data-note="F" data-sharp="F" data-flat="F" data-label="F">F</button>
+                <button class="note-btn" data-note="F#" data-sharp="F♯" data-flat="G♭" data-label="F♯/G♭">F♯/G♭</button>
+                <button class="note-btn" data-note="G" data-sharp="G" data-flat="G" data-label="G">G</button>
+                <button class="note-btn" data-note="G#" data-sharp="G♯" data-flat="A♭" data-label="G♯/A♭">G♯/A♭</button>
+                <button class="note-btn" data-note="A" data-sharp="A" data-flat="A" data-label="A">A</button>
+                <button class="note-btn" data-note="A#" data-sharp="A♯" data-flat="B♭" data-label="A♯/B♭">A♯/B♭</button>
+                <button class="note-btn" data-note="B" data-sharp="B" data-flat="B" data-label="B">B</button>
+                </div>
+                            <!-- Scale Types in their own row -->
+            <div class="btn-group scale-types" role="group" aria-label="Scale">
+                <span class="control-label">Scale</span>
+                <button class="scale-btn active" data-scale="major">Major</button>
+                <button class="scale-btn" data-scale="minor">Natural Minor</button>
+                <button class="scale-btn" data-scale="harmonic-minor">Harmonic Minor</button>
+                <button class="scale-btn" data-scale="pentatonic">Major pentatonic</button>
+            </div>
+            <!-- Accidentals in their own row -->
+            <div class="accidentals-container" role="group" aria-label="Note spelling">
+                <span class="control-label">Note spelling</span>
+                    <button class="accidental-btn" data-accidental="flat">Prefer flats</button>
+                    <button class="accidental-btn active" data-accidental="natural">Auto</button>
+                    <button class="accidental-btn" data-accidental="sharp">Prefer sharps</button>
+        </div>
+
+        <!-- Move the color legend here, below the visualization -->
+        <div class="color-legend">
+            <!-- Note display at the bottom of controls container -->
+        <div class="note-display" id="scale-notes">
+            C Major Scale: C - D - E - F - G - A - B - C
+        </div>
+            <p>Hover, tap, or focus a note to see more information. Notes are color-coded consistently across all visualizations:</p>
+            <div class="color-chips" id="standard-color-chips">
+                <div class="color-chip" data-degree="0"><span class="color-sample" style="background-color: rgba(255, 0, 0, 0.7);"></span> C <span class="solfege">(Do)</span></div>
+                <div class="color-chip" data-degree="1"><span class="color-sample" style="background-color: rgba(255, 165, 0, 0.7);"></span> D <span class="solfege">(Re)</span></div>
+                <div class="color-chip" data-degree="2"><span class="color-sample" style="background-color: rgba(255, 255, 0, 0.7);"></span> E <span class="solfege">(Mi)</span></div>
+                <div class="color-chip" data-degree="3"><span class="color-sample" style="background-color: rgba(0, 128, 0, 0.7);"></span> F <span class="solfege">(Fa)</span></div>
+                <div class="color-chip" data-degree="4"><span class="color-sample" style="background-color: rgba(0, 0, 255, 0.7);"></span> G <span class="solfege">(Sol)</span></div>
+                <div class="color-chip" data-degree="5"><span class="color-sample" style="background-color: rgba(75, 0, 130, 0.7);"></span> A <span class="solfege">(La)</span></div>
+                <div class="color-chip" data-degree="6"><span class="color-sample" style="background-color: rgba(143, 0, 255, 0.7);"></span> B <span class="solfege">(Ti)</span></div>
+        </div>
+
+            <!-- Pentatonic-specific color chips (initially hidden) -->
+            <div class="color-chips" id="pentatonic-color-chips" style="display: none;">
+                <div class="color-chip" data-degree="0"><span class="color-sample" style="background-color: rgba(255, 0, 0, 0.7);"></span> C <span class="solfege">(Do)</span></div>
+                <div class="color-chip" data-degree="1"><span class="color-sample" style="background-color: rgba(255, 165, 0, 0.7);"></span> D <span class="solfege">(Re)</span></div>
+                <div class="color-chip" data-degree="2"><span class="color-sample" style="background-color: rgba(255, 255, 0, 0.7);"></span> E <span class="solfege">(Mi)</span></div>
+                <div class="color-chip" data-degree="3"><span class="color-sample" style="background-color: rgba(0, 0, 255, 0.7);"></span> G <span class="solfege">(Sol)</span></div>
+                <div class="color-chip" data-degree="4"><span class="color-sample" style="background-color: rgba(75, 0, 130, 0.7);"></span> A <span class="solfege">(La)</span></div>
+            </div>
+
+            <p><strong>Notes with white borders</strong> indicate the root note of the scale.</p>
+        </div>
+        </div>
+
+        <a class="selection-link" id="selection-link" href="scales-interactive.html">Link to this view</a>
+
+        <!-- Add the CAGED System container after the color legend -->
+        <div class="caged-container">
+            <div class="caged-title">CAGED System</div>
+
+            <div class="caged-controls guitar-caged-controls">
+                <div class="caged-chord-select">
+                    <span>Root Note:</span>
+                    <button class="caged-btn active" data-root="C">C</button>
+                    <button class="caged-btn" data-root="C#">C#/D♭</button>
+                    <button class="caged-btn" data-root="D">D</button>
+                    <button class="caged-btn" data-root="D#">D#/E♭</button>
+                    <button class="caged-btn" data-root="E">E</button>
+                    <button class="caged-btn" data-root="F">F</button>
+                    <button class="caged-btn" data-root="F#">F#/G♭</button>
+                    <button class="caged-btn" data-root="G">G</button>
+                    <button class="caged-btn" data-root="G#">G#/A♭</button>
+                    <button class="caged-btn" data-root="A">A</button>
+                    <button class="caged-btn" data-root="A#">A#/B♭</button>
+                    <button class="caged-btn" data-root="B">B</button>
+                </div>
+
+                <div class="caged-shape-select">
+                    <span>Shape:</span>
+                    <button class="caged-btn active" data-shape="C">C</button>
+                    <button class="caged-btn" data-shape="A">A</button>
+                    <button class="caged-btn" data-shape="G">G</button>
+                    <button class="caged-btn" data-shape="E">E</button>
+                    <button class="caged-btn" data-shape="D">D</button>
+                    <button class="caged-btn" data-shape="all">All</button>
+                </div>
+        </div>
+
+            <div class="caged-controls" style="display: none;">
+                <div class="caged-chord-select">
+                    <span>Root Note:</span>
+                    <button class="caged-btn active" data-root="C">C</button>
+                    <button class="caged-btn" data-root="C#">C#/D♭</button>
+                    <button class="caged-btn" data-root="D">D</button>
+                    <button class="caged-btn" data-root="D#">D#/E♭</button>
+                    <button class="caged-btn" data-root="E">E</button>
+                    <button class="caged-btn" data-root="F">F</button>
+                    <button class="caged-btn" data-root="F#">F#/G♭</button>
+                    <button class="caged-btn" data-root="G">G</button>
+                    <button class="caged-btn" data-root="G#">G#/A♭</button>
+                    <button class="caged-btn" data-root="A">A</button>
+                    <button class="caged-btn" data-root="A#">A#/B♭</button>
+                    <button class="caged-btn" data-root="B">B</button>
+            </div>
+
+            </div>
+
+            <div class="caged-visualization">
+                <div class="caged-fretboard" id="caged-fretboard"></div>
+            </div>
+
+            <div class="note-details" id="caged-note-details" role="status" aria-live="polite">Select a chord note to see its details.</div>
+            <div class="caged-legend">
+                <div class="caged-legend-title">Legend:</div>
+                <div class="caged-legend-item guitar-caged-legend">
+                    <span class="caged-legend-color root" style="background-color: #ff5252;">R</span>
+                    <span>Root Note</span>
+                </div>
+                <div class="caged-legend-item guitar-caged-legend">
+                    <span class="caged-legend-color" style="background-color: #2196f3;">3</span>
+                    <span>3rd</span>
+                </div>
+                <div class="caged-legend-item guitar-caged-legend">
+                    <span class="caged-legend-color" style="background-color: #4caf50;">5</span>
+                    <span>5th</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="index.html">Home</a>
+        <a href="basics.html">Basics</a>
+        <a href="scales.html">Scales & Keys</a>
+        <a href="intervals.html">Intervals</a>
+        <a href="chords.html">Chords</a>
+        <a href="progressions.html">Progressions</a>
+        <a href="http://fenn.club">Fenn Macon</a>
+    </footer>
+</div>
+
+<script src="scales-data.js"></script>
+<script src="scales-interactive.js"></script>
+</body>
+</html>

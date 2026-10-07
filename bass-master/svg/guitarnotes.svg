@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="300px" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+  <title>Guitar Fretboard Notes</title>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="300" fill="#f9e4c0" />
+  
+  <!-- Frets -->
+  <line x1="100" y1="0" x2="100" y2="300" stroke="black" stroke-width="5" />
+  <line x1="200" y1="0" x2="200" y2="300" stroke="black" stroke-width="3" />
+  <line x1="300" y1="0" x2="300" y2="300" stroke="black" stroke-width="3" />
+  <line x1="400" y1="0" x2="400" y2="300" stroke="black" stroke-width="3" />
+  <line x1="500" y1="0" x2="500" y2="300" stroke="black" stroke-width="3" />
+  <line x1="600" y1="0" x2="600" y2="300" stroke="black" stroke-width="5" />
+  <line x1="700" y1="0" x2="700" y2="300" stroke="black" stroke-width="3" />
+  <line x1="800" y1="0" x2="800" y2="300" stroke="black" stroke-width="3" />
+  <line x1="900" y1="0" x2="900" y2="300" stroke="black" stroke-width="3" />
+  <line x1="1000" y1="0" x2="1000" y2="300" stroke="black" stroke-width="3" />
+  <line x1="1100" y1="0" x2="1100" y2="300" stroke="black" stroke-width="5" />
+  <line x1="1200" y1="0" x2="1200" y2="300" stroke="black" stroke-width="3" />
+  
+  <!-- Strings -->
+  <line x1="0" y1="25" x2="1200" y2="25" stroke="#D9D9D9" stroke-width="2" />
+  <line x1="0" y1="75" x2="1200" y2="75" stroke="#B8B8B8" stroke-width="3" />
+  <line x1="0" y1="125" x2="1200" y2="125" stroke="#989898" stroke-width="4" />
+  <line x1="0" y1="175" x2="1200" y2="175" stroke="#787878" stroke-width="5" />
+  <line x1="0" y1="225" x2="1200" y2="225" stroke="#585858" stroke-width="6" />
+  <line x1="0" y1="275" x2="1200" y2="275" stroke="#383838" stroke-width="7" />
+  
+  <!-- Notes for High E String (1st string) -->
+  <circle cx="50" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="50" y="30" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="150" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="150" y="30" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="250" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="250" y="30" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  <circle cx="350" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="350" y="30" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="450" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="450" y="30" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  <circle cx="550" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="550" y="30" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="650" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="650" y="30" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  <circle cx="750" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="750" y="30" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="850" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="850" y="30" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="950" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="950" y="30" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  <circle cx="1050" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="1050" y="30" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="1150" cy="25" r="15" fill="#EC407A" stroke="black" stroke-width="1" />
+  <text x="1150" y="30" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+  
+  <!-- Notes for B String (2nd string) -->
+  <circle cx="50" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="50" y="80" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="150" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="150" y="80" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="250" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="250" y="80" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  <circle cx="350" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="350" y="80" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="450" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="450" y="80" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+  <circle cx="550" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="550" y="80" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="650" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="650" y="80" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="750" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="750" y="80" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  <circle cx="850" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="850" y="80" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="950" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="950" y="80" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  <circle cx="1050" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="1050" y="80" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="1150" cy="75" r="15" fill="#9C27B0" stroke="black" stroke-width="1" />
+  <text x="1150" y="80" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  
+  <!-- Notes for G String (3rd string) -->
+  <circle cx="50" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="50" y="130" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="150" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="150" y="130" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  <circle cx="250" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="250" y="130" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="350" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="350" y="130" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  <circle cx="450" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="450" y="130" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="550" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="550" y="130" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="650" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="650" y="130" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  <circle cx="750" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="750" y="130" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="850" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="850" y="130" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+  <circle cx="950" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="950" y="130" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="1050" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="1050" y="130" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="1150" cy="125" r="15" fill="#2196F3" stroke="black" stroke-width="1" />
+  <text x="1150" y="130" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  
+  <!-- Notes for D String (4th string) -->
+  <circle cx="50" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="50" y="180" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="150" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="150" y="180" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+  <circle cx="250" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="250" y="180" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="350" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="350" y="180" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="450" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="450" y="180" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  <circle cx="550" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="550" y="180" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="650" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="650" y="180" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  <circle cx="750" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="750" y="180" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="850" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="850" y="180" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  <circle cx="950" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="950" y="180" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="1050" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="1050" y="180" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="1150" cy="175" r="15" fill="#4CAF50" stroke="black" stroke-width="1" />
+  <text x="1150" y="180" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  
+  <!-- Notes for A String (5th string) -->
+  <circle cx="50" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="50" y="230" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="150" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="150" y="230" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  <circle cx="250" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="250" y="230" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="350" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="350" y="230" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="450" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="450" y="230" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  <circle cx="550" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="550" y="230" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="650" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="650" y="230" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+  <circle cx="750" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="750" y="230" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="850" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="850" y="230" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="950" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="950" y="230" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  <circle cx="1050" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="1050" y="230" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="1150" cy="225" r="15" fill="#FF9800" stroke="black" stroke-width="1" />
+  <text x="1150" y="230" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  
+  <!-- Notes for Low E String (6th string) -->
+  <circle cx="50" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="50" y="280" font-family="Arial" font-size="14" text-anchor="middle">E</text>
+  <circle cx="150" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="150" y="280" font-family="Arial" font-size="14" text-anchor="middle">F</text>
+  <circle cx="250" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="250" y="280" font-family="Arial" font-size="14" text-anchor="middle">F#</text>
+  <circle cx="350" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="350" y="280" font-family="Arial" font-size="14" text-anchor="middle">G</text>
+  <circle cx="450" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="450" y="280" font-family="Arial" font-size="14" text-anchor="middle">G#</text>
+  <circle cx="550" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="550" y="280" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  <circle cx="650" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="650" y="280" font-family="Arial" font-size="14" text-anchor="middle">A#</text>
+  <circle cx="750" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="750" y="280" font-family="Arial" font-size="14" text-anchor="middle">B</text>
+  <circle cx="850" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="850" y="280" font-family="Arial" font-size="14" text-anchor="middle">C</text>
+  <circle cx="950" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="950" y="280" font-family="Arial" font-size="14" text-anchor="middle">C#</text>
+  <circle cx="1050" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="1050" y="280" font-family="Arial" font-size="14" text-anchor="middle">D</text>
+  <circle cx="1150" cy="275" r="15" fill="#F44336" stroke="black" stroke-width="1" />
+  <text x="1150" y="280" font-family="Arial" font-size="14" text-anchor="middle">D#</text>
+</svg> 

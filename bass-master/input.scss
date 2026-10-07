@@ -1,0 +1,217 @@
+@import 'reset';
+
+$font-stack: Helvetica, sans-serif;
+$primary-color: #e5fcc2;
+$secondary-color: #9DE0AD;
+$header-color: #547980;
+$footer-color: #E0E4CC;
+$active-color: #55bdb8;
+$text-color: #190f0f;
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+$breakpoint-tablet: 1200px;
+
+body{
+	color: $text-color;
+	background: $primary-color;
+	font-family: 'Patua One', cursive;
+}
+
+header{
+	font-family: 'Covered By Your Grace', cursive;
+	background: $header-color;
+	width:100%;
+	position:fixed;
+	top:0;
+	left:0;
+	z-index: 1000;
+}
+
+h1{
+	text-shadow: 1px 1px 1px #000;
+	text-align: center;
+	color: #F38630;
+}
+li{
+	list-style-type: square;
+    list-style-position: inside;
+    font-family: 'Raleway', sans-serif;
+}
+p{
+	font-family: 'Raleway', sans-serif;
+}
+a{
+	text-decoration:none;
+	color:$text-color;
+}
+a:hover{
+	text-shadow: 1px 1px 1px #fff;
+}
+
+.container { 
+	position: absolute;
+	top:100px;
+	width: 100%; 
+	padding-bottom: 20px;
+	z-index: 0;
+}
+
+article {
+  float: left;
+  width: 600px / 960px * 100%;
+  border: 1px groove #EC407A;
+  @include border-radius(4px);  
+  margin-left:10px;
+  margin-right:10px;
+  margin-bottom: 20px;
+  background: $secondary-color;
+  padding: 10px;
+    @media (max-width: $breakpoint-tablet) {
+  		width: 90%;
+	}
+}
+
+aside {	
+  float: right;
+  width: 300px / 960px * 90%;
+  border: 1px groove #EC407A;
+  @include border-radius(4px);
+  margin-left:10px;
+  margin-right:20px;
+  margin-bottom: 20px;
+  background: $secondary-color;
+  padding-left:10px;
+  padding-bottom:10px;
+  	@media (max-width: $breakpoint-tablet) {
+  		display:none;
+	}
+}
+
+footer{
+	background: $footer-color;
+	width:100%;
+	height:5%;
+	position:fixed;
+	bottom:0;
+	left:0;
+	display: inline-block;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
+	z-index: 1000;
+}
+
+button{
+	height: 90%;
+	font-family: 'Raleway', sans-serif;
+    @include border-radius(4px);  
+	border: 5% outset #000;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 2px;
+	background: $primary-color;
+	float: left;
+}
+
+button:hover{
+	background: $secondary-color;
+}
+
+button:active{
+	background: $active-color;
+}
+
+button:focus{
+	outline:none;
+}
+
+.btn-active{
+	background: $active-color;
+}
+
+#piano{
+	background: url("svg/piano.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#pianonotes{
+	background: url("svg/pianonotes.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#tc{
+	background-image: url("svg/tc.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#bc{
+	background-image: url("svg/bc.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#b{
+	background: url("svg/bass.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#bn{
+	background: url("svg/bassnotes.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#bt{
+	background: url("svg/bassnumbers.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#full{
+	background-image: url("svg/tcnotes.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+#nd{
+	background-image: url("svg/bcnotes.svg");
+	background-size: 100% 300px;
+	width:100%;
+	height:300px;
+	position:fixed;
+	overflow:hidden;
+}
+.is-hidden{
+	bottom:-5000px;
+}
+
+.is-active{
+	bottom:37px;
+}
+.right{
+	float:right;
+}

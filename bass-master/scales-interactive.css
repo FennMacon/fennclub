@@ -1,0 +1,1224 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #e5fcc2;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1000; /* Ensure header is above all visualizations */
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #777;
+    position: relative;
+    z-index: 1000; /* Ensure footer is above all visualizations */
+}
+
+.scale-page-container {
+    max-width: 1200px;
+    margin: 120px auto 60px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.visualization-container {
+    height: 300px;
+    border: 2px solid #547980;
+    border-radius: 4px;
+    background-color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.controls-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    background-color: #9DE0AD;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px groove #EC407A;
+    align-items: center; /* Center content horizontally */
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.control-group h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: calc(100% - 30px); /* Adjust width to account for padding */
+    margin-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.scale-btn, .note-btn, .accidental-btn, .viz-btn {
+    background-color: #547980;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Raleway', sans-serif;
+    transition: background-color 0.3s;
+}
+
+.scale-btn:hover, .note-btn:hover, .accidental-btn:hover, .viz-btn:hover {
+    background-color: #45666b;
+}
+
+.scale-btn.active, .note-btn.active, .accidental-btn.active, .viz-btn.active {
+    background-color: #F38630;
+}
+
+.note-btn {
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Visualization styles */
+.piano-visual, .bass-visual, .guitar-visual, .treble-visual, .bass-clef-visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.piano-visual.active, .bass-visual.active, .guitar-visual.active, .treble-visual.active, .bass-clef-visual.active {
+    opacity: 1;
+}
+
+/* Piano visualization */
+.piano-visual {
+    overflow-x: auto;
+    overflow-y: hidden;
+    pointer-events: none;
+}
+
+.piano-visual.active {
+    z-index: 1;
+    pointer-events: auto;
+}
+
+.piano-container {
+    display: flex;
+    min-width: 750px; /* Keep all 15 keys readable; scroll on narrow screens. */
+    height: 80%;
+    position: relative;
+    margin: 20px;
+    perspective: 500px;
+    border: 8px solid #000;
+    border-bottom: 18px solid #000;
+    border-radius: 10px;
+    background-color: #E5FCC2;
+}
+
+.white-key {
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
+    background-color: white;
+    border-right: 2px solid #000;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    z-index: 1;
+    transition: background-color 0.2s;
+    border-radius: 0 0 5px 5px;
+}
+
+.white-key[data-index="14"] {
+    border-right: none;
+}
+
+.white-key:hover {
+    background-color: #f0f0f0;
+}
+
+.black-key {
+    position: absolute;
+    width: 4%; /* 60% of one white key, matching the positioned boundaries. */
+    box-sizing: border-box;
+    height: 60%;
+    top: 0;
+    background-color: #000;
+    z-index: 2;
+    transform: translateX(-50%); /* Center the black key on its position */
+    border: 2px solid #000;
+    border-top: 0px solid #000;
+    border-radius: 0 0 3px 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* Position content at the bottom */
+    padding-top: 10px;
+    padding-bottom: 35px; /* Space for both text and highlight */
+    color: white;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.black-key-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 17px;
+}
+
+.black-key .accidental-label {
+    opacity: 0.8;
+}
+
+.black-key:hover {
+    background-color: #333;
+}
+
+/* Add styling for black keys that are part of the scale */
+.black-key.scale-note {
+    color: white;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+    background-color: #333; /* Slightly lighter background when part of scale */
+}
+
+/* Scale note highlighting */
+.key-highlight {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-top: auto;
+    margin-bottom: 30px;
+    z-index: 10;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+    cursor: pointer;
+}
+
+/* For highlights on black keys */
+.black-key .key-highlight {
+    margin-top: auto;
+    margin-bottom: 20px;
+    width: calc(2.5% + 8px); /* Changed from fixed 25px to responsive calculation */
+    height: calc(2.5% + 8px); /* Matching width for perfect circular shape */
+    position: relative; /* Ensure position context for z-index */
+    z-index: 10; /* Same z-index as white key highlights */
+}
+
+.key-highlight:hover {
+    transform: scale(1.15) !important;
+    z-index: 200 !important; /* Ensure highest z-index when hovering */
+    position: relative; /* Ensure z-index works */
+}
+
+.staff-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: #f8f8f8;
+}
+
+.staff-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+}
+
+/* Style for leger lines */
+.leger-line {
+    width: 44px !important; /* Make slightly wider to better support notes further from staff */
+    height: 2px;
+    background-color: #000;
+    position: absolute;
+}
+
+.note-display {
+    line-height: 1.5;
+    font-size: 16px;
+    text-align: center;
+    margin: 10px 0 5px;
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid rgba(236, 64, 122, 0.2);
+    width: calc(100% - 30px); /* Adjust width to account for padding */
+}
+
+/* String instrument visualization */
+.fretboard {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background-color: #d2b48c;
+    background-image: linear-gradient(90deg,
+        rgba(160, 120, 90, 0.3) 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) 10px,
+        rgba(160, 120, 90, 0.3) 10px
+    );
+    background-size: calc(100% / 13) 100%; /* Match the 13 fret positions */
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    z-index: 5; /* Ensure fretboard is below header/footer */
+}
+
+/* Special styling for the open string position (fret 0) */
+.fret[data-fret="0"] {
+    width: 4px; /* Make the nut (fret 0) thicker */
+    background-color: #444; /* Different color for the nut */
+    background: linear-gradient(to right, #888, #444, #888); /* Gradient effect */
+    box-shadow: 2px 0 3px rgba(0, 0, 0, 0.3); /* Add shadow for dimension */
+    z-index: 10; /* Ensure it's above other frets but below header/footer */
+}
+
+/* Add a lighter area for the open position */
+.fretboard::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(100% / 13); /* Width of first fret space */
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2); /* Make the open position more visible */
+    pointer-events: none; /* Don't interfere with clicks */
+    z-index: 1;
+}
+
+.string {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: #aaa;
+}
+
+.fret {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #888;
+}
+
+.string-note {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20; /* Keep notes above frets but below controls */
+    display: flex; /* Use flexbox for better centering */
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+/* Improved fretboard */
+.fretboard::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Remove the original fret::after style */
+.fret::after {
+    content: none;
+}
+
+/* Add style for the new fret labels */
+.fret-label {
+    position: absolute;
+    bottom: 5px; /* Move slightly down for better visibility */
+    transform: translateX(-50%);
+    font-size: 15px; /* Slightly larger */
+    font-weight: bold;
+    color: #333;
+    text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.9); /* Stronger text shadow for better visibility */
+    z-index: 3; /* Ensure it's above other elements */
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.4); /* Add semi-transparent background */
+    border-radius: 50%; /* Make it circular */
+    width: 22px; /* Fixed width */
+    height: 22px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Special style for open position (fret 0) label */
+.fret-label:first-of-type {
+    background-color: rgba(250, 250, 250, 0.7); /* More visible background */
+    font-weight: bold;
+    color: #111; /* Darker text */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Add subtle border */
+}
+
+/* Add string labels for bass with improved positioning and size */
+.bass-visual .string::before {
+    position: absolute;
+    left: 8px; /* Move slightly to the right */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Proper vertical centering */
+    font-size: 16px; /* Bigger font */
+    font-weight: bold;
+    color: #333; /* Darker for better visibility */
+    text-shadow: 0px 0px 2px white; /* Add text shadow for readability */
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Make it circular */
+    width: 24px; /* Fixed width */
+    height: 24px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3; /* Above strings */
+}
+
+.bass-visual .string:nth-child(1)::before { content: 'G'; }
+.bass-visual .string:nth-child(2)::before { content: 'D'; }
+.bass-visual .string:nth-child(3)::before { content: 'A'; }
+.bass-visual .string:nth-child(4)::before { content: 'E'; }
+
+/* Add string labels for guitar with improved positioning and size */
+.guitar-visual .string::before {
+    position: absolute;
+    left: 8px; /* Move slightly to the right */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Proper vertical centering */
+    font-size: 16px; /* Bigger font */
+    font-weight: bold;
+    color: #333; /* Darker for better visibility */
+    text-shadow: 0px 0px 2px white; /* Add text shadow for readability */
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Make it circular */
+    width: 24px; /* Fixed width */
+    height: 24px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3; /* Above strings */
+}
+
+.guitar-visual .string:nth-child(1)::before { content: 'e'; }
+.guitar-visual .string:nth-child(2)::before { content: 'B'; }
+.guitar-visual .string:nth-child(3)::before { content: 'G'; }
+.guitar-visual .string:nth-child(4)::before { content: 'D'; }
+.guitar-visual .string:nth-child(5)::before { content: 'A'; }
+.guitar-visual .string:nth-child(6)::before { content: 'E'; }
+
+/* Add enhanced hover effect styling for notes */
+.string-note:hover, .key-highlight:hover {
+    filter: brightness(1.3);
+    z-index: 100;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+.staff-note:hover {
+    filter: brightness(1.3);
+    z-index: 100;
+    cursor: pointer;
+}
+
+.key-highlight:hover {
+    transform: scale(1.15) !important;
+    /* Don't use translateX here as it can break the hover */
+}
+
+
+/* Fretboard inlay markers (dots) */
+.fret-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(240, 240, 240, 0.8);
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    z-index: 1;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7);
+    display: flex; /* Add flexbox centering */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure double dots are spaced evenly and properly aligned */
+.fret-marker.double, .fret-marker.double-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Make the dot at the 12th fret more distinctive */
+.fret-marker.double, .fret-marker.double-bottom {
+    background-color: rgba(245, 245, 245, 0.9);
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Side markers (smaller) */
+.side-marker {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(240, 240, 240, 0.8);
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    z-index: 1;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Add styles for the color legend */
+.color-legend {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+    border: 1px groove #EC407A;
+}
+
+.color-legend h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.color-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.color-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.color-sample {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Improve visualization container */
+.visualization-container {
+    margin-top: 15px;
+}
+
+/* Fixed tooltip styles */
+.note-tooltip {
+    position: absolute; /* Changed from absolute to fixed for better positioning */
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 9999; /* Extremely high z-index to ensure it's on top */
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    font-family: 'Raleway', sans-serif;
+    max-width: 300px;
+    text-align: center;
+    display: block; /* Ensure it's displayed as a block */
+}
+
+/* Improved piano styling */
+.white-key::after {
+    content: none;
+}
+
+.white-key:nth-child(7n+1)::after,
+.white-key:nth-child(7n+2)::after,
+.white-key:nth-child(7n+3)::after,
+.white-key:nth-child(7n+4)::after,
+.white-key:nth-child(7n+5)::after,
+.white-key:nth-child(7n+6)::after,
+.white-key:nth-child(7n)::after,
+.white-key:nth-child(7n+7)::after {
+    content: none;
+}
+
+/* Style for accidental text */
+.accidental-text {
+    position: absolute;
+    left: -5px;
+    top: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Add CSS for scale pattern display */
+.scale-pattern {
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+.note-display {
+    line-height: 1.5;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+
+
+
+/* Add Piano Info Styles */
+.piano-info {
+    background-color: #f8f8f8;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    border-left: 3px solid #547980;
+    font-size: 14px;
+}
+
+.piano-info h4 {
+    margin: 0 0 5px 0;
+    color: #547980;
+}
+
+.piano-info p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+/* Style for accidental labels on black keys */
+
+
+/* Add CSS for the new layout arrangement */
+
+
+/* Position the accidental controls near the root notes */
+.accidentals-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    position: static;
+}
+
+.accidentals-container .accidental-btn {
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.accidentals-container .accidental-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Style for the root notes */
+.root-notes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.note-btn {
+    min-width: 45px;
+    min-height: 37px;
+    text-align: center;
+    border-radius: 4px;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.note-btn:hover {
+    transform: scale(1.05);
+}
+
+.note-btn.active {
+    background-color: #F38630;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Make sure all root notes have even borders */
+.string-note[data-root="true"],
+.scale-note[data-root="true"],
+.key-highlight[data-root="true"] {
+    border: 2px solid white !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Add an animation to the active visualization */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.piano-visual.active, .bass-visual.active, .guitar-visual.active,
+.treble-visual.active, .bass-clef-visual.active {
+    opacity: 1;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Make scale buttons and viz buttons match the styling */
+.scale-btn, .viz-btn {
+    min-width: 45px;
+    text-align: center;
+    border-radius: 4px;
+    transition: transform 0.2s, background-color 0.3s;
+    margin: 3px;
+}
+
+.scale-btn:hover, .viz-btn:hover {
+    transform: scale(1.05);
+}
+
+.scale-btn.active, .viz-btn.active {
+    background-color: #F38630;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Make the first row a flex row with Scale Type and Visualization side by side */
+.controls-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Make each control group in the row take appropriate width */
+.controls-row .control-group {
+    flex: 1;
+}
+
+
+/* Update the root notes container to have proper positioning */
+.root-notes-container {
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    padding-right: 140px; /* Make room for accidentals */
+    border-top: 1px solid rgba(236, 64, 122, 0.3);
+    position: relative; /* For absolute positioning of accidentals */
+}
+
+/* Override for root notes container to remove extra padding */
+.root-notes-container {
+    padding-right: 0 !important;
+}
+
+/* Staff note styling */
+.staff-note {
+    position: absolute;
+    width: 24px; /* Slightly smaller for better fit */
+    height: 18px; /* Shorter height */
+    background-color: rgba(255, 0, 0, 1.0); /* Changed to full opacity */
+    border-radius: 50%; /* Maximum roundness for perfect circles */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    z-index: 10;
+    box-shadow: 0 0 0 1px black, 0 0 6px rgba(0, 0, 0, 0.3); /* Add black outer border to all notes */
+    transition: none; /* Remove transition effects */
+    display: flex; /* Enable flex for centering text */
+    align-items: center;
+    justify-content: center;
+    color: white; /* Text color for scale degree */
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid black; /* Add black border */
+}
+
+/* Make text in yellow notes black for better contrast */
+.staff-note[style*="rgba(255, 255, 0, 1.0)"] {
+    color: black;
+}
+
+/* Make text in red notes black for better contrast */
+.staff-note[style*="rgba(255, 0, 0, 1.0)"] {
+    color: black;
+}
+
+/* Make text in orange notes black for better contrast */
+.staff-note[style*="rgba(255, 165, 0, 1.0)"] {
+    color: black;
+}
+
+/* String note styling - also increase smoothness */
+.string-note {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background-color: #f00;
+    border-radius: 50%; /* Maximum roundness for perfect circles */
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    box-shadow: 0 0 0 1px black, 0 0 8px rgba(0, 0, 0, 0.4); /* Add black outer border to all notes */
+    display: flex; /* Enable flex for centering text */
+    align-items: center;
+    justify-content: center;
+    color: white; /* Text color for scale degree */
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Make text in yellow string notes black for better contrast */
+.string-note[style*="rgba(255, 255, 0, 1.0)"] {
+    color: black;
+}
+
+/* Style for accidentals (sharps and flats) */
+.note-accidental {
+    position: absolute;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: serif;
+    color: #333;
+    z-index: 11; /* Above the notes */
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    transform: translateY(-50%); /* Only center vertically */
+}
+
+/* Sharps and flats styling */
+.note-sharp {
+    left: 12px; /* Position to the right of the note */
+}
+
+.note-flat {
+    left: 12px; /* Position to the right of the note */
+}
+
+
+/* Improved leger line styling */
+.leger-line {
+    width: 44px !important; /* Make slightly wider to better support notes further from staff */
+    height: 2px;
+    background-color: #000;
+    position: absolute;
+    transform: translateX(-50%); /* Center horizontally */
+}
+
+/* Key signature styling */
+.key-signature {
+    position: absolute;
+    left: 80px; /* Position after clef symbol */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    font-family: serif;
+    color: #333;
+}
+
+/* CAGED System Styles */
+.caged-container {
+    /* Remove fixed height to allow container to expand based on content */
+    min-height: 400px;
+    border: 2px solid #547980;
+    border-radius: 4px;
+    background-color: #ffffff;
+    position: relative;
+    overflow: visible; /* Change from hidden to visible */
+    margin-top: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 60px; /* Increase padding to ensure space for legend */
+}
+
+.caged-title {
+    background-color: #ffffff;
+    color: #333;
+    padding: 8px 15px;
+    font-size: 1.17em;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(236, 64, 122, 0.3);
+}
+
+.caged-controls {
+    display: flex;
+    flex-direction: column; /* Stack the controls vertically */
+    gap: 15px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.caged-chord-select, .caged-shape-select, .caged-pattern-select {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.caged-chord-select span, .caged-shape-select span, .caged-pattern-select span {
+    margin-right: 5px;
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.caged-btn {
+    background-color: #547980;
+    color: white;
+    border: none;
+    min-height: 30px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Raleway', sans-serif;
+    transition: background-color 0.3s;
+}
+
+.caged-btn:hover {
+    background-color: #45666b;
+}
+
+.caged-btn.active {
+    background-color: #F38630;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.caged-visualization {
+    margin: 20px 15px;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+/* CAGED Fretboard Styles */
+.caged-fretboard {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    background-color: #d2b48c;
+    background-image: linear-gradient(90deg,
+        rgba(160, 120, 90, 0.3) 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) 10px,
+        rgba(160, 120, 90, 0.3) 10px
+    );
+    background-size: calc(100% / 13) 100%;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    border-radius: 4px;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+    overflow: visible; /* Make sure note markers are visible */
+    z-index: 5;
+}
+
+/* Add a lighter area for the open position */
+.caged-fretboard::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(100% / 13); /* Width of first fret space */
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2); /* Make the open position more visible */
+    pointer-events: none; /* Don't interfere with clicks */
+    z-index: 1;
+}
+
+/* CAGED fret styling */
+.fret {
+    position: absolute;
+    height: 100%;
+    width: 1px;
+    background-color: rgba(160, 120, 90, 0.6);
+    z-index: 2; /* Above strings but below notes */
+}
+
+/* Special styling for the 0th fret (nut) */
+.fret[data-fret="0"] {
+    width: 4px; /* Make the nut thicker */
+    background-color: #444; /* Different color for the nut */
+    background: linear-gradient(to right, #888, #444, #888); /* Gradient effect */
+    box-shadow: 2px 0 3px rgba(0, 0, 0, 0.3); /* Add shadow for dimension */
+    z-index: 10; /* Ensure it's above other frets */
+}
+
+.caged-string {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* String label styling with rounded white background */
+.string-label {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    z-index: 3;
+    left: 4px;
+    transform: translateY(-50%);
+}
+
+/* CAGED fretboard inlay markers (dots) */
+.caged-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(240, 240, 240, 0.8);
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    z-index: 2;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Double dot markers */
+.caged-marker.double, .caged-marker.double-bottom {
+    background-color: rgba(245, 245, 245, 0.9);
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.caged-shape {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20; /* Keep highlights above frets but below controls */
+    text-align: center;
+    line-height: 28px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    display: flex;      /* Add flexbox for better centering */
+    align-items: center;
+    justify-content: center;
+}
+
+.caged-root {
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+/* Style the legend colors the same way */
+.caged-legend-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    display: flex;      /* Add flexbox for better centering */
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* Removing .piano-note style as we won't use it anymore */
+
+/* Increase font size for key labels */
+.black-key-label, .accidental-label {
+    font-size: 17px; /* Increased from default 16px */
+}
+
+.caged-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+    position: relative; /* Change from absolute to relative */
+    margin-top: 15px; /* Add margin to separate from fretboard */
+}
+
+.caged-legend-title {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.caged-legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.caged-legend-color {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+    text-align: center;
+    line-height: 24px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+/* Special styling for root note in legend */
+.caged-legend-color.root {
+    border: 2px solid white;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* Fret number labels */
+.fret-number {
+    position: absolute;
+    bottom: 2px;
+    font-size: 12px;
+    color: #333;
+    font-weight: bold;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+/* String note styling (for guitar and bass) */
+.string-note {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background-color: #f00;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    display: flex; /* Enable flex for centering text */
+    align-items: center;
+    justify-content: center;
+    color: white; /* Text color for scale degree */
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+
+
+/* Page-specific layout overrides for the shared legacy stylesheet. */
+.btn-group, .accidentals-container {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0;
+    gap: 8px;
+}
+.controls-container button {
+    float: none;
+    height: auto;
+    min-height: 40px;
+    margin: 0;
+}
+button:focus-visible, footer a:focus-visible {
+    outline: 3px solid #190f0f;
+    outline-offset: 3px;
+}
+footer {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    height: auto;
+    padding: 6px 10px;
+}
+footer a {
+    padding: 8px 12px;
+    background: #e5fcc2;
+    border: 1px solid #547980;
+    border-radius: 4px;
+    font: 14px 'Raleway', sans-serif;
+}
+footer a:last-child { margin-left: auto; }
+@media (max-width: 600px) {
+    body { padding: 12px; }
+    .scale-page-container {
+        padding: 0;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        gap: 14px;
+    }
+    .controls-container { padding: 12px; gap: 12px; }
+    .root-notes {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+    }
+    .note-btn { min-width: 0; padding: 8px 4px; font-size: 12px; }
+    .scale-types {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .scale-btn, .viz-btn { padding: 8px 10px; }
+    .color-legend { box-sizing: border-box; width: 100%; padding: 10px; }
+    .note-display { padding: 0; overflow-wrap: anywhere; }
+    footer { position: static; justify-content: center; }
+    footer a:last-child { margin-left: 0; }
+    .caged-chord-select, .caged-shape-select { flex-wrap: wrap; }
+}
+
+.control-label { width: 100%; font-weight: bold; font-size: 13px; text-align: left; }
+.accidentals-container .accidental-btn { width: auto; padding: 8px 12px; font-size: 14px; }
+.note-details { padding: 10px 14px; background: #fff; border: 1px solid #547980; border-radius: 4px; min-height: 1.4em; }
+.selection-link { align-self: flex-end; text-decoration: underline; font-size: 13px; }
+[role="button"]:focus-visible { outline: 3px solid #190f0f; outline-offset: -3px; }
+.piano-visual, .bass-visual, .guitar-visual, .treble-visual, .bass-clef-visual { visibility: hidden; pointer-events: none; }
+.piano-visual.active, .bass-visual.active, .guitar-visual.active, .treble-visual.active, .bass-clef-visual.active { visibility: visible; pointer-events: auto; }
+.note-tooltip { box-sizing: border-box; position: fixed; white-space: pre-line; max-width: min(300px, calc(100vw - 16px)); }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+.root-notes .control-label, .scale-types .control-label { grid-column: 1 / -1; }

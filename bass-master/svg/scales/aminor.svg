@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="300px" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- A Minor Scale: A, B, C, D, E, F, G -->
+  
+  <!-- Piano Overlay -->
+  <g class="piano-highlights">
+    <!-- A keys -->
+    <rect x="150" y="0" width="30" height="180" fill="rgba(75, 0, 130, 0.3)" />
+    <rect x="360" y="0" width="30" height="180" fill="rgba(75, 0, 130, 0.3)" />
+    <rect x="570" y="0" width="30" height="180" fill="rgba(75, 0, 130, 0.3)" />
+    <rect x="780" y="0" width="30" height="180" fill="rgba(75, 0, 130, 0.3)" />
+    <rect x="990" y="0" width="30" height="180" fill="rgba(75, 0, 130, 0.3)" />
+    
+    <!-- B keys -->
+    <rect x="180" y="0" width="30" height="180" fill="rgba(143, 0, 255, 0.3)" />
+    <rect x="390" y="0" width="30" height="180" fill="rgba(143, 0, 255, 0.3)" />
+    <rect x="600" y="0" width="30" height="180" fill="rgba(143, 0, 255, 0.3)" />
+    <rect x="810" y="0" width="30" height="180" fill="rgba(143, 0, 255, 0.3)" />
+    <rect x="1020" y="0" width="30" height="180" fill="rgba(143, 0, 255, 0.3)" />
+    
+    <!-- C keys -->
+    <rect x="0" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    <rect x="210" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    <rect x="420" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    <rect x="630" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    <rect x="840" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    <rect x="1050" y="0" width="30" height="180" fill="rgba(255, 0, 0, 0.3)" />
+    
+    <!-- D keys -->
+    <rect x="30" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    <rect x="240" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    <rect x="450" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    <rect x="660" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    <rect x="870" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    <rect x="1080" y="0" width="30" height="180" fill="rgba(255, 165, 0, 0.3)" />
+    
+    <!-- E keys -->
+    <rect x="60" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    <rect x="270" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    <rect x="480" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    <rect x="690" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    <rect x="900" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    <rect x="1110" y="0" width="30" height="180" fill="rgba(255, 255, 0, 0.3)" />
+    
+    <!-- F keys -->
+    <rect x="90" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    <rect x="300" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    <rect x="510" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    <rect x="720" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    <rect x="930" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    <rect x="1140" y="0" width="30" height="180" fill="rgba(0, 128, 0, 0.3)" />
+    
+    <!-- G keys -->
+    <rect x="120" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+    <rect x="330" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+    <rect x="540" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+    <rect x="750" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+    <rect x="960" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+    <rect x="1170" y="0" width="30" height="180" fill="rgba(0, 0, 255, 0.3)" />
+  </g>
+  
+  <!-- Bass Fretboard Overlay -->
+  <g class="bass-highlights" transform="translate(0, 50)">
+    <!-- String 1 (E) - Open and positions for F, G, A -->
+    <circle cx="50" cy="205" r="15" fill="rgba(255, 255, 0, 0.5)" /> <!-- Open E -->
+    <circle cx="100" cy="205" r="15" fill="rgba(0, 128, 0, 0.5)" /> <!-- F -->
+    <circle cx="200" cy="205" r="15" fill="rgba(0, 0, 255, 0.5)" /> <!-- G -->
+    <circle cx="300" cy="205" r="15" fill="rgba(75, 0, 130, 0.5)" /> <!-- A -->
+    
+    <!-- String 2 (A) - Open and positions for B, C, D, E -->
+    <circle cx="50" cy="175" r="15" fill="rgba(75, 0, 130, 0.5)" /> <!-- Open A -->
+    <circle cx="100" cy="175" r="15" fill="rgba(143, 0, 255, 0.5)" /> <!-- B -->
+    <circle cx="200" cy="175" r="15" fill="rgba(255, 0, 0, 0.5)" /> <!-- C -->
+    <circle cx="300" cy="175" r="15" fill="rgba(255, 165, 0, 0.5)" /> <!-- D -->
+    <circle cx="400" cy="175" r="15" fill="rgba(255, 255, 0, 0.5)" /> <!-- E -->
+    
+    <!-- String 3 (D) - Open and positions for E, F, G -->
+    <circle cx="50" cy="145" r="15" fill="rgba(255, 165, 0, 0.5)" /> <!-- Open D -->
+    <circle cx="100" cy="145" r="15" fill="rgba(255, 255, 0, 0.5)" /> <!-- E -->
+    <circle cx="200" cy="145" r="15" fill="rgba(0, 128, 0, 0.5)" /> <!-- F -->
+    <circle cx="300" cy="145" r="15" fill="rgba(0, 0, 255, 0.5)" /> <!-- G -->
+    
+    <!-- String 4 (G) - Open and positions for A, B, C -->
+    <circle cx="50" cy="115" r="15" fill="rgba(0, 0, 255, 0.5)" /> <!-- Open G -->
+    <circle cx="100" cy="115" r="15" fill="rgba(75, 0, 130, 0.5)" /> <!-- A -->
+    <circle cx="200" cy="115" r="15" fill="rgba(143, 0, 255, 0.5)" /> <!-- B -->
+    <circle cx="300" cy="115" r="15" fill="rgba(255, 0, 0, 0.5)" /> <!-- C -->
+  </g>
+  
+  <!-- Staff Notation Overlay -->
+  <g class="staff-highlights">
+    <!-- A positions on staff -->
+    <circle cx="100" cy="80" r="10" fill="rgba(75, 0, 130, 0.5)" />
+    <circle cx="350" cy="80" r="10" fill="rgba(75, 0, 130, 0.5)" />
+    <circle cx="650" cy="80" r="10" fill="rgba(75, 0, 130, 0.5)" />
+    <circle cx="950" cy="80" r="10" fill="rgba(75, 0, 130, 0.5)" />
+    
+    <!-- B positions -->
+    <circle cx="150" cy="70" r="10" fill="rgba(143, 0, 255, 0.5)" />
+    <circle cx="380" cy="70" r="10" fill="rgba(143, 0, 255, 0.5)" />
+    <circle cx="680" cy="70" r="10" fill="rgba(143, 0, 255, 0.5)" />
+    <circle cx="980" cy="70" r="10" fill="rgba(143, 0, 255, 0.5)" />
+    
+    <!-- C positions -->
+    <circle cx="200" cy="130" r="10" fill="rgba(255, 0, 0, 0.5)" />
+    <circle cx="400" cy="130" r="10" fill="rgba(255, 0, 0, 0.5)" />
+    <circle cx="700" cy="130" r="10" fill="rgba(255, 0, 0, 0.5)" />
+    <circle cx="1000" cy="130" r="10" fill="rgba(255, 0, 0, 0.5)" />
+    
+    <!-- D positions -->
+    <circle cx="250" cy="120" r="10" fill="rgba(255, 165, 0, 0.5)" />
+    <circle cx="450" cy="120" r="10" fill="rgba(255, 165, 0, 0.5)" />
+    <circle cx="750" cy="120" r="10" fill="rgba(255, 165, 0, 0.5)" />
+    <circle cx="1050" cy="120" r="10" fill="rgba(255, 165, 0, 0.5)" />
+    
+    <!-- E positions -->
+    <circle cx="280" cy="110" r="10" fill="rgba(255, 255, 0, 0.5)" />
+    <circle cx="500" cy="110" r="10" fill="rgba(255, 255, 0, 0.5)" />
+    <circle cx="800" cy="110" r="10" fill="rgba(255, 255, 0, 0.5)" />
+    <circle cx="1100" cy="110" r="10" fill="rgba(255, 255, 0, 0.5)" />
+    
+    <!-- F positions -->
+    <circle cx="310" cy="100" r="10" fill="rgba(0, 128, 0, 0.5)" />
+    <circle cx="550" cy="100" r="10" fill="rgba(0, 128, 0, 0.5)" />
+    <circle cx="850" cy="100" r="10" fill="rgba(0, 128, 0, 0.5)" />
+    <circle cx="1150" cy="100" r="10" fill="rgba(0, 128, 0, 0.5)" />
+    
+    <!-- G positions -->
+    <circle cx="340" cy="90" r="10" fill="rgba(0, 0, 255, 0.5)" />
+    <circle cx="600" cy="90" r="10" fill="rgba(0, 0, 255, 0.5)" />
+    <circle cx="900" cy="90" r="10" fill="rgba(0, 0, 255, 0.5)" />
+  </g>
+</svg> 

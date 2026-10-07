@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intervals</title>
+    <link rel="stylesheet" type="text/css" href="output.css">
+    <link href='https://fonts.googleapis.com/css?family=Covered+By+Your+Grace|Patua+One|Raleway' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+</head>
+<body>
+<div id="wrapper">
+    <header>
+        <a href="index.html"><h1>Bass Master 64</h1></a>
+    </header>
+    <div class="container">
+        <aside>
+            <ul><h3><a href="./basics.html">Basics</a></h3>
+                <li>Staff, Clefs, Ledgers</li>
+                <li>Note Duration</li>
+                <li>Measures and Time Signatures</li>
+                <li>Rest Duration</li>
+                <li>Dots and Ties</li>
+                <li>Steps and Accidentals</li>
+            </ul>
+            <ul><h3><a href="./scales.html">Scales and Key Signatures</a></h3>
+                <li>The Major Scale</li>
+                <li>The Minor Scale</li>
+                <li>Scale Degrees</li>
+                <li>Key Signatures</li>
+                <li>Key Signature Calculations</li>
+            </ul>
+            <ul><h3><a href="./intervals.html">Intervals</a></h3>
+                <li>Generic Intervals</li>
+                <li>Specific Intervals</li>
+                <li>Writing Intervals</li>
+                <li>Interval Inversion</li>
+            </ul>
+            <ul><h3><a href="./chords.html">Chords</a></h3>
+                <li>Introduction to Chords</li>
+                <li>Triad Inversion</li>
+                <li>Seventh Chords</li>
+                <li>More Seventh Chords</li>
+                <li>Seventh Chord Inversion</li>
+            </ul>
+            <ul><h3><a href="./progressions.html">Chord Progressions</a></h3>
+                <li>Nonharmonic Tones</li>
+                <li>Phrases and Cadences</li>
+                <li>Circle Progressions</li>
+                <li>Common Chord Progressions</li>
+                <li>Triads in First Inversions</li>
+                <li>Traids in Second Inversions</li>
+            </ul>
+        </aside>
+        <article>
+            <h2>Intervals</h2>
+            <p>
+                An <strong>interval</strong> is the distance between two notes. Intervals are the building blocks 
+                for chords, melodies, and harmonies.
+            </p>
+            <p>
+                Intervals can be <em>unison, second, third, fourth, fifth, sixth, seventh,</em> or <em>octave</em>. 
+                They can also be qualified as <strong>major, minor, perfect, augmented,</strong> or <strong>diminished</strong>.
+            </p>
+            <p><em>Bass Tip:</em> Bass lines often use perfect fifths and octaves to outline chords. 
+                Practicing interval shapes helps you navigate common bass figures.
+            </p>
+		</article>
+		<article>
+            <!-- Generic Intervals -->
+            <h3>Generic Intervals</h3>
+            <p>
+                <strong>Generic intervals</strong> (or “basic intervals”) are counted by letter names only. 
+                For example, from C to E is always called a “third” (C–D–E = 1–2–3) regardless of sharps or flats.
+            </p>
+            <p>
+                Another example: C to E or C to Eb are both generically “thirds”; the exact quality (major or minor) 
+                is determined by the number of semitones.
+            </p>
+		</article>
+		<article>
+            <!-- Specific Intervals -->
+            <h3>Specific Intervals</h3>
+            <p>
+                <strong>Specific intervals</strong> account for the exact semitone distance. 
+                For seconds, thirds, sixths, and sevenths, intervals can be <em>major, minor, augmented,</em> or <em>diminished</em>. 
+                For unisons, fourths, fifths, and octaves, intervals are <em>perfect, augmented,</em> or <em>diminished</em>.
+            </p>
+            <ul>
+                <li><em>Example:</em> C to E = Major Third (4 semitones).</li>
+                <li>C to Eb = Minor Third (3 semitones).</li>
+            </ul>
+		</article>
+		<article>
+            <!-- Writing Intervals -->
+            <h3>Writing Intervals</h3>
+            <p>
+                To write or spell an interval correctly:
+            </p>
+            <ol>
+                <li>Determine the <strong>generic interval</strong> by letter distance (e.g., 3rd, 4th, etc.).</li>
+                <li>Adjust with accidentals to get the correct <strong>specific interval</strong> (major, minor, perfect, etc.).</li>
+            </ol>
+            <p>
+                <em>Example:</em> Generic interval from C to G is a fifth. To make it a <strong>perfect fifth</strong>, 
+                you need 7 semitones between C and G.
+            </p>
+		</article>
+		<article style="margin-bottom: 3rem;">
+            <!-- Interval Inversion -->
+            <h3>Interval Inversion</h3>
+            <p>
+                <strong>Inverting</strong> an interval means flipping its notes so the lower note becomes higher or vice versa. 
+                The sum of a diatonic interval and its inversion is always 9 (e.g., a 3rd inverts to a 6th, 4th inverts to a 5th).
+            </p>
+            <ul>
+                <li><em>Example:</em> Major 3rd (C to E) inverts to Minor 6th (E to C).</li>
+                <li>Perfect 4th (C to F) inverts to Perfect 5th (F to C).</li>
+            </ul>
+            <p><em>Bass Tip:</em> Inversion knowledge helps analyze chords in various voicings, especially for smooth bass lines.</p>
+        </article>
+    </div>
+    <footer>
+        <button id="pButton">Piano</button>
+        <div id="piano" class="is-hidden"></div>
+        <button id="pnButton">Piano Notes</button>
+        <div id="pianonotes" class="is-hidden"></div>
+        <button id="tcButton">Treble Clef</button>
+        <div id="tc" class="is-hidden"></div>
+        <button id="fcButton">Treble Notes</button>
+        <div id="full" class="is-hidden"></div>
+        <button id="bcButton">Bass Clef</button>
+        <div id="bc" class="is-hidden"></div>
+        <button id="ndButton">Bass Notes</button>
+        <div id="nd" class="is-hidden"></div>
+        <button id="bButton">Bass</button>
+        <div id="b" class="is-hidden"></div>
+        <button id="btButton">Tab Numbers</button>
+        <div id="bt" class="is-hidden"></div>
+        <button id="bnButton">Bass Notes</button>
+        <div id="bn" class="is-hidden"></div>      
+        <a href="http://fenn.club"><button class="right">Fenn Macon</button></a>
+    </footer>
+</div>
+</body>
+</html>

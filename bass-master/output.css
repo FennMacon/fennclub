@@ -1,0 +1,216 @@
+html,
+body,
+ul,
+ol {
+  margin: 0;
+  padding: 0; }
+
+body {
+  color: #190f0f;
+  background: #e5fcc2;
+  font-family: 'Patua One', cursive; }
+
+header {
+  font-family: 'Covered By Your Grace', cursive;
+  background: #547980;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; }
+
+h1 {
+  text-shadow: 1px 1px 1px #000;
+  text-align: center;
+  color: #F38630; }
+
+li {
+  list-style-type: square;
+  list-style-position: inside;
+  font-family: 'Raleway', sans-serif; }
+
+p {
+  font-family: 'Raleway', sans-serif; }
+
+a {
+  text-decoration: none;
+  color: #190f0f; }
+
+a:hover {
+  text-shadow: 1px 1px 1px #fff; }
+
+.container {
+  position: absolute;
+  top: 100px;
+  width: 100%;
+  padding-bottom: 20px;
+  z-index: 0; }
+
+article {
+  float: left;
+  width: 62.5%;
+  border: 1px groove #EC407A;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  border-radius: 4px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  background: #9DE0AD;
+  padding: 10px; }
+  @media (max-width: 1200px) {
+    article {
+      width: 90%; } }
+
+aside {
+  float: right;
+  width: 28.125%;
+  border: 1px groove #EC407A;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  border-radius: 4px;
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  background: #9DE0AD;
+  padding-left: 10px;
+  padding-bottom: 10px; }
+  @media (max-width: 1200px) {
+    aside {
+      display: none; } }
+
+footer {
+  background: #E0E4CC;
+  width: 100%;
+  height: 5%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: inline-block;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  z-index: 1000; }
+
+button {
+  height: 90%;
+  font-family: 'Raleway', sans-serif;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  border-radius: 4px;
+  border: 5% outset #000;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 2px;
+  background: #e5fcc2;
+  float: left; }
+
+button:hover {
+  background: #9DE0AD; }
+
+button:active {
+  background: #55bdb8; }
+
+button:focus {
+  outline: none; }
+
+.btn-active {
+  background: #55bdb8; }
+
+/* Add CSS variable for footer height */
+:root {
+  --footer-height: 37px; /* Default value, will be updated by JavaScript */
+}
+
+#piano, #pianonotes, #tc, #bc, #b, #bn, #bt, #full, #nd {
+  background-size: 100% 300px;
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  bottom: var(--footer-height); /* Use CSS variable for positioning */
+}
+
+#piano {
+  background: url("svg/piano.svg");
+}
+
+#pianonotes {
+  background: url("svg/pianonotes.svg");
+}
+
+#tc {
+  background-image: url("svg/tc.svg");
+}
+
+#bc {
+  background-image: url("svg/bc.svg");
+}
+
+#b {
+  background: url("svg/bass.svg");
+}
+
+#bn {
+  background: url("svg/bassnotes.svg");
+}
+
+#bt {
+  background: url("svg/bassnumbers.svg");
+}
+
+#full {
+  background-image: url("svg/tcnotes.svg");
+}
+
+#nd {
+  background-image: url("svg/bcnotes.svg");
+}
+
+.is-hidden {
+  display: none;
+  bottom: -5000px;
+}
+
+.is-active {
+  display: block;
+  bottom: var(--footer-height) !important; /* Force using the CSS variable */
+}
+
+.right {
+  float: right;
+}
+
+/* Delete everything below this line that's related to scales */
+.scale-controls {
+  display: none; /* Hide this instead of deleting for backward compatibility */
+}
+
+#keySelector, #scaleTypeSelector {
+  display: none; /* Hide these instead of deleting for backward compatibility */
+}
+
+#hideAllButton {
+  background-color: #ff6b6b;
+}
+
+#hideAllButton:hover {
+  background-color: #ff5252;
+}
+
+/* Hide all scale highlights */
+.scale-highlight {
+  display: none;
+}
+
+/* Hide all scale classes */
+.scale-cmajor, .scale-cminor, .scale-gmajor, .scale-gminor, 
+.scale-dmajor, .scale-dminor, .scale-amajor, .scale-aminor, 
+.scale-emajor, .scale-eminor {
+  display: none;
+}
+
+/*# sourceMappingURL=output.css.map */

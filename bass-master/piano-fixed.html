@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Scales - Bass Master 64</title>
+    <link rel="stylesheet" type="text/css" href="output.css">
+    <link href='https://fonts.googleapis.com/css?family=Covered+By+Your+Grace|Patua+One|Raleway' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <style>
+        .scale-page-container {
+            max-width: 1200px;
+            margin: 120px auto 60px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .visualization-container {
+            height: 300px;
+            border: 2px solid #547980;
+            border-radius: 4px;
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            background-color: #9DE0AD;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px groove #EC407A;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .control-group h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .scale-btn, .note-btn, .accidental-btn, .viz-btn {
+            background-color: #547980;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        .scale-btn:hover, .note-btn:hover, .accidental-btn:hover, .viz-btn:hover {
+            background-color: #45666b;
+        }
+
+        .scale-btn.active, .note-btn.active, .accidental-btn.active, .viz-btn.active {
+            background-color: #F38630;
+        }
+
+        .note-btn {
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Visualization styles */
+        .piano-visual, .bass-visual, .guitar-visual, .treble-visual, .bass-clef-visual {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .piano-visual.active, .bass-visual.active, .guitar-visual.active, .treble-visual.active, .bass-clef-visual.active {
+            opacity: 1;
+        }
+
+        /* Piano visualization */
+        .piano-container {
+            display: flex;
+            height: 80%;
+            position: relative;
+            margin: 20px;
+            perspective: 500px;
+            border: 2px solid #000;
+            background-color: #E5FCC2;
+        }
+
+        .white-key {
+            flex: 1;
+            background-color: white;
+            border-right: 2px solid #000;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            z-index: 1;
+            transition: background-color 0.2s;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .white-key:last-child {
+            border-right: none;
+        }
+
+        .white-key:hover {
+            background-color: #f0f0f0;
+        }
+
+        .black-key {
+            position: absolute;
+            width: 35px; /* Slightly narrower to fit the extra key */
+            height: 60%;
+            top: 0;
+            background-color: #000;
+            z-index: 2;
+            transform: translateX(-50%); /* Center the black key on its position */
+            border: 2px solid #000;
+            border-radius: 0 0 3px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end; /* Position content at the bottom */
+            padding-top: 10px;
+            padding-bottom: 35px; /* Space for both text and highlight */
+            color: white;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .black-key-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .black-key .accidental-label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .black-key:hover {
+            background-color: #333;
+        }
+
+        /* Add styling for black keys that are part of the scale */
+        .black-key.scale-note {
+            color: white;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+            background-color: #333; /* Slightly lighter background when part of scale */
+        }
+
+        /* Scale note highlighting */
+        .key-highlight {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-top: auto;
+            margin-bottom: 30px;
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+
+        /* For highlights on black keys */
+        .black-key .key-highlight {
+            margin-top: auto;
+            margin-bottom: 20px;
+            width: 25px;
+            height: 25px;
+            position: relative; /* Ensure position context for z-index */
+            z-index: 10; /* Same z-index as white key highlights */
+        }
+
+        .key-highlight:hover {
+            transform: scale(1.15) !important;
+            z-index: 200 !important; /* Ensure highest z-index when hovering */
+            position: relative; /* Ensure z-index works */
+        }
+
+        .staff-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            background-color: #f8f8f8;
+        }
+
+        .staff-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #000;
+        }
+
+        .note-display {
+            line-height: 1.5;
+            font-size: 16px;
+            text-align: center;
+            margin: 10px 0 5px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid rgba(236, 64, 122, 0.2);
+        }
+
+        /* String instrument visualization */
+        .fretboard {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            background-color: #d2b48c;
+            background-image: linear-gradient(90deg, 
+                rgba(160, 120, 90, 0.3) 1px, 
+                rgba(0, 0, 0, 0) 1px, 
+                rgba(0, 0, 0, 0) 10px, 
+                rgba(160, 120, 90, 0.3) 10px
+            );
+            background-size: calc(100% / 13) 100%; /* Match the 13 fret positions */
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .string {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #aaa;
+        }
+
+        .fret {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: #888;
+        }
+
+        .string-note {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        /* Add enhanced hover effect styling for notes */
+        .string-note:hover, .key-highlight:hover, .staff-note:hover {
+            filter: brightness(1.3);
+            z-index: 100;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+        .string-note:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        .key-highlight:hover {
+            transform: scale(1.15) !important;
+            /* Don't use translateX here as it can break the hover */
+        }
+        .staff-note:hover {
+            transform: scale(1.15);
+        }
+
+        /* Fretboard inlay markers (dots) */
+        .fret-marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: rgba(240, 240, 240, 0.8);
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Side markers (smaller) */
+        .side-marker {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: rgba(240, 240, 240, 0.8);
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Double dot for 12th fret - guitar */
+        .guitar-visual .fret-marker.double {
+            top: 35% !important;
+        }
+        
+        .guitar-visual .fret-marker.double-bottom {
+            top: 65% !important;
+        }
+        
+        /* Double dot for 12th fret - bass */
+        .bass-visual .fret-marker.double {
+            top: 35% !important;
+        }
+        
+        .bass-visual .fret-marker.double-bottom {
+            top: 65% !important;
+        }
+
+        /* Add styles for the color legend */
+        .color-legend {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border: 1px groove #EC407A;
+        }
+        
+        .color-legend h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .color-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .color-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .color-sample {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        /* Improve visualization container */
+        .visualization-container {
+            margin-top: 15px;
+        }
+        
+        /* Fixed tooltip styles */
+        .note-tooltip {
+            position: fixed; /* Changed from absolute to fixed for better positioning */
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 9999; /* Extremely high z-index to ensure it's on top */
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-family: 'Raleway', sans-serif;
+            max-width: 300px;
+            text-align: center;
+            display: block; /* Ensure it's displayed as a block */
+        }
+        
+        /* Improved piano styling */
+        .white-key::after {
+            content: none;
+        }
+
+        .white-key:nth-child(7n+1)::after,
+        .white-key:nth-child(7n+2)::after,
+        .white-key:nth-child(7n+3)::after,
+        .white-key:nth-child(7n+4)::after,
+        .white-key:nth-child(7n+5)::after,
+        .white-key:nth-child(7n+6)::after,
+        .white-key:nth-child(7n)::after,
+        .white-key:nth-child(7n+7)::after {
+            content: none;
+        }
+        
+        /* Improved fretboard */
+        .fretboard::before {
+            content: 'Nut';
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            font-size: 10px;
+            color: #555;
+        }
+        
+        .fret::after {
+            content: attr(data-fret);
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            font-size: 10px;
+            color: #555;
+        }
+        
+        /* Add string labels for bass */
+        .bass-visual .string::before {
+            position: absolute;
+            left: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .bass-visual .string:nth-child(1)::before { content: 'G'; }
+        .bass-visual .string:nth-child(2)::before { content: 'D'; }
+        .bass-visual .string:nth-child(3)::before { content: 'A'; }
+        .bass-visual .string:nth-child(4)::before { content: 'E'; }
+        
+        /* Add string labels for guitar */
+        .guitar-visual .string::before {
+            position: absolute;
+            left: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .guitar-visual .string:nth-child(1)::before { content: 'e'; }
+        .guitar-visual .string:nth-child(2)::before { content: 'B'; }
+        .guitar-visual .string:nth-child(3)::before { content: 'G'; }
+        .guitar-visual .string:nth-child(4)::before { content: 'D'; }
+        .guitar-visual .string:nth-child(5)::before { content: 'A'; }
+        .guitar-visual .string:nth-child(6)::before { content: 'E'; }
+        
+        /* Style for accidental text */
+        .accidental-text {
+            position: absolute;
+            left: -5px;
+            top: 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* Add CSS for scale pattern display */
+        .scale-pattern {
+            font-family: monospace;
+            padding: 2px 5px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .note-display {
+            line-height: 1.5;
+        }
+        
+        .white-key {
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .black-key {
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Add Piano Info Styles */
+        .piano-info {
+            background-color: #f8f8f8;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 3px solid #547980;
+            font-size: 14px;
+        }
+
+        .piano-info h4 {
+            margin: 0 0 5px 0;
+            color: #547980;
+        }
+
+        .piano-info p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        /* Style for accidental labels on black keys */
+        .black-key {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 35px; /* Space for both text and highlight */
+        }
+
+        /* Add CSS for the new layout arrangement */
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            background-color: #9DE0AD;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px groove #EC407A;
+        }
+
+        /* Position the accidental controls near the root notes */
+        .accidentals-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            background-color: rgba(84, 121, 128, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .accidentals-container .accidental-btn {
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .accidentals-container .accidental-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Style for the root notes */
+        .root-notes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .note-btn {
+            min-width: 45px;
+            text-align: center;
+            border-radius: 4px;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .note-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .note-btn.active {
+            background-color: #F38630;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Make sure all root notes have even borders */
+        .string-note[data-root="true"],
+        .scale-note[data-root="true"],
+        .key-highlight[data-root="true"] {
+            border: 2px solid white !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* Add an animation to the active visualization */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .piano-visual.active, .bass-visual.active, .guitar-visual.active, 
+        .treble-visual.active, .bass-clef-visual.active {
+            opacity: 1;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Make scale buttons and viz buttons match the styling */
+        .scale-btn, .viz-btn {
+            min-width: 45px;
+            text-align: center;
+            border-radius: 4px;
+            transition: transform 0.2s, background-color 0.3s;
+            margin: 3px;
+        }
+        
+        .scale-btn:hover, .viz-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .scale-btn.active, .viz-btn.active {
+            background-color: #F38630;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Make the first row a flex row with Scale Type and Visualization side by side */
+        .controls-row {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* Make each control group in the row take appropriate width */
+        .controls-row .control-group {
+            flex: 1;
+        }
+
+        /* Position the accidental controls near the root notes */
+        .accidentals-container {
+            /* position: absolute removed */
+            top: 10px; /* Align better with Root Note header */
+            right: 15px;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            background-color: rgba(84, 121, 128, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Update the root notes container to have proper positioning */
+        .root-notes-container {
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            padding-right: 140px; /* Make room for accidentals */
+            border-top: 1px solid rgba(236, 64, 122, 0.3);
+            position: relative; /* For absolute positioning of accidentals */
+        }
+
+        /* Override for accidentals container to force it to be centered below root notes */
+        .accidentals-container {
+            position: static !important;
+            display: flex !important;
+            justify-content: center !important;
+            margin-top: 15px !important;
+            top: auto !important;
+            right: auto !important;
+        }
+
+        /* Override for root notes container to remove extra padding */
+        .root-notes-container {
+            padding-right: 0 !important;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <header>
+        <a href="index.html"><h1>I want you to play guitar.</h1></a>
+        <p></p>
+    </header>
+
+    <div class="scale-page-container">
+
+        <div class="controls-container">
+            <!-- Scale Types in their own row -->
+            <div class="btn-group scale-types" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; margin-bottom: 15px;">
+                        <button class="scale-btn active" data-scale="major">Major</button>
+                        <button class="scale-btn" data-scale="minor">Natural Minor</button>
+                        <button class="scale-btn" data-scale="harmonic-minor">Harmonic Minor</button>
+                        <button class="scale-btn" data-scale="pentatonic">Pentatonic</button>
+                </div>
+
+            <!-- Visualization in its own row -->
+            <div class="btn-group visualizations" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; margin-bottom: 15px; ">
+                        <button class="viz-btn active" data-viz="piano">Piano</button>
+                        <button class="viz-btn" data-viz="bass">Bass</button>
+                        <button class="viz-btn" data-viz="guitar">Guitar</button>
+                        <button class="viz-btn" data-viz="treble">Treble Clef</button>
+                        <button class="viz-btn" data-viz="bass-clef">Bass Clef</button>
+            </div>
+            
+            <!-- Root Notes in their own row -->
+            <div class="btn-group root-notes" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; margin-bottom: 15px;">
+                <button class="note-btn active" data-note="C" data-sharp="C" data-flat="C" data-label="C">C</button>
+                <button class="note-btn" data-note="C#" data-sharp="C♯" data-flat="D♭" data-label="C♯/D♭">C♯/D♭</button>
+                <button class="note-btn" data-note="D" data-sharp="D" data-flat="D" data-label="D">D</button>
+                <button class="note-btn" data-note="D#" data-sharp="D♯" data-flat="E♭" data-label="D♯/E♭">D♯/E♭</button>
+                <button class="note-btn" data-note="E" data-sharp="E" data-flat="E" data-label="E">E</button>
+                <button class="note-btn" data-note="F" data-sharp="F" data-flat="F" data-label="F">F</button>
+                <button class="note-btn" data-note="F#" data-sharp="F♯" data-flat="G♭" data-label="F♯/G♭">F♯/G♭</button>
+                <button class="note-btn" data-note="G" data-sharp="G" data-flat="G" data-label="G">G</button>
+                <button class="note-btn" data-note="G#" data-sharp="G♯" data-flat="A♭" data-label="G♯/A♭">G♯/A♭</button>
+                <button class="note-btn" data-note="A" data-sharp="A" data-flat="A" data-label="A">A</button>
+                <button class="note-btn" data-note="A#" data-sharp="A♯" data-flat="B♭" data-label="A♯/B♭">A♯/B♭</button>
+                <button class="note-btn" data-note="B" data-sharp="B" data-flat="B" data-label="B">B</button>
+                </div>
+                
+            <!-- Accidentals in their own row -->
+            <div class="accidentals-container" style="display: flex; justify-content: center; width: 100%; margin-bottom: 15px;">
+                    <button class="accidental-btn" data-accidental="flat">♭</button>
+                    <button class="accidental-btn active" data-accidental="natural">♮</button>
+                    <button class="accidental-btn" data-accidental="sharp">♯</button>
+        </div>
+
+            <!-- Note display at the bottom of controls container -->
+        <div class="note-display" id="scale-notes">
+            C Major Scale: C - D - E - F - G - A - B - C
+            </div>
+        </div>
+
+        <div class="visualization-container">
+            <!-- Piano Visualization -->
+            <div class="piano-visual active" id="piano-viz"></div>
+            
+            <!-- Bass Visualization -->
+            <div class="bass-visual" id="bass-viz"></div>
+            
+            <!-- Guitar Visualization -->
+            <div class="guitar-visual" id="guitar-viz"></div>
+            
+            <!-- Treble Clef Visualization -->
+            <div class="treble-visual" id="treble-viz"></div>
+            
+            <!-- Bass Clef Visualization -->
+            <div class="bass-clef-visual" id="bass-clef-viz"></div>
+        </div>
+
+        <!-- Move the color legend here, below the visualization -->
+        <div class="color-legend">
+            <h3>Color Legend & Instructions</h3>
+            <p>Hover over any note to see more information. Notes are color-coded consistently across all visualizations:</p>
+            <div class="color-chips">
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(255, 0, 0, 0.7);"></span> C (Do) - Chromatic Position 1</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(255, 165, 0, 0.7);"></span> D (Re) - Chromatic Position 3</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(255, 255, 0, 0.7);"></span> E (Mi) - Chromatic Position 5</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(0, 128, 0, 0.7);"></span> F (Fa) - Chromatic Position 6</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(0, 0, 255, 0.7);"></span> G (Sol) - Chromatic Position 8</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(75, 0, 130, 0.7);"></span> A (La) - Chromatic Position 10</div>
+                <div class="color-chip"><span class="color-sample" style="background-color: rgba(143, 0, 255, 0.7);"></span> B (Ti) - Chromatic Position 12</div>
+            </div>
+            <p><strong>Notes with white borders</strong> indicate the root note of the scale.</p>
+        </div>
+    </div>
+
+    <footer>
+        <a href="index.html"><button>Home</button></a>
+        <a href="basics.html"><button>Basics</button></a>
+        <a href="scales.html"><button>Scales & Keys</button></a>
+        <a href="intervals.html"><button>Intervals</button></a>
+        <a href="chords.html"><button>Chords</button></a>
+        <a href="progressions.html"><button>Progressions</button></a>
+        <a href="http://fenn.club"><button class="right">Fenn Macon</button></a>
+    </footer>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Scale definitions with whole/half step patterns
+        const scales = {
+            'major': {
+                'intervals': [0, 2, 4, 5, 7, 9, 11], // W-W-H-W-W-W-H pattern (2-2-1-2-2-2-1)
+                'description': 'Major Scale: {0} - {1} - {2} - {3} - {4} - {5} - {6} - {0}',
+                'pattern': 'W-W-H-W-W-W-H',
+                'steps': [2, 2, 1, 2, 2, 2, 1]
+            },
+            'minor': {
+                'intervals': [0, 2, 3, 5, 7, 8, 10], // W-H-W-W-H-W-W pattern (2-1-2-2-1-2-2)
+                'description': 'Natural Minor Scale: {0} - {1} - {2} - {3} - {4} - {5} - {6} - {0}',
+                'pattern': 'W-H-W-W-H-W-W',
+                'steps': [2, 1, 2, 2, 1, 2, 2]
+            },
+            'harmonic-minor': {
+                'intervals': [0, 2, 3, 5, 7, 8, 11], // W-H-W-W-H-W+H-H pattern (2-1-2-2-1-3-1)
+                'description': 'Harmonic Minor Scale: {0} - {1} - {2} - {3} - {4} - {5} - {6} - {0}',
+                'pattern': 'W-H-W-W-H-W+H-H',
+                'steps': [2, 1, 2, 2, 1, 3, 1]
+            },
+            'pentatonic': {
+                'intervals': [0, 2, 4, 7, 9], // W-W-W+H-W-W+H pattern (2-2-3-2-3)
+                'description': 'Pentatonic Scale: {0} - {1} - {2} - {3} - {4} - {0}',
+                'pattern': 'W-W-W+H-W-W+H',
+                'steps': [2, 2, 3, 2, 3]
+            }
+        };
+
+        // Note definitions
+        const notes = ['C', 'C♯/D♭', 'D', 'D♯/E♭', 'E', 'F', 'F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B'];
+        const flatNotes = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
+        const sharpNotes = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+
+        // Note numbering (1-based) - two options
+        const noteNumbersFromC = {
+            'C': 1, 'C♯': 2, 'D♭': 2, 'D': 3, 'D♯': 4, 'E♭': 4, 'E': 5, 'F': 6, 
+            'F♯': 7, 'G♭': 7, 'G': 8, 'G♯': 9, 'A♭': 9, 'A': 10, 'A♯': 11, 'B♭': 11, 'B': 12
+        };
+
+        // Key signature preferences for proper music theory notation
+        const preferredAccidentals = {
+            'C': { major: 'sharp', minor: 'flat' },
+            'C♯': { major: 'sharp', minor: 'sharp' },
+            'D♭': { major: 'flat', minor: 'flat' },
+            'D': { major: 'sharp', minor: 'flat' },
+            'D♯': { major: 'sharp', minor: 'sharp' },
+            'E♭': { major: 'flat', minor: 'flat' },
+            'E': { major: 'sharp', minor: 'sharp' },
+            'F': { major: 'flat', minor: 'flat' },
+            'F♯': { major: 'sharp', minor: 'sharp' },
+            'G♭': { major: 'flat', minor: 'flat' },
+            'G': { major: 'sharp', minor: 'flat' },
+            'G♯': { major: 'sharp', minor: 'sharp' },
+            'A♭': { major: 'flat', minor: 'flat' },
+            'A': { major: 'sharp', minor: 'flat' },
+            'A♯': { major: 'sharp', minor: 'sharp' },
+            'B♭': { major: 'flat', minor: 'flat' },
+            'B': { major: 'sharp', minor: 'sharp' }
+        };
+        
+        // Color definitions for notes
+        const noteColors = [
+            'rgba(255, 0, 0, 0.7)',      // C - Red
+            'rgba(255, 128, 0, 0.7)',    // C#/Db - Orange-Red
+            'rgba(255, 165, 0, 0.7)',    // D - Orange
+            'rgba(255, 210, 0, 0.7)',    // D#/Eb - Yellow-Orange
+            'rgba(255, 255, 0, 0.7)',    // E - Yellow
+            'rgba(0, 128, 0, 0.7)',      // F - Green
+            'rgba(0, 200, 175, 0.7)',    // F#/Gb - Teal
+            'rgba(0, 0, 255, 0.7)',      // G - Blue
+            'rgba(75, 0, 210, 0.7)',     // G#/Ab - Blue-Indigo
+            'rgba(75, 0, 130, 0.7)',     // A - Indigo
+            'rgba(110, 0, 190, 0.7)',    // A#/Bb - Purple
+            'rgba(143, 0, 255, 0.7)'     // B - Violet
+        ];
+
+        // Color definitions for scale degrees
+        const scaleDegreeColors = [
+            'rgba(255, 0, 0, 0.7)',      // Root (1) - Red
+            'rgba(255, 165, 0, 0.7)',    // 2nd - Orange
+            'rgba(255, 255, 0, 0.7)',    // 3rd - Yellow
+            'rgba(0, 128, 0, 0.7)',      // 4th - Green
+            'rgba(0, 0, 255, 0.7)',      // 5th - Blue
+            'rgba(75, 0, 130, 0.7)',     // 6th - Indigo
+            'rgba(143, 0, 255, 0.7)'     // 7th - Violet
+        ];
+
+        // Current state
+        let currentScale = 'major';
+        let currentRoot = 'C';
+        let currentAccidental = 'natural';
+        let currentVisualization = 'piano';
+        let rootIndex = 0;
+
+        // Helper function for piano tooltips - moved outside to be accessible to both init and update functions
+        function ensurePianoTooltips() {
+            // First remove any existing event handlers
+            $('#piano-viz').off('mouseenter mouseleave', '.key-highlight');
+            $(document).off('mousemove.pianoTooltip');
+            
+            // Use the same approach as the other working visualizations
+            $('#piano-viz').on('mouseenter', '.key-highlight', function(e) {
+                const title = $(this).attr('title');
+                if (title) {
+                    // Remove the title attribute to prevent default browser tooltip
+                    $(this).data('title', title).removeAttr('title');
+                    
+                    // Show our custom tooltip
+                    const globalTooltip = $('#global-tooltip');
+                    globalTooltip.text(title);
+                    globalTooltip.css({
+                        'opacity': 1,
+                        'z-index': 9999
+                    });
+                    
+                    // Position tooltip near the mouse and track mouse movement at document level
+                    $(document).on('mousemove.pianoTooltip', function(e) {
+                        globalTooltip.css({
+                            left: e.pageX + 15,
+                            top: e.pageY - 40
+                        });
+                    });
+                    
+                    // Trigger mousemove once to position tooltip immediately
+                    $(document).trigger('mousemove.pianoTooltip');
+                }
+            }).on('mouseleave', '.key-highlight', function() {
+                // Hide the tooltip
+                $('#global-tooltip').css('opacity', 0);
+                $(document).off('mousemove.pianoTooltip');
+                
+                // Restore the title attribute
+                const title = $(this).data('title');
+                if (title) {
+                    $(this).attr('title', title);
+                }
+            });
+        }
+
+        // Calculate scale notes based on whole/half step patterns
+        function calculateScaleNotes(rootIndex, scaleType) {
+            try {
+            const scaleInfo = scales[scaleType];
+                if (!scaleInfo) {
+                    console.error("Invalid scale type:", scaleType);
+                    return [0, 2, 4, 5, 7, 9, 11].map(i => (rootIndex + i) % 12); // Default to major if invalid
+                }
+                
+            const intervals = scaleInfo.intervals;
+            
+            // Map intervals to absolute note indices
+            const scaleNoteIndices = intervals.map(interval => (rootIndex + interval) % 12);
+            
+            // Add the root note at the end (octave higher) for completeness
+            scaleNoteIndices.push(rootIndex);
+            
+            return scaleNoteIndices;
+            } catch (error) {
+                console.error("Error in calculateScaleNotes:", error);
+                return [0, 2, 4, 5, 7, 9, 11].map(i => (rootIndex + i) % 12); // Default to major if error
+            }
+        }
+
+        // Get note name based on current accidental preference and musical context
+        function getNoteName(index, forceAccidental = null) {
+            try {
+            const normalizedIndex = index % 12;
+            let accidentalType = forceAccidental || currentAccidental;
+            
+                // If the accidental is set to 'natural', determine the proper notation based on music theory
+                if (accidentalType === 'natural') {
+                    // For accidental roots, use music theory conventions for proper notation
+                    if (currentRoot.includes('♯') && currentRoot.includes('♭')) {
+                        // Handle based on specific key conventions in music theory
+                        const keyConventions = {
+                            'C♯/D♭': 'flat',  // D♭ major is more common than C♯ major
+                            'D♯/E♭': 'flat',  // E♭ major is more common than D♯ major
+                            'F♯/G♭': 'sharp', // F♯ major is more common than G♭ major
+                            'G♯/A♭': 'flat',  // A♭ major is more common than G♯ major
+                            'A♯/B♭': 'flat',  // B♭ major is more common than A♯ major
+                        };
+                        
+                        if (keyConventions[currentRoot]) {
+                            accidentalType = keyConventions[currentRoot];
+                        }
+                        // Default to key signature preferences if no specific convention
+                        else if (preferredAccidentals[currentRoot.split('/')[0]]) {
+                            if (currentScale === 'major' || currentScale === 'pentatonic') {
+                                accidentalType = preferredAccidentals[currentRoot.split('/')[0]].major;
+                            } else {
+                                accidentalType = preferredAccidentals[currentRoot.split('/')[0]].minor;
+                            }
+                        }
+                    } 
+                    // Otherwise use the key signature preferences for the current root note
+                    else if (preferredAccidentals[currentRoot]) {
+                if (currentScale === 'major' || currentScale === 'pentatonic') {
+                    accidentalType = preferredAccidentals[currentRoot].major;
+                } else {
+                    accidentalType = preferredAccidentals[currentRoot].minor;
+                        }
+                }
+            }
+            
+            if (accidentalType === 'flat') {
+                return flatNotes[normalizedIndex];
+            } else if (accidentalType === 'sharp') {
+                return sharpNotes[normalizedIndex];
+            } else {
+                return notes[normalizedIndex];
+                }
+            } catch (error) {
+                console.error("Error in getNoteName:", error, "index:", index, "forceAccidental:", forceAccidental);
+                return notes[index % 12]; // Default to standard notation if error
+            }
+        }
+
+        // Get note number (1-12) starting from C
+        function getNoteNumber(index) {
+            return (index % 12) + 1;
+        }
+
+        // Helper function to determine root index consistently across all functions
+        function determineRootIndex(rootNote) {
+            try {
+            let index = -1;
+            
+            if (rootNote.includes('♯')) {
+                const noteName = rootNote.split('/')[0];
+                index = sharpNotes.indexOf(noteName);
+            } else if (rootNote.includes('♭')) {
+                const noteName = rootNote.includes('/') ? rootNote.split('/')[1] : rootNote;
+                index = flatNotes.indexOf(noteName);
+            } else {
+                // For natural notes like C, D, E, etc.
+                index = notes.findIndex(n => n.startsWith(rootNote) && !n.includes('♯') && !n.includes('♭'));
+            }
+            
+            // Handle case where the root note wasn't found
+            if (index === -1) {
+                console.error("Root note not found:", rootNote);
+                if (rootNote === "F♯/G♭") {
+                    index = 6; // Hardcode the index for F♯/G♭
+                } else {
+                    index = 0; // Default to C if no match found
+                }
+            }
+            
+            return index;
+            } catch (error) {
+                console.error("Error in determineRootIndex:", error, "rootNote:", rootNote);
+                return 0; // Default to C if error
+            }
+        }
+
+        // Update scale notes display with note numbers
+        function updateScaleNotesDisplay() {
+            try {
+            const scaleInfo = scales[currentScale];
+            
+            // Use the helper function to determine root index
+            rootIndex = determineRootIndex(currentRoot);
+            
+            // Calculate scale notes using the step pattern
+            const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Get the preferred accidental type for this key/scale
+                // We'll reuse this for the root display and all notes
+                let preferredAccidentalType = currentAccidental;
+            
+            // Get all note names in the scale using appropriate accidentals
+            const scaleNotes = scaleNoteIndices.map((index, i) => {
+                    const noteName = getNoteName(index, preferredAccidentalType);
+                // For the last note (octave), indicate it's the same as root but higher
+                if (i === scaleNoteIndices.length - 1) {
+                        return `${noteName}`;
+                }
+                    return `${noteName}`;
+            });
+            
+            // Format the scale name more cleanly
+            const scaleName = currentScale.charAt(0).toUpperCase() + currentScale.slice(1).replace('-', ' ');
+                
+                // Get the clean root note name with the preferred accidental format
+                let displayRoot = currentRoot;
+                
+                // If current root is a dual-notation accidental (like C♯/D♭), choose the appropriate one
+                if (currentRoot.includes('♯') && currentRoot.includes('♭')) {
+                    // Use getNoteName to get the properly formatted root note name
+                    // Pass rootIndex to use the same consistent logic in getNoteName
+                    displayRoot = getNoteName(rootIndex, preferredAccidentalType);
+                }
+                
+                // Update scale pattern display
+                const patternDisplay = `<span class="scale-pattern">${scaleInfo.pattern}</span>`;
+            
+            // Update the display with both note names and pattern
+                $('#scale-notes').html(`${displayRoot} ${scaleName} Scale: ${scaleNotes.join(' - ')}<br>Step Pattern: ${patternDisplay}`);
+                
+                // Update all visualizations
+                updateAllVisualizations();
+                
+                // Update the color legend
+                updateColorLegend();
+            } catch (error) {
+                console.error("Error in updateScaleNotesDisplay:", error);
+                $('#scale-notes').html(`Error displaying scale: ${error.message}`);
+            }
+        }
+
+        // Update color legend based on scale degrees
+        function updateColorLegend() {
+            try {
+            const scaleInfo = scales[currentScale];
+            const degreeNames = ['1 (Root)', '2', '3', '4', '5', '6', '7'];
+            const solfege = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'];
+            
+            // Clear existing color chips
+            $('.color-chips').empty();
+                
+                // Use same preferred accidental type as in the main display
+                const preferredAccidentalType = currentAccidental;
+            
+            // Add new color chips for each scale degree
+            for (let i = 0; i < scaleInfo.intervals.length; i++) {
+                const degreeName = degreeNames[i];
+                const solfegeNameForDegree = solfege[i];
+                    const noteIndex = (rootIndex + scaleInfo.intervals[i]) % 12;
+                    // Use our enhanced getNoteName function for consistent display
+                    const noteName = getNoteName(noteIndex, preferredAccidentalType);
+                const color = scaleDegreeColors[i];
+                
+                    const chip = $(`<div class="color-chip"><span class="color-sample" style="background-color: ${color};"></span> ${degreeName} (${solfegeNameForDegree}) - ${noteName}</div>`);
+                $('.color-chips').append(chip);
+            }
+            } catch (error) {
+                console.error("Error in updateColorLegend:", error);
+                $('.color-chips').html(`<div class="color-chip">Error updating color legend: ${error.message}</div>`);
+            }
+        }
+
+        // Initialize piano visualization with white and black keys
+        function initPianoVisualization() {
+            try {
+                // Clear container
+                $('#piano-viz').empty();
+            
+                // Create piano container
+                const pianoContainer = $('<div class="piano-container"></div>');
+                $('#piano-viz').append(pianoContainer);
+                
+                // Create a single global tooltip if it doesn't exist
+                if ($('#global-tooltip').length === 0) {
+                    $('body').append('<div id="global-tooltip" class="note-tooltip"></div>');
+                    $('#global-tooltip').css({
+                        'position': 'fixed', 
+                        'z-index': 9999,
+                        'pointer-events': 'none'
+                    });
+                }
+                
+                // White key names in order - adding a C at the end
+                const whiteKeyNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
+                
+                // Add white keys first
+                for (let i = 0; i < whiteKeyNames.length; i++) {
+                    const whiteKey = $('<div class="white-key"></div>');
+                    whiteKey.text(whiteKeyNames[i]);
+                    whiteKey.attr('data-note', whiteKeyNames[i]);
+                    whiteKey.attr('data-index', i);
+                    pianoContainer.append(whiteKey);
+                }
+            
+                // Black key positions and mappings
+                // Each black key is positioned between two white keys
+                const blackKeyMap = [
+                    { pos: 0, leftKey: 'C', rightKey: 'D', noteIndex: 1, sharp: 'C♯', flat: 'D♭' },
+                    { pos: 1, leftKey: 'D', rightKey: 'E', noteIndex: 3, sharp: 'D♯', flat: 'E♭' },
+                    { pos: 3, leftKey: 'F', rightKey: 'G', noteIndex: 6, sharp: 'F♯', flat: 'G♭' },
+                    { pos: 4, leftKey: 'G', rightKey: 'A', noteIndex: 8, sharp: 'G♯', flat: 'A♭' },
+                    { pos: 5, leftKey: 'A', rightKey: 'B', noteIndex: 10, sharp: 'A♯', flat: 'B♭' },
+                    { pos: 7, leftKey: 'C', rightKey: 'D', noteIndex: 1, sharp: 'C♯', flat: 'D♭' },
+                    { pos: 8, leftKey: 'D', rightKey: 'E', noteIndex: 3, sharp: 'D♯', flat: 'E♭' },
+                    { pos: 10, leftKey: 'F', rightKey: 'G', noteIndex: 6, sharp: 'F♯', flat: 'G♭' },
+                    { pos: 11, leftKey: 'G', rightKey: 'A', noteIndex: 8, sharp: 'G♯', flat: 'A♭' },
+                    { pos: 12, leftKey: 'A', rightKey: 'B', noteIndex: 10, sharp: 'A♯', flat: 'B♭' },
+                    { pos: 14, leftKey: 'C', rightKey: 'D', noteIndex: 1, sharp: 'C♯', flat: 'D♭' }
+                ];
+                
+                // Add black keys positioned at the boundaries between white keys
+                blackKeyMap.forEach((blackKey, index) => {
+                    // Skip the last black key if we're at the very end of the keyboard
+                    if (blackKey.pos >= whiteKeyNames.length - 1) return;
+                    
+                    // Calculate the position between the two adjacent white keys
+                    const keyWidth = 100 / whiteKeyNames.length; // Width of each white key in %
+                    const leftPosition = (blackKey.pos + 1) * keyWidth; // Position at the boundary between keys
+                    
+                    const blackKeyElement = $('<div class="black-key"></div>');
+                    
+                    // Position key exactly at the boundary, transformed to center it
+                    blackKeyElement.css('left', `${leftPosition}%`);
+                    
+                    // Create labels for sharp and flat names
+                    const sharpLabel = $(`<div class="black-key-label">${blackKey.sharp}</div>`);
+                    const flatLabel = $(`<div class="accidental-label">${blackKey.flat}</div>`);
+                    
+                    blackKeyElement.append(sharpLabel);
+                    blackKeyElement.append(flatLabel);
+                    
+                    // Set data attributes for note information
+                    blackKeyElement.attr('data-note', `${blackKey.sharp}/${blackKey.flat}`);
+                    blackKeyElement.attr('data-note-index', blackKey.noteIndex);
+                    
+                    pianoContainer.append(blackKeyElement);
+                });
+                
+                // Add tooltip handlers directly here using the exact same approach as the bass visualization
+                $('#piano-viz').on('mouseenter', '.key-highlight', function() {
+                    const title = $(this).attr('title');
+                    if (title) {
+                        // Remove the title attribute to prevent default browser tooltip
+                        $(this).data('title', title).removeAttr('title');
+                        
+                        // Show our custom tooltip
+                        const globalTooltip = $('#global-tooltip');
+                        globalTooltip.text(title);
+                        globalTooltip.css('opacity', 1);
+                        
+                        // Position tooltip near the mouse
+                        $(document).on('mousemove.pianoTooltip', function(e) {
+                            globalTooltip.css({
+                                left: e.pageX + 15,
+                                top: e.pageY - 40
+                            });
+                        });
+                    }
+                }).on('mouseleave', '.key-highlight', function() {
+                    // Hide the tooltip
+                    $('#global-tooltip').css('opacity', 0);
+                    $(document).off('mousemove.pianoTooltip');
+                    
+                    // Restore the title attribute
+                    const title = $(this).data('title');
+                    if (title) {
+                        $(this).attr('title', title);
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing piano visualization:", error);
+            }
+        }
+
+        // Update piano visualization with tooltip info
+        function updatePianoVisualization() {
+            try {
+                const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Remove existing highlights and reset
+                $('#piano-viz').find('.key-highlight').remove();
+                
+                // Remove any existing event handlers for piano tooltips
+                $(document).off('mousemove.pianoTooltip');
+                
+                // Piano note indices mapping
+                // White keys: C(0), D(2), E(4), F(5), G(7), A(9), B(11)
+                const whiteKeyNoteIndices = [0, 2, 4, 5, 7, 9, 11, 0, 2, 4, 5, 7, 9, 11, 0]; // Two octaves plus one extra C
+                
+                // Highlight white keys that are in the scale
+                $('#piano-viz').find('.white-key').each(function(index) {
+                    const noteIndex = whiteKeyNoteIndices[index];
+                    const scalePosition = scaleNoteIndices.indexOf(noteIndex);
+                    
+                    if (scalePosition !== -1) {
+                        const color = scaleDegreeColors[scalePosition % scaleDegreeColors.length];
+                        const isRoot = scalePosition === 0 || scalePosition === scaleNoteIndices.length - 1;
+                        const noteName = getNoteName(noteIndex);
+                        
+                        // Get scale degree for tooltip
+                        const scaleDegree = scalePosition + 1;
+                        const degreeText = scaleDegree <= 7 ? 
+                            `${scaleDegree}${['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree]} degree` : 
+                            'Octave';
+                        
+                        // Add highlight circle
+                        const highlight = $('<div class="key-highlight"></div>');
+                        highlight.css('background-color', color);
+                        if (isRoot) highlight.attr('data-root', 'true');
+                        
+                        // Add tooltip info
+                        highlight.attr('title', `${noteName} - ${degreeText}`);
+                        highlight.attr('data-note', noteName);
+                        highlight.attr('data-degree', scaleDegree);
+                        
+                        $(this).append(highlight);
+                    }
+                });
+                
+                // Highlight black keys that are in the scale
+                $('#piano-viz').find('.black-key').each(function() {
+                    const noteIndex = parseInt($(this).attr('data-note-index'));
+                    const scalePosition = scaleNoteIndices.indexOf(noteIndex);
+                    
+                    if (scalePosition !== -1) {
+                        const color = scaleDegreeColors[scalePosition % scaleDegreeColors.length];
+                        const isRoot = scalePosition === 0 || scalePosition === scaleNoteIndices.length - 1;
+                        const noteName = getNoteName(noteIndex);
+                        
+                        // Get scale degree for tooltip
+                        const scaleDegree = scalePosition + 1;
+                        const degreeText = scaleDegree <= 7 ? 
+                            `${scaleDegree}${['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree]} degree` : 
+                            'Octave';
+                        
+                        // Add highlight circle
+                        const highlight = $('<div class="key-highlight"></div>');
+                        highlight.css('background-color', color);
+                        if (isRoot) highlight.attr('data-root', 'true');
+                        
+                        // Add tooltip info
+                        highlight.attr('title', `${noteName} - ${degreeText}`);
+                        highlight.attr('data-note', noteName);
+                        highlight.attr('data-degree', scaleDegree);
+                        
+                        $(this).append(highlight);
+                    }
+                });
+                
+                // Make sure global tooltip exists
+                if ($('#global-tooltip').length === 0) {
+                    $('body').append('<div id="global-tooltip" class="note-tooltip"></div>');
+                }
+            } catch (error) {
+                console.error("Error in updatePianoVisualization:", error);
+            }
+        }
+
+        // Initialize bass visualization with evenly spaced frets
+        function initBassVisualization() {
+            try {
+                // Clear container
+                $('#bass-viz').empty();
+            
+                // Create fretboard container
+            const fretboard = $('<div class="fretboard"></div>');
+                $('#bass-viz').append(fretboard);
+            
+                // Add 4 strings (G, D, A, E from top to bottom)
+                const bassStrings = ['G', 'D', 'A', 'E'];
+                const bassStringIndices = [7, 2, 9, 4]; // Corresponding note indices
+                
+            for (let i = 0; i < 4; i++) {
+                const string = $('<div class="string"></div>');
+                    string.css('top', `${25 + (i * 50 / 4)}%`);
+                    string.attr('data-string', bassStrings[i]);
+                    string.attr('data-index', bassStringIndices[i]);
+                fretboard.append(string);
+            }
+            
+                // Add 13 frets (0 = open string, 12 = octave)
+            for (let i = 0; i <= 12; i++) {
+                const fret = $('<div class="fret"></div>');
+                    fret.css('left', `${i * (100 / 13)}%`);
+                fret.attr('data-fret', i);
+                fretboard.append(fret);
+            }
+            
+                // Add fretboard markers (dots)
+            addFretboardMarkers(fretboard, 'bass');
+            
+                // Use the global tooltip
+                $('#bass-viz').on('mouseenter', '.string-note', function() {
+                    const title = $(this).attr('title');
+                    if (title) {
+                        // Remove the title attribute to prevent default browser tooltip
+                        $(this).data('title', title).removeAttr('title');
+                        
+                        // Show our custom tooltip
+                        const globalTooltip = $('#global-tooltip');
+                        globalTooltip.text(title);
+                        globalTooltip.css('opacity', 1);
+                        
+                        // Position tooltip near the mouse
+                        $(document).on('mousemove.bassTooltip', function(e) {
+                            globalTooltip.css({
+                                left: e.pageX + 15,
+                                top: e.pageY - 40
+                            });
+                        });
+                    }
+                }).on('mouseleave', '.string-note', function() {
+                    // Hide the tooltip
+                    $('#global-tooltip').css('opacity', 0);
+                    $(document).off('mousemove.bassTooltip');
+                    
+                    // Restore the title attribute
+                    const title = $(this).data('title');
+                    if (title) {
+                        $(this).attr('title', title);
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing bass visualization:", error);
+            }
+        }
+
+        // Function to add fretboard inlay markers (dots)
+        function addFretboardMarkers(fretboard, instrumentType) {
+            try {
+                // Standard fret markers at positions 3, 5, 7, 9, 12
+                // Move all markers one fret to the right
+                const markerPositions = [4, 6, 8, 10, 13];
+                const stringCount = instrumentType === 'bass' ? 4 : 6;
+                
+                markerPositions.forEach(pos => {
+                    // Calculate position percentage
+                    const xPos = (pos - 0.5) * (100 / 13); // Center between frets
+                    let yPos = 50; // Default center for single dots
+                    
+                    if (pos === 13) {
+                        // Add double dots at the 13th fret (formerly 12th)
+                        const topDot = $('<div class="fret-marker double"></div>');
+                        topDot.css({
+                            left: `${xPos}%`,
+                            top: '35%'
+                        });
+                        fretboard.append(topDot);
+                        
+                        const bottomDot = $('<div class="fret-marker double-bottom"></div>');
+                        bottomDot.css({
+                            left: `${xPos}%`,
+                            top: '65%'
+                        });
+                        fretboard.append(bottomDot);
+                    } else {
+                        // Add single dots for other positions
+                        const dot = $('<div class="fret-marker"></div>');
+                        dot.css({
+                            left: `${xPos}%`,
+                            top: `${yPos}%`
+                        });
+                        fretboard.append(dot);
+                    }
+                    
+                    // Add small side markers (optional)
+                    if (instrumentType === 'bass' || instrumentType === 'guitar') {
+                        const sideMarker = $('<div class="side-marker"></div>');
+                        sideMarker.css({
+                            left: `${xPos}%`,
+                            top: '90%' // Near bottom edge
+                        });
+                        fretboard.append(sideMarker);
+                    }
+                });
+            } catch (error) {
+                console.error("Error adding fretboard markers:", error);
+            }
+        }
+
+        // Update bass visualization with tooltip and string/fret info
+        function updateBassVisualization() {
+            try {
+                const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Remove existing note markers
+                $('#bass-viz').find('.string-note').remove();
+                
+                // Get strings and their base notes
+                const strings = $('#bass-viz').find('.string');
+                
+                // For each string
+                strings.each(function() {
+                    const $string = $(this);
+                    const stringBaseIndex = parseInt($string.attr('data-index'));
+                    const stringName = $string.attr('data-string');
+                    
+                    // For each fret (0-12)
+                    for (let fret = 0; fret <= 12; fret++) {
+                        // Calculate the note at this fret
+                        const noteIndex = (stringBaseIndex + fret) % 12;
+                        
+                        // Check if note is in the scale
+                        const scaleIndex = scaleNoteIndices.indexOf(noteIndex);
+                        if (scaleIndex !== -1) {
+                            // It's in the scale - show a note marker
+                            const color = scaleDegreeColors[scaleIndex % scaleDegreeColors.length];
+                            const isRoot = scaleIndex === 0 || scaleIndex === scaleNoteIndices.length - 1;
+                            
+                            // Create note marker
+                            const noteMarker = $('<div class="string-note"></div>');
+                            
+                            // Position the note in the middle of the fret
+                            noteMarker.css({
+                                'background-color': color,
+                                'left': `${(fret * (100 / 13)) + ((100 / 13) / 2)}%`, // Position in middle of fret
+                                'top': $string.css('top')
+                            });
+                            
+                            // Add root note styling if it's the root
+                            if (isRoot) {
+                                noteMarker.attr('data-root', 'true');
+                            }
+                            
+                            // Get note info for tooltip
+                            const noteName = getNoteName(noteIndex);
+                            
+                            // Scale degree info
+                            const scaleDegree = scaleIndex + 1;
+                            let degreeText = '';
+                            if (scaleDegree <= 7) {
+                                const degreeSuffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree];
+                                degreeText = `${scaleDegree}${degreeSuffix} degree`;
+                            } else {
+                                degreeText = 'Octave';
+                            }
+                            
+                            // Set tooltip content
+                            noteMarker.attr('title', `${noteName} - ${degreeText}\nString: ${stringName}, Fret: ${fret}`);
+                            
+                            // Add the note marker to the fretboard
+                            $('#bass-viz').find('.fretboard').append(noteMarker);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error updating bass visualization:", error);
+            }
+        }
+
+        // Initialize guitar visualization with evenly spaced frets
+        function initGuitarVisualization() {
+            try {
+                // Clear container
+                $('#guitar-viz').empty();
+                
+                // Create fretboard container
+                const fretboard = $('<div class="fretboard"></div>');
+                $('#guitar-viz').append(fretboard);
+                
+                // Add 6 strings (e, B, G, D, A, E from top to bottom)
+                const guitarStrings = ['e', 'B', 'G', 'D', 'A', 'E'];
+                const guitarStringIndices = [4, 11, 7, 2, 9, 4]; // Note indices, with high e = E + octave
+                
+                for (let i = 0; i < 6; i++) {
+                    const string = $('<div class="string"></div>');
+                    string.css('top', `${15 + (i * 70 / 6)}%`);
+                    string.attr('data-string', guitarStrings[i]);
+                    string.attr('data-index', guitarStringIndices[i]);
+                    fretboard.append(string);
+                }
+                
+                // Add 13 frets (0 = open string, 12 = octave)
+                for (let i = 0; i <= 12; i++) {
+                    const fret = $('<div class="fret"></div>');
+                    fret.css('left', `${i * (100 / 13)}%`);
+                    fret.attr('data-fret', i);
+                    fretboard.append(fret);
+                }
+                
+                // Add fretboard markers (dots)
+                addFretboardMarkers(fretboard, 'guitar');
+                
+                // Use the global tooltip
+                $('#guitar-viz').on('mouseenter', '.string-note', function() {
+                    const title = $(this).attr('title');
+                    if (title) {
+                        // Remove the title attribute to prevent default browser tooltip
+                        $(this).data('title', title).removeAttr('title');
+                        
+                        // Show our custom tooltip
+                        const globalTooltip = $('#global-tooltip');
+                        globalTooltip.text(title);
+                        globalTooltip.css('opacity', 1);
+                        
+                        // Position tooltip near the mouse
+                        $(document).on('mousemove.guitarTooltip', function(e) {
+                            globalTooltip.css({
+                                left: e.pageX + 15,
+                                top: e.pageY - 40
+                            });
+                        });
+                    }
+                }).on('mouseleave', '.string-note', function() {
+                    // Hide the tooltip
+                    $('#global-tooltip').css('opacity', 0);
+                    $(document).off('mousemove.guitarTooltip');
+                    
+                    // Restore the title attribute
+                    const title = $(this).data('title');
+                    if (title) {
+                        $(this).attr('title', title);
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing guitar visualization:", error);
+            }
+        }
+
+        // Update guitar visualization with tooltip and string/fret info
+        function updateGuitarVisualization() {
+            try {
+                const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Remove existing note markers
+                $('#guitar-viz').find('.string-note').remove();
+                
+                // Get strings and their base notes
+                const strings = $('#guitar-viz').find('.string');
+                
+                // For each string
+                strings.each(function() {
+                    const $string = $(this);
+                    const stringBaseIndex = parseInt($string.attr('data-index'));
+                    const stringName = $string.attr('data-string');
+                    
+                    // For each fret (0-12)
+                for (let fret = 0; fret <= 12; fret++) {
+                        // Calculate the note at this fret
+                        const noteIndex = (stringBaseIndex + fret) % 12;
+                        
+                        // Check if note is in the scale
+                        const scaleIndex = scaleNoteIndices.indexOf(noteIndex);
+                        if (scaleIndex !== -1) {
+                            // It's in the scale - show a note marker
+                            const color = scaleDegreeColors[scaleIndex % scaleDegreeColors.length];
+                            const isRoot = scaleIndex === 0 || scaleIndex === scaleNoteIndices.length - 1;
+                            
+                            // Create note marker
+                            const noteMarker = $('<div class="string-note"></div>');
+                            
+                            // Position the note in the middle of the fret
+                            noteMarker.css({
+                                'background-color': color,
+                                'left': `${(fret * (100 / 13)) + ((100 / 13) / 2)}%`, // Position in middle of fret
+                                'top': $string.css('top')
+                            });
+                            
+                            // Add root note styling if it's the root
+                            if (isRoot) {
+                                noteMarker.attr('data-root', 'true');
+                            }
+                            
+                            // Get note info for tooltip
+                        const noteName = getNoteName(noteIndex);
+                            
+                            // Scale degree info
+                            const scaleDegree = scaleIndex + 1;
+                            let degreeText = '';
+                            if (scaleDegree <= 7) {
+                                const degreeSuffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree];
+                                degreeText = `${scaleDegree}${degreeSuffix} degree`;
+                            } else {
+                                degreeText = 'Octave';
+                            }
+                            
+                            // Set tooltip content
+                            noteMarker.attr('title', `${noteName} - ${degreeText}\nString: ${stringName}, Fret: ${fret}`);
+                            
+                            // Add the note marker to the fretboard
+                            $('#guitar-viz').find('.fretboard').append(noteMarker);
+                    }
+                }
+            });
+            } catch (error) {
+                console.error("Error updating guitar visualization:", error);
+            }
+        }
+
+        // Initialize treble clef visualization
+        function initTrebleVisualization() {
+            try {
+                // Clear container
+                $('#treble-viz').empty();
+                
+                // Create staff container
+                const staffContainer = $('<div class="staff-container"></div>');
+                $('#treble-viz').append(staffContainer);
+                
+                // Add treble clef symbol
+                const clefSymbol = $('<div class="clef-symbol">𝄞</div>');
+                clefSymbol.css({
+                    'position': 'absolute',
+                    'left': '20px',
+                    'top': '50%',
+                    'transform': 'translateY(-55%)',
+                    'font-size': '100px',
+                    'font-family': 'serif',
+                    'color': '#333'
+                });
+                staffContainer.append(clefSymbol);
+                
+                // Add 5 staff lines
+                for (let i = 0; i < 5; i++) {
+                    const staffLine = $('<div class="staff-line"></div>');
+                    staffLine.css('top', `${35 + (i * 10)}%`);
+                    staffContainer.append(staffLine);
+                }
+                
+                // Use the global tooltip
+                $('#treble-viz').on('mouseenter', '.staff-note', function() {
+                    const title = $(this).attr('title');
+                    if (title) {
+                        // Remove the title attribute to prevent default browser tooltip
+                        $(this).data('title', title).removeAttr('title');
+                        
+                        // Show our custom tooltip
+                        const globalTooltip = $('#global-tooltip');
+                        globalTooltip.text(title);
+                        globalTooltip.css('opacity', 1);
+                        
+                        // Position tooltip near the mouse
+                        $(document).on('mousemove.trebleTooltip', function(e) {
+                            globalTooltip.css({
+                                left: e.pageX + 15,
+                                top: e.pageY - 40
+                            });
+                        });
+                    }
+                }).on('mouseleave', '.staff-note', function() {
+                    // Hide the tooltip
+                    $('#global-tooltip').css('opacity', 0);
+                    $(document).off('mousemove.trebleTooltip');
+                    
+                    // Restore the title attribute
+                    const title = $(this).data('title');
+                    if (title) {
+                        $(this).attr('title', title);
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing treble visualization:", error);
+            }
+        }
+
+        // Initialize bass clef visualization
+        function initBassClefVisualization() {
+            try {
+                // Clear container
+                $('#bass-clef-viz').empty();
+                
+                // Create staff container
+                const staffContainer = $('<div class="staff-container"></div>');
+                $('#bass-clef-viz').append(staffContainer);
+                
+                // Add bass clef symbol
+                const clefSymbol = $('<div class="clef-symbol">𝄢</div>');
+                clefSymbol.css({
+                    'position': 'absolute',
+                    'left': '20px',
+                    'top': '50%',
+                    'transform': 'translateY(-35%)',
+                    'font-size': '80px',
+                    'font-family': 'serif',
+                    'color': '#333'
+                });
+                staffContainer.append(clefSymbol);
+                
+                // Add 5 staff lines
+                for (let i = 0; i < 5; i++) {
+                    const staffLine = $('<div class="staff-line"></div>');
+                    staffLine.css('top', `${35 + (i * 10)}%`);
+                    staffContainer.append(staffLine);
+                }
+                
+                // Use the global tooltip
+                $('#bass-clef-viz').on('mouseenter', '.staff-note', function() {
+                    const title = $(this).attr('title');
+                    if (title) {
+                        // Remove the title attribute to prevent default browser tooltip
+                        $(this).data('title', title).removeAttr('title');
+                        
+                        // Show our custom tooltip
+                        const globalTooltip = $('#global-tooltip');
+                        globalTooltip.text(title);
+                        globalTooltip.css('opacity', 1);
+                        
+                        // Position tooltip near the mouse
+                        $(document).on('mousemove.bassClefTooltip', function(e) {
+                            globalTooltip.css({
+                                left: e.pageX + 15,
+                                top: e.pageY - 40
+                            });
+                        });
+                    }
+                }).on('mouseleave', '.staff-note', function() {
+                    // Hide the tooltip
+                    $('#global-tooltip').css('opacity', 0);
+                    $(document).off('mousemove.bassClefTooltip');
+                    
+                    // Restore the title attribute
+                    const title = $(this).data('title');
+                    if (title) {
+                        $(this).attr('title', title);
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing bass clef visualization:", error);
+            }
+        }
+        
+        // Update treble clef visualization
+        function updateTrebleVisualization() {
+            try {
+                const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Remove existing notes
+                $('#treble-viz').find('.staff-note').remove();
+                
+                // Map of note indices to staff positions (percentage from top)
+                // Middle C (C4) is represented as position 60
+                // Each note is 5% above/below
+            const notePositions = {
+                    0: 60, // C
+                    1: 55, // C#/Db
+                    2: 55, // D
+                    3: 50, // D#/Eb
+                    4: 50, // E
+                    5: 45, // F
+                    6: 40, // F#/Gb
+                    7: 40, // G
+                    8: 35, // G#/Ab
+                    9: 35, // A
+                    10: 30, // A#/Bb
+                    11: 30, // B
+                };
+                
+                // For each note in the scale
+                scaleNoteIndices.forEach((noteIndex, scalePosition) => {
+                    const color = scaleDegreeColors[scalePosition % scaleDegreeColors.length];
+                    const isRoot = scalePosition === 0 || scalePosition === scaleNoteIndices.length - 1;
+                    
+                    // Get position on staff
+                    const position = notePositions[noteIndex % 12];
+                    
+                    // Create note element
+                    const noteElement = $('<div class="staff-note"></div>');
+                    noteElement.css({
+                        'position': 'absolute',
+                        'width': '30px',
+                        'height': '20px',
+                        'background-color': color,
+                        'border-radius': '50%',
+                        'left': `${120 + (scalePosition * 60)}px`,
+                        'top': `${position}%`,
+                        'z-index': 10
+                    });
+                    
+                    // Add root note styling if it's the root
+                    if (isRoot) {
+                        noteElement.attr('data-root', 'true');
+                        noteElement.css('border', '2px solid white');
+                    }
+                    
+                    // Get note info for tooltip
+                    const noteName = getNoteName(noteIndex);
+                    
+                    // Scale degree info
+                    const scaleDegree = scalePosition + 1;
+                    let degreeText = '';
+                    if (scaleDegree <= 7) {
+                        const degreeSuffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree];
+                        degreeText = `${scaleDegree}${degreeSuffix} degree`;
+                    } else {
+                        degreeText = 'Octave';
+                    }
+                    
+                    // Set tooltip content
+                    noteElement.attr('title', `${noteName} - ${degreeText}`);
+                    
+                    // Add the note to the staff
+                    $('#treble-viz').find('.staff-container').append(noteElement);
+                    
+                    // Add leger lines if necessary (for notes outside the staff)
+                    if (position > 55) { // Below middle line
+                        const legerLine = $('<div class="staff-line"></div>');
+                        legerLine.css({
+                            'top': `${position}%`,
+                            'width': '40px',
+                            'left': `${110 + (scalePosition * 60)}px`,
+                            'z-index': 5
+                        });
+                        $('#treble-viz').find('.staff-container').append(legerLine);
+                    }
+                });
+            } catch (error) {
+                console.error("Error updating treble visualization:", error);
+            }
+        }
+        
+        // Update bass clef visualization
+        function updateBassClefVisualization() {
+            try {
+                const scaleNoteIndices = calculateScaleNotes(rootIndex, currentScale);
+                
+                // Remove existing notes
+                $('#bass-clef-viz').find('.staff-note').remove();
+                
+                // Map of note indices to staff positions (percentage from top)
+                // Note positions are different for bass clef
+                // Middle C (C4) is represented as position 25
+            const notePositions = {
+                    0: 40, // C
+                    1: 35, // C#/Db
+                    2: 35, // D
+                    3: 30, // D#/Eb
+                    4: 30, // E
+                    5: 25, // F
+                    6: 20, // F#/Gb
+                    7: 20, // G
+                    8: 15, // G#/Ab
+                    9: 15, // A
+                    10: 10, // A#/Bb
+                    11: 10, // B
+                };
+                
+                // For each note in the scale
+                scaleNoteIndices.forEach((noteIndex, scalePosition) => {
+                    const color = scaleDegreeColors[scalePosition % scaleDegreeColors.length];
+                    const isRoot = scalePosition === 0 || scalePosition === scaleNoteIndices.length - 1;
+                    
+                    // Get position on staff
+                    const position = notePositions[noteIndex % 12];
+                    
+                    // Create note element
+                    const noteElement = $('<div class="staff-note"></div>');
+                    noteElement.css({
+                        'position': 'absolute',
+                        'width': '30px',
+                        'height': '20px',
+                        'background-color': color,
+                        'border-radius': '50%',
+                        'left': `${120 + (scalePosition * 60)}px`,
+                        'top': `${position}%`,
+                        'z-index': 10
+                    });
+                    
+                    // Add root note styling if it's the root
+                    if (isRoot) {
+                        noteElement.attr('data-root', 'true');
+                        noteElement.css('border', '2px solid white');
+                    }
+                    
+                    // Get note info for tooltip
+                    const noteName = getNoteName(noteIndex);
+                    
+                    // Scale degree info
+                    const scaleDegree = scalePosition + 1;
+                    let degreeText = '';
+                    if (scaleDegree <= 7) {
+                        const degreeSuffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th'][scaleDegree];
+                        degreeText = `${scaleDegree}${degreeSuffix} degree`;
+                    } else {
+                        degreeText = 'Octave';
+                    }
+                    
+                    // Set tooltip content
+                    noteElement.attr('title', `${noteName} - ${degreeText}`);
+                    
+                    // Add the note to the staff
+                    $('#bass-clef-viz').find('.staff-container').append(noteElement);
+                    
+                    // Add leger lines if necessary (for notes outside the staff)
+                    if (position < 15 || position > 55) {
+                        const legerLine = $('<div class="staff-line"></div>');
+                        legerLine.css({
+                            'top': `${position}%`,
+                            'width': '40px',
+                            'left': `${110 + (scalePosition * 60)}px`,
+                            'z-index': 5
+                        });
+                        $('#bass-clef-viz').find('.staff-container').append(legerLine);
+                    }
+                });
+            } catch (error) {
+                console.error("Error updating bass clef visualization:", error);
+            }
+        }
+
+        // Initialize the visualizations
+        function initAllVisualizations() {
+            try {
+                // Initialize all visualizations - to be called once at setup
+                initPianoVisualization();
+                initBassVisualization();
+                initGuitarVisualization();
+                initTrebleVisualization();
+                initBassClefVisualization();
+            } catch (error) {
+                console.error("Error initializing visualizations:", error);
+            }
+        }
+
+        // EVENT HANDLERS - Fixed implementation
+        
+        // Scale button click handler
+        $('.scale-btn').click(function() {
+            try {
+                $('.scale-btn').removeClass('active');
+                $(this).addClass('active');
+                currentScale = $(this).data('scale');
+                updateScaleNotesDisplay();
+            } catch (error) {
+                console.error("Error in scale button handler:", error);
+            }
+        });
+        
+        // Root note button click handler
+        $('.note-btn').click(function() {
+            try {
+                $('.note-btn').removeClass('active');
+                $(this).addClass('active');
+                currentRoot = $(this).data('label');
+                updateScaleNotesDisplay();
+            } catch (error) {
+                console.error("Error in note button handler:", error);
+            }
+        });
+
+        // Accidental button click handler
+        $('.accidental-btn').click(function() {
+            try {
+                $('.accidental-btn').removeClass('active');
+            $(this).addClass('active');
+            currentAccidental = $(this).data('accidental');
+                updateScaleNotesDisplay();
+            } catch (error) {
+                console.error("Error in accidental button handler:", error);
+            }
+        });
+
+        // Visualization button click handler
+        $('.viz-btn').click(function() {
+            try {
+            $('.viz-btn').removeClass('active');
+            $(this).addClass('active');
+                
+                // Hide all visualizations
+                $('.piano-visual, .bass-visual, .guitar-visual, .treble-visual, .bass-clef-visual').removeClass('active');
+                
+                // Show the selected visualization
+                currentVisualization = $(this).data('viz');
+                $(`#${currentVisualization}-viz`).addClass('active');
+                
+                // Update the current visualization
+                updateAllVisualizations();
+            } catch (error) {
+                console.error("Error in visualization button handler:", error);
+            }
+        });
+
+        // Initialize everything on document ready
+        try {
+            // Create a global tooltip element that will be used by all visualizations
+            if ($('#global-tooltip').length === 0) {
+                $('body').append('<div id="global-tooltip" class="note-tooltip"></div>');
+            }
+            
+            // Make tooltip appear above everything else
+            $('#global-tooltip').css({
+                'position': 'fixed', 
+                'z-index': 9999,
+                'pointer-events': 'none'
+            });
+            
+            // Initialize and show the first visualization (piano)
+            initAllVisualizations();
+            updateScaleNotesDisplay();
+        } catch (error) {
+            console.error("Error during initialization:", error);
+            $('#scale-notes').html(`Error initializing: ${error.message}`);
+        }
+
+        // Update all visualizations when something changes
+        function updateAllVisualizations() {
+            try {
+                // Update the relevant visualization based on the current one
+                switch(currentVisualization) {
+                    case 'piano':
+                        updatePianoVisualization();
+                        break;
+                    case 'bass':
+                        updateBassVisualization();
+                        break;
+                    case 'guitar':
+                        updateGuitarVisualization();
+                        break;
+                    case 'treble':
+                        updateTrebleVisualization();
+                        break;
+                    case 'bass-clef':
+                        updateBassClefVisualization();
+                        break;
+                    default:
+                        console.error("Unknown visualization type:", currentVisualization);
+                }
+            } catch (error) {
+                console.error("Error updating visualizations:", error);
+            }
+        }
+    });
+</script>
+</body>
+</html> 
