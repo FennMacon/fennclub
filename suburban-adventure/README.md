@@ -69,3 +69,5 @@ The woodland mansion faces its courtyard and has an enterable regal interior: ni
 Floating candles light every mansion chamber. Woodland trails share smooth, uneven dirt ribbons and matching tree clearance; pond approaches now join the road correctly. The southeast woods contain seven developed clearings and fourteen discoveries along two branching trail systems. Preview the woods and pond at `/tests/woodland-preview.html`.
 
 For area testing, press **1–9** (top row or numpad) to teleport to the current map’s section centers. Read the grid left to right, north to south: **1 river / 2 north plaza / 3 mansion; 4 river / 5 main plaza / 6 carnival; 7 river and subway / 8 pond / 9 forest clearings**. The same grid order works in the city. Shortcuts also leave interiors, and are disabled while using the phone, talking, or typing.
+
+`npm run check` regenerates the production import map using a content hash of all runtime modules. Commit the generated `index.html` with each release so browsers load one consistent revision. Startup failures expose error details and offer a fresh-page retry.
