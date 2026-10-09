@@ -8,16 +8,17 @@ DIALOGUE (content/dialogue/)
 ----------------------------
 Each NPC has a .txt file (e.g. Maya.txt, Jake.txt).
 Scenes are marked with: === SCENE_NAME ===
-Use UNLOCKS: scene_name to gate later dialogue.
+Use UNLOCKS: Song title to award a song when this conversation finishes.
+Scene headers must match scene keys in scenes.js; these are locations, not conversation stages.
 Format: Speaker: Their line of dialogue
 
 Example:
-  === INTRO ===
+  === PLAZA ===
   Maya: Hey, nice to see you!
-  UNLOCKS: CHAT
+  UNLOCKS: First Song
   Player: Thanks!
 
-  === CHAT ===
+  === FOREST_SUBURBAN ===
   Maya: So, what brings you here?
 
 FLAVOR TEXT (content/flavor/)

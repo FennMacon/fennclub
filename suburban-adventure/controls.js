@@ -1,3 +1,5 @@
+import { getPhoneOpenState } from './phone-ui.js';
+import { hasActiveConversation } from './dialogue.js';
 // controls.js - Desktop input only (keyboard, mouse)
 // Mobile touch/joystick logic lives in mobile-controls.js
 import * as THREE from 'three';
@@ -24,7 +26,7 @@ export const maxPitch = Math.PI / 3;
 export let isPointerLocked = false;  // Always false; kept for compatibility
 
 // Mobile detection (used by main.js to branch desktop vs mobile init)
-export let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+export let isMobile = navigator.maxTouchPoints > 0 && window.matchMedia('(any-pointer: coarse)').matches;
 
 // Initialize controls (desktop: keyboard + mouse; mobile: no-op, mobile-controls.js handles touch)
 export const initializeControls = (camera, canvas, shouldRotate180) => {
@@ -38,8 +40,13 @@ export const initializeControls = (camera, canvas, shouldRotate180) => {
 };
 
 // Keyboard controls
+export const resetControls = () => { Object.keys(keyboard).forEach(key => keyboard[key] = false); };
 const setupKeyboardControls = () => {
+    window.addEventListener('blur', resetControls);
+    document.addEventListener('visibilitychange', resetControls);
+    document.addEventListener('game-modal-change', resetControls);
     document.addEventListener('keydown', (e) => {
+        if (getPhoneOpenState() || hasActiveConversation() || e.target.closest?.('input, textarea, button, [contenteditable]')) return;
         if (e.key === 'w' || e.key === 'W') keyboard.w = true;
         if (e.key === 'a' || e.key === 'A') keyboard.a = true;
         if (e.key === 's' || e.key === 'S') keyboard.s = true;
@@ -73,7 +80,7 @@ const setupMouseControls = (canvas) => {
     let isDragging = false;
 
     const onMouseMove = (event) => {
-        if (isDragging && (event.buttons & 1)) {
+        if (!getPhoneOpenState() && !hasActiveConversation() && isDragging && (event.buttons & 1)) {
             yaw -= event.movementX * mouseSensitivity;
             pitch -= event.movementY * mouseSensitivity;
             pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
@@ -103,27 +110,28 @@ const applyCollisionAndBounds = (camera, PLAZA_CONFIG, streetElements) => {
 };
 
 // Update camera - desktop path (keyboard only; mouse updates yaw/pitch in mousemove)
-export const updateCameraPositionDesktop = (camera, PLAZA_CONFIG = null, streetElements = null) => {
-    const speed = keyboard.shift ? moveSpeed * sprintMultiplier : moveSpeed;
+export const updateCameraPositionDesktop = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
+    const speed = moveSpeed * 60 * deltaTime * (keyboard.shift ? sprintMultiplier : 1);
     const forward = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
     const right = new THREE.Vector3(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2)).normalize();
 
-    if (keyboard.w || keyboard.up) camera.position.addScaledVector(forward, -speed);
-    if (keyboard.s || keyboard.down) camera.position.addScaledVector(forward, speed);
-    if (keyboard.a || keyboard.left) camera.position.addScaledVector(right, -speed);
-    if (keyboard.d || keyboard.right) camera.position.addScaledVector(right, speed);
+    const x = Number(keyboard.d || keyboard.right) - Number(keyboard.a || keyboard.left);
+    const z = Number(keyboard.s || keyboard.down) - Number(keyboard.w || keyboard.up);
+    const length = Math.max(1, Math.hypot(x, z));
+    camera.position.addScaledVector(forward, z * speed / length);
+    camera.position.addScaledVector(right, x * speed / length);
     if (keyboard.q) camera.position.y -= speed;
     if (keyboard.e) camera.position.y += speed;
 
     camera.rotation.order = 'YXZ';
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
-    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements);
+    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, deltaTime);
 };
 
 // Update camera - mobile path (touch joysticks)
-export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetElements = null) => {
-    const speed = getMobileSprint() ? moveSpeed * sprintMultiplier : moveSpeed;
+export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
+    const speed = moveSpeed * 60 * deltaTime * (getMobileSprint() ? sprintMultiplier : 1);
     const forward = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
     const right = new THREE.Vector3(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2)).normalize();
 
@@ -136,7 +144,7 @@ export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetEl
     camera.position.addScaledVector(forward, move.y * speed);
     camera.position.addScaledVector(right, move.x * speed);
 
-    const lookSensitivity = 0.02;
+    const lookSensitivity = 1.2 * deltaTime;
     yaw -= look.x * lookSensitivity;
     pitch -= look.y * lookSensitivity;
     pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
@@ -144,15 +152,16 @@ export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetEl
     camera.rotation.order = 'YXZ';
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
-    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements);
+    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, deltaTime);
 };
 
 // Unified entry - branches based on isMobile
-export const updateCameraPosition = (camera, PLAZA_CONFIG = null, streetElements = null) => {
+export const updateCameraPosition = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
+    if (document.getElementById('startup') || getPhoneOpenState() || hasActiveConversation()) return;
     if (isMobile) {
-        updateCameraPositionMobile(camera, PLAZA_CONFIG, streetElements);
+        updateCameraPositionMobile(camera, PLAZA_CONFIG, streetElements, deltaTime);
     } else {
-        updateCameraPositionDesktop(camera, PLAZA_CONFIG, streetElements);
+        updateCameraPositionDesktop(camera, PLAZA_CONFIG, streetElements, deltaTime);
     }
 };
 

@@ -1,11 +1,12 @@
+import { storage } from './storage.js';
 // npcs.js - NPC creation and management
 import * as THREE from 'three';
 import { createWireframeMaterial } from './utils.js';
 import { isMobile } from './controls.js';
 import { INTERIOR_TARGET_SIZE, createGlowingWireframeMaterial } from './buildings.js';
-import { startConversation, getCurrentDialogue, advanceConversation, hasActiveConversation, endConversation, getConversationAtEnd, setConversationAtEnd, unlockCurrentSong, getUnlockedSongs, getCurrentConversationUnlock, isSongUnlocked, markItemEncountered } from './dialogue.js';
+import { startConversation, getCurrentDialogue, advanceConversation, hasActiveConversation, endConversation, getConversationAtEnd, setConversationAtEnd, unlockCurrentSong, markItemEncountered } from './dialogue.js';
 import { triggerPhoneGlow } from './phone-ui.js';
-import { SCENE_CONFIGS, UNIFIED_MAP, UNIFIED_MAP_ZONE_OFFSETS, getCurrentMap } from './scenes.js';
+import { SCENE_CONFIGS, UNIFIED_MAP, getCurrentMap } from './scenes.js';
 
 const DEFAULT_NPC_COLOR = 0xFF6B9D;
 const NPC_WORLD_POSITION = new THREE.Vector3();
@@ -211,7 +212,7 @@ export const initializeNPCInteraction = () => {
     // Create interaction UI
     interactionUI = document.createElement('div');
     interactionUI.style.position = 'fixed';
-    interactionUI.style.bottom = isMobile ? '130px' : '20px';
+    interactionUI.style.bottom = isMobile ? 'calc(120px + env(safe-area-inset-bottom))' : '20px';
     interactionUI.style.left = '50%';
     interactionUI.style.transform = 'translateX(-50%)';
     interactionUI.style.padding = '20px';
@@ -223,16 +224,24 @@ export const initializeNPCInteraction = () => {
     interactionUI.style.borderRadius = '4px';
     interactionUI.style.display = 'none';
     interactionUI.style.zIndex = isMobile ? '1100' : '1000';
-    interactionUI.style.maxWidth = '500px';
+    interactionUI.style.width = 'min(500px, calc(100vw - 24px))';
     interactionUI.style.textAlign = 'left';
     interactionUI.style.boxShadow = '0 0 10px rgba(136, 255, 230, 0.5)';
     interactionUI.style.lineHeight = '1.6';
+    interactionUI.addEventListener('click', event => {
+        if (event.target.closest('[data-close-conversation]')) {
+            resetNPCInteraction();
+            document.dispatchEvent(new Event('game-modal-change'));
+        }
+    });
+    interactionUI.className = 'game-prompt';
+    interactionUI.setAttribute('aria-live', 'polite');
     document.body.appendChild(interactionUI);
     
     // Create scene switching UI
     sceneSwitchUI = document.createElement('div');
     sceneSwitchUI.style.position = 'fixed';
-    sceneSwitchUI.style.bottom = isMobile ? '210px' : '80px';
+    sceneSwitchUI.style.bottom = isMobile ? 'calc(168px + env(safe-area-inset-bottom))' : '80px';
     sceneSwitchUI.style.left = '50%';
     sceneSwitchUI.style.transform = 'translateX(-50%)';
     sceneSwitchUI.style.color = '#FFFF88';
@@ -243,12 +252,13 @@ export const initializeNPCInteraction = () => {
     sceneSwitchUI.style.borderRadius = '5px';
     sceneSwitchUI.style.display = 'none';
     sceneSwitchUI.style.zIndex = isMobile ? '1100' : '1000';
+    sceneSwitchUI.className = 'game-prompt';
     document.body.appendChild(sceneSwitchUI);
     
     // Create nearby item UI (matches sceneSwitchUI styling)
     nearbyItemUI = document.createElement('div');
     nearbyItemUI.style.position = 'fixed';
-    nearbyItemUI.style.bottom = isMobile ? '210px' : '80px';
+    nearbyItemUI.style.bottom = isMobile ? 'calc(168px + env(safe-area-inset-bottom))' : '80px';
     nearbyItemUI.style.left = '50%';
     nearbyItemUI.style.transform = 'translateX(-50%)';
     nearbyItemUI.style.color = '#FFFF88';
@@ -259,6 +269,7 @@ export const initializeNPCInteraction = () => {
     nearbyItemUI.style.borderRadius = '5px';
     nearbyItemUI.style.display = 'none';
     nearbyItemUI.style.zIndex = isMobile ? '1100' : '1000';
+    nearbyItemUI.className = 'game-prompt';
     document.body.appendChild(nearbyItemUI);
 };
 
@@ -347,10 +358,10 @@ export const checkBusStopProximity = (camera, PLAZA_CONFIG, CURRENT_SCENE, stree
         const distanceToExit = playerPosition.distanceTo(exitPortalPos);
         
         if (distanceToExit < 3) {
-            const previousScene = localStorage.getItem('previousExteriorScene') || 'PLAZA';
+            const previousScene = storage.getItem('previousExteriorScene') || 'PLAZA';
             sceneSwitchUI.innerHTML = `
                 <div style="font-weight: bold; margin-bottom: 5px;">🚪 Exit</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">Press Space to exit to:</div>
+                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} exit to:</div>
                 <div style="color: #88FF88;">${SCENE_CONFIGS[previousScene]?.name || 'Street'}</div>
             `;
             sceneSwitchUI.style.display = 'block';
@@ -410,7 +421,7 @@ export const checkBusStopProximity = (camera, PLAZA_CONFIG, CURRENT_SCENE, stree
             const targetScene = getBuildingPortalDestination(nearestPortal.style, CURRENT_SCENE);
             sceneSwitchUI.innerHTML = `
                 <div style="font-weight: bold; margin-bottom: 5px;">🚪 ${nearestPortal.name}</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">Press Space to enter:</div>
+                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} enter:</div>
                 <div style="color: #88FF88;">${targetScene.name}</div>
             `;
             sceneSwitchUI.style.display = 'block';
@@ -427,7 +438,7 @@ export const checkBusStopProximity = (camera, PLAZA_CONFIG, CURRENT_SCENE, stree
             const dest = currentMap === 'suburban' ? 'Allston' : 'the suburbs';
             sceneSwitchUI.innerHTML = `
                 <div style="font-weight: bold; margin-bottom: 5px;">🚇 Subway</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">Press Space to travel to ${dest}</div>
+                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} travel to ${dest}</div>
             `;
             sceneSwitchUI.style.display = 'block';
             return;
@@ -453,7 +464,7 @@ export const checkBusStopProximity = (camera, PLAZA_CONFIG, CURRENT_SCENE, stree
         if (nextScene) {
             sceneSwitchUI.innerHTML = `
                 <div style="font-weight: bold; margin-bottom: 5px;">🚌 Bus Stop</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">Press Space to travel to:</div>
+                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} travel to:</div>
                 <div style="color: #88FF88;">${nextScene.name}</div>
             `;
             sceneSwitchUI.style.display = 'block';
@@ -500,6 +511,13 @@ export const initializeConversationHandlers = () => {
 
 // Handle interaction input - returns true if action was consumed (caller should not process portals/bus)
 export const handleInteractionInput = (CURRENT_SCENE) => {
+    if (showingUnlockedSong) {
+        endConversation();
+        conversationNPC = null;
+        showingUnlockedSong = false;
+        sceneSwitchUI.style.display = 'none';
+        return true;
+    }
     // Check if we walked away from the NPC we were talking to
     if (hasActiveConversation() && conversationNPC && nearbyNPC !== conversationNPC) {
         console.log('🚶 Walked away from', conversationNPC.userData.name, 'to', nearbyNPC?.userData.name || 'nobody');
@@ -585,38 +603,6 @@ export const handleInteractionInput = (CURRENT_SCENE) => {
                 `;
                 sceneSwitchUI.style.display = 'block';
                 
-                setTimeout(() => {
-                    const endConversationHandler = () => {
-                        endConversation();
-                        conversationNPC = null; // Clear the conversation NPC
-                        showingUnlockedSong = false; // Clear flag
-                        sceneSwitchUI.style.display = 'none';
-                        
-                        // Hide dialogue UI if still showing
-                        if (conversationFadeTimeout) {
-                            clearTimeout(conversationFadeTimeout);
-                            conversationFadeTimeout = null;
-                        }
-                        interactionUI.style.display = 'none';
-                        interactionUI.style.opacity = '1';
-                        interactionUI.style.transition = '';
-                        
-                        // Show nearby NPC name in top-left if available
-                        if (nearbyNPC) {
-                            const npcName = nearbyNPC.userData.name;
-                            const npcColor = nearbyNPC.userData.color || DEFAULT_NPC_COLOR;
-                            const npcColorCSS = hexToCSSColor(npcColor);
-                            nearbyItemUI.innerHTML = `
-                                <div style="font-weight: bold; margin-bottom: 5px; color: ${npcColorCSS};">${npcName}</div>
-                            `;
-                            nearbyItemUI.style.display = 'block';
-                        } else {
-                            nearbyItemUI.style.display = 'none';
-                        }
-                        document.removeEventListener('keydown', endConversationHandler);
-                    };
-                    document.addEventListener('keydown', endConversationHandler);
-                }, 100);
                 return true;
             } else {
                 // No unlock, fade out dialogue UI
@@ -759,6 +745,7 @@ const showDialogueStep = (dialogue) => {
     }
     
     interactionUI.innerHTML = `
+        <button data-close-conversation aria-label="End conversation" style="float:right; min-width:44px; color:#88FFE6; background:transparent; border:0; font-size:24px;">×</button>
         <div style="font-weight: bold; margin-bottom: 10px; color: ${speakerColor}; text-align: center;">
             ${dialogue.speaker}
         </div>
@@ -1078,3 +1065,32 @@ export const handleItemInteractionKey = () => {
 export const getInteractionUI = () => interactionUI;
 export const getNearbyNPC = () => nearbyNPC;
 export const getNearbyItem = () => nearbyItem;
+
+export function resetNPCInteraction() {
+    clearTimeout(conversationFadeTimeout);
+    clearTimeout(flavorTextFadeTimeout);
+    endConversation();
+    nearbyNPC = conversationNPC = nearbyItem = null;
+    allNPCs = [];
+    showingUnlockedSong = showingItemFlavor = false;
+    for (const [object, original] of itemOriginalMaterials) {
+        if (object.material !== original) object.material.dispose();
+        object.material = original;
+    }
+    itemOriginalMaterials.clear();
+    for (const ui of [interactionUI, sceneSwitchUI, nearbyItemUI]) {
+        if (ui) { ui.style.display = 'none'; ui.style.opacity = '1'; ui.style.transition = ''; }
+    }
+}
+export function getMobileInteraction() {
+    if (hasActiveConversation() || showingUnlockedSong) return { type: 'continue', text: 'CONTINUE' };
+    if (nearbyNPC) return { type: 'talk', text: 'TALK' };
+    if (nearbyItem) return { type: 'inspect', text: 'INSPECT' };
+    if (sceneSwitchUI?.style.display === 'block') {
+        const text = sceneSwitchUI.textContent;
+        if (text.includes('Exit')) return { type: 'exit', text: 'EXIT' };
+        if (text.includes('enter')) return { type: 'enter', text: 'ENTER' };
+        return { type: 'travel', text: 'TRAVEL' };
+    }
+    return { type: 'run', text: 'EXPLORE' };
+}

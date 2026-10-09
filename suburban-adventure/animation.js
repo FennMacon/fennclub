@@ -1,14 +1,15 @@
+import { getPhoneOpenState } from './phone-ui.js';
 // animation.js - Animation loop and time-based updates
 import * as THREE from 'three';
 import { updateNightSky } from './nightsky.js';
 import { updateSkybox } from './skybox.js';
 import { updateZoneFog, updateGroundFog } from './fog.js';
-import { createWireframeMaterial } from './utils.js';
-import { HORIZONTAL_BOUNDS, VERTICAL_BOUNDS, CONNECTOR_X, CITY_CONNECTOR_X, getHorizontalBounds } from './roads.js';
+import { VERTICAL_BOUNDS, CONNECTOR_X, CITY_CONNECTOR_X, getHorizontalBounds } from './roads.js';
 
 // Animation variables
 export let time = 0;
-let lastTime = 0;
+let lastTime = null;
+let frameScale = 1;
 let dayTime = 0;
 const DAY_LENGTH = 180; // seconds for full day/night cycle (~45 sec per phase)
 
@@ -19,7 +20,6 @@ const getAverageFrequency = (start, end) => {
 
 // Animate neon signs and lights
 export const animateNeonSigns = (streetElements) => {
-    time += 0.05;
     
     // Animate the KARAOKE sign letters with alternating colors
     if (streetElements.karaokeSigns) {
@@ -108,7 +108,7 @@ export const animateCars = (streetElements, createCar, getRandomCarColor) => {
     const horizBounds = getHorizontalBounds(streetElements.mapType);
     const carPositions = {};
     const BOUNDS = { horizontal: horizBounds, vertical: VERTICAL_BOUNDS };
-    const speed = 0.05;
+    const speed = 0.05 * frameScale;
     
     // Move existing cars
     for (let i = streetElements.cars.length - 1; i >= 0; i--) {
@@ -251,15 +251,15 @@ export const animateCampfire = (streetElements) => {
             }
             
             const props = child.userData.smokeProperties;
-            props.age += 0.016; // Increment age (assuming 60fps)
+            props.age += frameScale / 60; // Increment age (assuming 60fps)
             
             // Rise upward with varying speed
-            child.position.y += props.riseSpeed;
+            child.position.y += props.riseSpeed * frameScale;
             
             // Add wind drift (more pronounced at higher altitudes)
             const windStrength = Math.min(child.position.y / 8, 1); // Wind increases with height
-            child.position.x += (Math.sin(time * 0.3 + child.position.y * 0.1) * props.driftSpeed * windStrength);
-            child.position.z += (Math.cos(time * 0.4 + child.position.y * 0.15) * props.driftSpeed * windStrength);
+            child.position.x += (Math.sin(time * 0.3 + child.position.y * 0.1) * props.driftSpeed * windStrength) * frameScale;
+            child.position.z += (Math.cos(time * 0.4 + child.position.y * 0.15) * props.driftSpeed * windStrength) * frameScale;
             
             // Calculate fade progress based on height and age
             const heightProgress = Math.min(child.position.y / props.maxHeight, 1);
@@ -326,14 +326,14 @@ export const animatePondMist = (streetElements) => {
             }
             
             const props = child.userData.mistProperties;
-            props.age += 0.016; // Increment age (assuming 60fps)
+            props.age += frameScale / 60; // Increment age (assuming 60fps)
             
             // Gentle floating upward
-            child.position.y += props.floatSpeed;
+            child.position.y += props.floatSpeed * frameScale;
             
             // Add subtle drift
-            child.position.x += (Math.sin(time * 0.2 + child.position.y * 0.05) * props.driftSpeed);
-            child.position.z += (Math.cos(time * 0.25 + child.position.y * 0.03) * props.driftSpeed);
+            child.position.x += (Math.sin(time * 0.2 + child.position.y * 0.05) * props.driftSpeed) * frameScale;
+            child.position.z += (Math.cos(time * 0.25 + child.position.y * 0.03) * props.driftSpeed) * frameScale;
             
             // Calculate fade progress based on height and age
             const heightProgress = Math.min(child.position.y / props.maxHeight, 1);
@@ -429,7 +429,7 @@ export const animateClouds = (streetElements, camera) => {
         
         // Move cloud forward slowly (relative to camera movement)
         // In this environment, clouds move slowly relative to camera
-        cloud.position.z += 0.01; // Slow forward movement
+        cloud.position.z += 0.01 * frameScale; // Slow forward movement
         
         // Gentle sideways drift using sine wave
         cloud.position.x = cloud.userData.originalX + Math.sin(Date.now() * 0.0001) * 10;
@@ -466,7 +466,7 @@ export const animateClouds = (streetElements, camera) => {
         // Fade from 0.0 to maxOpacity and back to 0.0
         // Only increment fadePhase if cloud wasn't just reset (to prevent jump)
         if (!wasReset) {
-            cloud.userData.fadePhase += cloud.userData.fadeSpeed;
+            cloud.userData.fadePhase += cloud.userData.fadeSpeed * frameScale;
         }
         const fadeValue = (Math.sin(cloud.userData.fadePhase) + 1) / 2; // 0 to 1
         const opacity = cloud.userData.maxOpacity * fadeValue; // Fade from 0.0 to maxOpacity and back to 0.0
@@ -632,7 +632,7 @@ export const animateCounterFlowers = (scene, deltaTime) => {
 // Animate bus
 // Animate coffee pot steam
 export const animateCoffeeSteam = (scene, deltaTime) => {
-    scene.traverse((object) => {
+    (scene.userData.steamGroups || []).forEach((object) => {
         if (object.userData && object.userData.steamParticles) {
             const steamParticles = object.userData.steamParticles;
             const time = getTime();
@@ -703,7 +703,7 @@ export const animateBus = (streetElements) => {
     if (buses.length === 0) return;
     
     buses.forEach(bus => {
-        const speed = bus.userData.speed || 0.03;
+        const speed = (bus.userData.speed || 0.03) * frameScale;
         const direction = bus.userData.direction;
         const bounds = bus.userData.bounds || { xMin: -140, xMax: 140 };
         
@@ -748,14 +748,15 @@ export const createAnimationLoop = (
     const animate = (currentTime) => {
         requestAnimationFrame(animate);
         
-        const deltaTime = (currentTime - lastTime) / 1000;
+        const deltaTime = document.hidden || lastTime === null ? 0 : Math.min(0.05, Math.max(0, (currentTime - lastTime) / 1000));
+        frameScale = deltaTime * 60;
         lastTime = currentTime;
-        time += 0.05;
+        time += deltaTime * 6;
         dayTime += deltaTime;
         const dayProgress = (dayTime % DAY_LENGTH) / DAY_LENGTH;
         
         // Update camera and controls
-        updateCameraPosition();
+        updateCameraPosition(deltaTime);
 
         // Distance-based tree spawn/despawn (unified map only)
         if (streetElements.unifiedMapTrees) {
@@ -772,10 +773,10 @@ export const createAnimationLoop = (
 
         // River flow animation (unified map only)
         if (streetElements.riverUpdate) {
-            streetElements.riverUpdate();
+            streetElements.riverUpdate(deltaTime);
         }
         if (streetElements.carnivalUpdate) {
-            streetElements.carnivalUpdate();
+            streetElements.carnivalUpdate(deltaTime);
         }
         
         // Update debug info
@@ -784,12 +785,12 @@ export const createAnimationLoop = (
         }
         
         // Check interactions
-        checkNearbyNPCs();
-        if (checkNearbyItems) {
-            checkNearbyItems();
+        if (!getPhoneOpenState()) {
+            checkNearbyNPCs();
+            if (checkNearbyItems) checkNearbyItems();
+            checkBusStopProximity();
+            updateMobileActionButton();
         }
-        checkBusStopProximity();
-        updateMobileActionButton();
         
         // Update animations
         animateFloatingDonuts(scene, deltaTime);
@@ -806,7 +807,7 @@ export const createAnimationLoop = (
         animateCoffeeSteam(scene, deltaTime);
         updateNightSky(scene, time, dayProgress);
         updateSkybox(scene, time, dayProgress);
-        updateZoneFog(scene, camera, streetElements, isInterior);
+        updateZoneFog(scene, camera, streetElements, typeof isInterior === 'function' ? isInterior() : isInterior);
         updateGroundFog(scene);
         
         // Render with post-processing (simple pixelation effect)

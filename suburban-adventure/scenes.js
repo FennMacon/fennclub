@@ -1,3 +1,4 @@
+import { storage } from './storage.js';
 // scenes.js - Scene configuration and management
 
 // Unified map mode: all three outdoor scenes in one continuous world
@@ -5,9 +6,9 @@ export const UNIFIED_MAP = true;
 
 // Map mode: suburban (default) or city (Allston-style)
 export const CURRENT_MAP_KEY = 'suburbanAdventureMap';
-export const getCurrentMap = () => localStorage.getItem(CURRENT_MAP_KEY) || 'suburban';
+export const getCurrentMap = () => (storage.getItem(CURRENT_MAP_KEY) === 'city' ? 'city' : 'suburban');
 export const setCurrentMap = (map) => {
-    localStorage.setItem(CURRENT_MAP_KEY, map);
+    storage.setItem(CURRENT_MAP_KEY, map);
 };
 
 // Zone offsets for unified map (x, z) - 3x3 grid, 1000x1000 world
@@ -437,19 +438,20 @@ export const switchScene = (sceneName, camera, yaw) => {
             y: cameraPos.y, // Keep current height
             z: SCENE_CONFIGS[sceneName].NEAR_SIDEWALK_Z + 3 // A bit back from the bus stop in new scene
         };
-        localStorage.setItem('busStopCameraPosition', JSON.stringify(busStopCameraPosition));
+        storage.setItem('busStopCameraPosition', JSON.stringify(busStopCameraPosition));
         
         // Save scene choice to localStorage
-        localStorage.setItem('suburbanAdventureScene', sceneName);
+        storage.setItem('suburbanAdventureScene', sceneName);
         console.log(`Switching to ${PLAZA_CONFIG.name}`);
         // Trigger scene rebuild
-        location.reload();
+        document.dispatchEvent(new Event('game-scene-change'));
     }
 };
 
 // Function to get current scene from localStorage
 export const getCurrentScene = () => {
-    return localStorage.getItem('suburbanAdventureScene') || 'PLAZA';
+    const scene = storage.getItem('suburbanAdventureScene');
+    return SCENE_CONFIGS[scene] ? scene : (getCurrentMap() === 'city' ? 'CITY_PLAZA' : 'PLAZA');
 };
 
 // Function to get plaza config for current scene
@@ -459,9 +461,9 @@ export const getPlazaConfig = (sceneName) => {
 
 // Function to check if camera should rotate 180° on scene load
 export const shouldRotate180OnLoad = () => {
-    const savedBusStopPosition = localStorage.getItem('busStopCameraPosition');
+    const savedBusStopPosition = storage.getItem('busStopCameraPosition');
     if (savedBusStopPosition) {
-        localStorage.removeItem('busStopCameraPosition');
+        storage.removeItem('busStopCameraPosition');
         return true;
     }
     return false;

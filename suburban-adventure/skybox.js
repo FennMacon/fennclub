@@ -90,13 +90,6 @@ const getGradientColorsForTime = (dayProgress) => {
     const localProgress = nextIdx === 0 ? dayProgress - positions[idx] : (dayProgress - positions[idx]);
     const t = Math.min(1, Math.max(0, localProgress / span));
     const easedT = t * t * (3 - 2 * t); // smoothstep for softer fade
-    // #region agent log
-    const _lastIdx = getGradientColorsForTime._lastIdx;
-    if (_lastIdx !== undefined && _lastIdx !== idx) {
-        fetch('http://127.0.0.1:7242/ingest/f3d0524f-f482-4ec8-b4f3-8319dd2a9758',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'skybox.js:getGradientColorsForTime',message:'phase boundary crossed',data:{dayProgress,idx,nextIdx,prevIdx:_lastIdx,keyFrom:keys[idx],keyTo:keys[nextIdx],t},hypothesisId:'H3'})}).catch(()=>{});
-    }
-    getGradientColorsForTime._lastIdx = idx;
-    // #endregion
 
     return CANONICAL_STOPS.map((stop) => ({
         stop,
@@ -366,11 +359,6 @@ const createSkybox = (scene, sceneType = 'PLAZA', interiorDimensions = null) => 
     // Get gradient colors based on scene type
     const colorStops = getGradientColors(sceneType);
     console.log(`🌅 Creating ${sceneType} skybox gradient with ${colorStops.length} color stops`);
-    // #region agent log
-    if (sceneType === 'UNIFIED_MAP') {
-        fetch('http://127.0.0.1:7242/ingest/f3d0524f-f482-4ec8-b4f3-8319dd2a9758',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'skybox.js:createSkybox',message:'UNIFIED_MAP initial gradient',data:{firstColor:colorStops[0]?.color,lastColor:colorStops[colorStops.length-1]?.color},hypothesisId:'H4'})}).catch(()=>{});
-    }
-    // #endregion
     
     // Create vertical gradient from bottom to top
     const gradient = ctx.createLinearGradient(0, 0, 0, 256);
@@ -466,16 +454,9 @@ const updateSkybox = (scene, time, dayProgress = 0) => {
     const canvas = scene.userData.skyboxCanvas;
     if (!texture || !canvas) return;
     
-    const prevProgress = scene.userData._skyLastDayProgress;
-    const isFirstUpdate = prevProgress === undefined;
-    // #region agent log
-    if (isFirstUpdate) {
-        fetch('http://127.0.0.1:7242/ingest/f3d0524f-f482-4ec8-b4f3-8319dd2a9758',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'skybox.js:updateSkybox',message:'first updateSkybox',data:{dayProgress,firstColorStop:getGradientColorsForTime(dayProgress)[0]?.color},hypothesisId:'H4'})}).catch(()=>{});
-    } else if (prevProgress !== undefined && (Math.abs(dayProgress - prevProgress) > 0.08 || (prevProgress > 0.9 && dayProgress < 0.1))) {
-        fetch('http://127.0.0.1:7242/ingest/f3d0524f-f482-4ec8-b4f3-8319dd2a9758',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'skybox.js:updateSkybox',message:'dayProgress jump in updateSkybox',data:{dayProgress,prevProgress,delta:dayProgress-prevProgress},hypothesisId:'H2'})}).catch(()=>{});
-    }
-    scene.userData._skyLastDayProgress = dayProgress;
-    // #endregion
+    const now = performance.now();
+    if (now - (scene.userData.lastSkyUpdate ?? -Infinity) < 100) return;
+    scene.userData.lastSkyUpdate = now;
     
     const colorStops = getGradientColorsForTime(dayProgress);
     redrawGradientTexture(canvas, colorStops);

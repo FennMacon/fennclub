@@ -6,7 +6,7 @@ const flavorCache = {};
 let loaded = false;
 
 // Simple format parser: "=== SCENE ===" blocks, "KEY: value" metadata, "Speaker: text" lines
-function parseDialogueFile(text, npcName) {
+export function parseDialogueFile(text, npcName) {
     const result = {};
     let currentScene = null;
     let currentBlock = null;
@@ -48,7 +48,7 @@ function parseDialogueFile(text, npcName) {
 }
 
 // Flavor format: "=== ID ===" blocks, "NAME: value", paragraphs = flavor variants
-function parseFlavorFile(text) {
+export function parseFlavorFile(text) {
     const result = {};
     let currentId = null;
     let currentBlock = null;
@@ -149,38 +149,30 @@ const FLAVOR_FILES = [
     'carnival.txt'
 ];
 
+let loading;
 export async function loadAllContent() {
     if (loaded) return;
-
-    const base = 'content';
-
-    for (const { npc, file } of DIALOGUE_FILES) {
+    if (loading) return loading;
+    const load = async (path, accept) => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
         try {
-            const res = await fetch(`${base}/dialogue/${file}`);
-            if (res.ok) {
-                const text = await res.text();
-                const parsed = parseDialogueFile(text, npc);
-                dialogueCache[npc] = parsed;
-            }
-        } catch (e) {
-            console.warn(`Content load failed for dialogue/${file}:`, e.message);
-        }
-    }
-
-    for (const file of FLAVOR_FILES) {
-        try {
-            const res = await fetch(`${base}/flavor/${file}`);
-            if (res.ok) {
-                const text = await res.text();
-                const parsed = parseFlavorFile(text);
-                Object.assign(flavorCache, parsed);
-            }
-        } catch (e) {
-            console.warn(`Content load failed for flavor/${file}:`, e.message);
-        }
-    }
-
-    loaded = true;
+            const response = await fetch(new URL(`content/${path}`, import.meta.url).href, { signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            accept(await response.text());
+        } catch (error) {
+            console.warn(`Content load failed for ${path}; using fallback:`, error.message);
+        } finally { clearTimeout(timeout); }
+    };
+    loading = Promise.all([
+        ...DIALOGUE_FILES.map(({ npc, file }) => load(`dialogue/${file}`, text => {
+            const parsed = parseDialogueFile(text, npc);
+            if (!Object.keys(parsed).length) throw new Error('No dialogue blocks');
+            dialogueCache[npc] = parsed;
+        })),
+        ...FLAVOR_FILES.map(file => load(`flavor/${file}`, text => Object.assign(flavorCache, parseFlavorFile(text))))
+    ]).then(() => { loaded = true; });
+    return loading;
 }
 
 export function getConversation(npcName, scene) {
@@ -189,7 +181,7 @@ export function getConversation(npcName, scene) {
     let data = dialogueCache[npcName] || (groupKey ? dialogueCache[groupKey] : null);
     if (!data) data = FALLBACK_CONVERSATIONS[npcName] || (groupKey ? FALLBACK_CONVERSATIONS[groupKey] : null);
     if (!data) return null;
-    const sceneData = data[scene];
+    const sceneData = data[scene] || FALLBACK_CONVERSATIONS[npcName]?.[scene] || FALLBACK_CONVERSATIONS[groupKey]?.[scene];
     return sceneData || null;
 }
 

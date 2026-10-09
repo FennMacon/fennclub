@@ -1,3 +1,4 @@
+import { storage } from './storage.js';
 // dialogue.js - NPC dialogue and conversation system
 import { getConversation, registerFallbackConversations } from './content-loader.js';
 
@@ -380,7 +381,7 @@ export let encounteredItems = new Set(); // Set of item names
 const loadPersistedState = () => {
     // Load unlocked songs
     try {
-        const savedSongs = localStorage.getItem('suburbanAdventureUnlockedSongs');
+        const savedSongs = storage.getItem('suburbanAdventureUnlockedSongs');
         if (savedSongs) {
             const songsArray = JSON.parse(savedSongs);
             unlockedSongs = new Map(songsArray);
@@ -392,7 +393,7 @@ const loadPersistedState = () => {
     
     // Load encountered items
     try {
-        const savedItems = localStorage.getItem('suburbanAdventureEncounteredItems');
+        const savedItems = storage.getItem('suburbanAdventureEncounteredItems');
         if (savedItems) {
             const itemsArray = JSON.parse(savedItems);
             encounteredItems = new Set(itemsArray);
@@ -408,7 +409,7 @@ const savePersistedState = () => {
     // Save unlocked songs (convert Map to array for JSON)
     try {
         const songsArray = Array.from(unlockedSongs.entries());
-        localStorage.setItem('suburbanAdventureUnlockedSongs', JSON.stringify(songsArray));
+        storage.setItem('suburbanAdventureUnlockedSongs', JSON.stringify(songsArray));
     } catch (e) {
         console.warn('Failed to save unlocked songs to localStorage:', e);
     }
@@ -416,7 +417,7 @@ const savePersistedState = () => {
     // Save encountered items (convert Set to array for JSON)
     try {
         const itemsArray = Array.from(encounteredItems);
-        localStorage.setItem('suburbanAdventureEncounteredItems', JSON.stringify(itemsArray));
+        storage.setItem('suburbanAdventureEncounteredItems', JSON.stringify(itemsArray));
     } catch (e) {
         console.warn('Failed to save encountered items to localStorage:', e);
     }
@@ -431,6 +432,7 @@ export const startConversation = (npcName, currentScene) => {
     const conversationData = getConversation(npcName, currentScene);
     if (conversationData) {
         currentConversation = conversationData;
+        if (typeof document !== 'undefined') document.dispatchEvent(new Event('game-modal-change'));
         conversationStep = 0;
         conversationAtEnd = false;
         return true;
@@ -533,8 +535,8 @@ export const resetGameProgress = () => {
     
     // Remove from localStorage
     try {
-        localStorage.removeItem('suburbanAdventureUnlockedSongs');
-        localStorage.removeItem('suburbanAdventureEncounteredItems');
+        storage.removeItem('suburbanAdventureUnlockedSongs');
+        storage.removeItem('suburbanAdventureEncounteredItems');
         console.log('Game progress reset: cleared unlocked songs and items');
     } catch (e) {
         console.warn('Failed to remove game progress from localStorage:', e);

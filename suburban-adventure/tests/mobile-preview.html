@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Adventure mobile preview</title><link rel="stylesheet" href="/game.css"><style>body{margin:0;overflow:hidden;background:#000;color:white;font-family:Arial,sans-serif}canvas{display:block}</style></head><body><div id="startup" role="status"><h1>Suburban Adventure</h1><p id="startup-message">Loading the neighborhood…</p></div><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><script type="module">
+// Desktop-only preview fixture; real devices use controls.js capability detection.
+Object.defineProperty(navigator,'maxTouchPoints',{configurable:true,value:5});
+const original = window.matchMedia.bind(window);
+window.matchMedia = query => query === '(any-pointer: coarse)' ? {matches:true} : original(query);
+await import('../bootstrap.js');
+</script></body></html>

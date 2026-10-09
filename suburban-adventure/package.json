@@ -1,0 +1,10 @@
+{
+  "name": "suburban-adventure",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8765 --bind 127.0.0.1",
+    "test": "node --test tests/*.test.js",
+    "check": "node tests/check-modules.js"
+  }
+}

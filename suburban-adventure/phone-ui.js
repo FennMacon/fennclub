@@ -5,6 +5,11 @@ import { getUnlockedSongs, getEncounteredItems, hasActiveConversation, resetGame
 let phoneUI = null;
 let phoneButton = null;
 let isPhoneOpen = false;
+let lastContentKey = '';
+let closeTimer;
+let previousFocus;
+let journal;
+const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
 // Debug info state
 let debugInfo = {
@@ -22,6 +27,11 @@ export const initializePhoneUI = (options = {}) => {
     // Create phone container
     phoneUI = document.createElement('div');
     phoneUI.id = 'phone-ui';
+    phoneUI.setAttribute('role', 'dialog');
+    phoneUI.setAttribute('aria-modal', 'true');
+    phoneUI.setAttribute('aria-label', 'Phone: discoveries and soundtrack');
+    phoneUI.setAttribute('aria-hidden', 'true');
+    phoneUI.inert = true;
     phoneUI.style.cssText = `
         position: fixed;
         top: 50%;
@@ -81,6 +91,7 @@ export const initializePhoneUI = (options = {}) => {
     // Create scrollable content area
     const contentArea = document.createElement('div');
     contentArea.id = 'phone-content';
+    contentArea.tabIndex = 0;
     contentArea.style.cssText = `
         flex: 1;
         overflow-y: auto;
@@ -90,6 +101,34 @@ export const initializePhoneUI = (options = {}) => {
         line-height: 1.6;
     `;
     
+    journal = document.createElement('div');
+    contentArea.append(journal);
+    const soundtrack = document.createElement('section');
+    const heading = document.createElement('h3');
+    heading.textContent = 'Neighborhood soundtrack';
+    const select = document.createElement('select');
+    select.setAttribute('aria-label', 'Choose a soundtrack');
+    select.style.cssText = 'width:100%; min-height:44px; margin-bottom:8px;';
+    const tracks = ['machinery .mp3', 'hospital.mp3', 'halloween carnival.mp3', 'little orchestral.mp3', 'weird night music.mp3', 'Dark Tech Lab.mp3', 'twistery.mp3', 'Crush Theme 1.mp3', 'crush theme 3.mp3', 'crush theme 2.mp3', 'Magazine Cover.mp3', 'Anxiety Shopping.mp3', 'interlude.mp3', 'denouement.mp3'];
+    for (const file of tracks) {
+        const option = document.createElement('option');
+        option.value = file;
+        option.textContent = file.replace(/\.mp3$/, '').trim();
+        select.append(option);
+    }
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.preload = 'none';
+    audio.style.width = '100%';
+    audio.setAttribute('aria-label', 'Soundtrack player');
+    const setTrack = () => { audio.src = new URL(`music/${encodeURIComponent(select.value)}`, import.meta.url).href; };
+    setTrack();
+    select.addEventListener('change', setTrack);
+    const hint = document.createElement('p');
+    hint.textContent = 'Choose a track and press play. Use the player to pause or change volume.';
+    soundtrack.append(heading, select, audio, hint);
+    contentArea.append(soundtrack);
+
     // Custom scrollbar styling
     contentArea.style.scrollbarWidth = 'thin';
     contentArea.style.scrollbarColor = '#3a3a3a #1a1a1a';
@@ -214,9 +253,11 @@ export const initializePhoneUI = (options = {}) => {
     // Create on-screen toggle button (bottom-right corner)
     phoneButton = document.createElement('button');
     phoneButton.id = 'phone-toggle-button';
+    phoneButton.setAttribute('aria-label', 'Open phone');
+    phoneButton.setAttribute('aria-expanded', 'false');
     // Create phone outline SVG icon (48x48) - invisible by default, flashes color when song/item gained
     phoneButton.innerHTML = `
-        <svg width="48" height="48" viewBox="0 0 32 32" style="stroke: transparent; fill: none; stroke-width: 2; transition: stroke 0.4s ease;">
+        <svg width="48" height="48" viewBox="0 0 32 32" style="stroke: #88FFE6; fill: none; stroke-width: 2; transition: stroke 0.4s ease;">
             <rect x="8" y="4" width="16" height="24" rx="2" ry="2"/>
             <rect x="12" y="6" width="8" height="1" rx="0.5"/>
             <circle cx="16" cy="24" r="1.5"/>
@@ -288,50 +329,49 @@ const updatePhoneContent = () => {
     
     const songs = getUnlockedSongs();
     const items = getEncounteredItems();
+    const key = JSON.stringify([songs, items, debugInfo.scene]);
+    if (key === lastContentKey) return;
+    lastContentKey = key;
     
     let html = '';
     
-    // Info/Debug Section (at top)
-    html += '<div style="margin-bottom: 24px;">';
-    html += `<div style="color: #CCFFFF; margin-bottom: 6px;"><span style="color: #888;">Scene:</span> <span style="color: #00ff00; font-weight: bold;">${debugInfo.scene}</span></div>`;
-    html += `<div style="color: #CCFFFF; margin-bottom: 6px;"><span style="color: #888;">Time:</span> <span style="color: #00ff00;">${debugInfo.time}</span></div>`;
-    html += `<div style="color: #CCFFFF; margin-bottom: 6px;"><span style="color: #888;">FPS:</span> <span style="color: #00ff00;">${debugInfo.fps}</span></div>`;
-    html += `<div style="color: #CCFFFF; margin-bottom: 6px;"><span style="color: #888;">Camera:</span> <span style="color: #00ff00; font-size: 10px;">${debugInfo.cameraPosition.x}, ${debugInfo.cameraPosition.y}, ${debugInfo.cameraPosition.z}</span></div>`;
-    html += `<div style="color: #CCFFFF;"><span style="color: #888;">Speed:</span> <span style="color: #00ff00;">${debugInfo.cameraSpeed}</span> units/sec</div>`;
-    html += '</div>';
-    html += '</div>';
-    
+    html += `<h3>${escapeHTML(debugInfo.scene)}</h3>`;
+    html += '<p>Explore the plaza, talk to neighbors, and inspect glowing objects. Bus stops connect the neighborhoods; the subway takes you to Allston.</p>';
+    html += '<h3>Discovered songs</h3>';
     // Songs Section
     html += '<div style="margin-bottom: 24px;">';
     
     if (songs.length === 0) {
-        html += '<div style="color: #666; font-style: italic; padding: 16px 0;"></div>';
+        html += '<p>No discoveries yet. Meet a neighbor or inspect an object to begin.</p>';
     } else {
         songs.forEach(song => {
             html += '<div style="margin-bottom: 12px; padding: 8px; background: rgba(58, 58, 58, 0.3); border-radius: 4px; border-left: 3px solid #88FFE6;">';
-            html += `<div style="color: #CCFFFF; font-weight: bold; margin-bottom: 4px;">${song.unlockedBy} - ${song.name}</div>`;
+            html += `<div style="color: #CCFFFF; font-weight: bold; margin-bottom: 4px;">${escapeHTML(song.unlockedBy)} — ${escapeHTML(song.name)}</div>`;
             html += '</div>';
         });
     }
     
     html += '</div>';
     
+    html += '<h3>Found objects</h3>';
     // Items Section
     html += '<div>';
     
     if (items.length === 0) {
-        html += '<div style="color: #666; font-style: italic; padding: 16px 0;"></div>';
+        html += '<p>No discoveries yet. Meet a neighbor or inspect an object to begin.</p>';
     } else {
         items.forEach(item => {
             html += '<div style="margin-bottom: 8px; padding: 8px; background: rgba(58, 58, 58, 0.3); border-radius: 4px; border-left: 3px solid #FFFF88;">';
-            html += `<div style="color: #CCFFFF;">${item}</div>`;
+            html += `<div style="color: #CCFFFF;">${escapeHTML(item)}</div>`;
             html += '</div>';
         });
     }
     
     html += '</div>';
     
-    contentArea.innerHTML = html;
+    const scroll = contentArea.scrollTop;
+    journal.innerHTML = html;
+    contentArea.scrollTop = scroll;
 };
 
 // Update debug info in phone UI
@@ -355,9 +395,16 @@ export const togglePhone = () => {
         return;
     }
     
+    clearTimeout(closeTimer);
     isPhoneOpen = !isPhoneOpen;
+    phoneUI.setAttribute('aria-hidden', String(!isPhoneOpen));
+    phoneUI.inert = !isPhoneOpen;
+    phoneButton.setAttribute('aria-expanded', String(isPhoneOpen));
+    document.dispatchEvent(new Event('game-modal-change'));
     
     if (isPhoneOpen) {
+        previousFocus = document.activeElement;
+        phoneUI.querySelector('button:last-child').focus();
         // Exit pointer lock to free the cursor
         if (document.pointerLockElement) {
             document.exitPointerLock();
@@ -382,8 +429,9 @@ export const togglePhone = () => {
         phoneUI.style.opacity = '0';
         
         // Use setTimeout to disable pointer events after animation
-        setTimeout(() => {
-            phoneUI.style.pointerEvents = 'none';
+        previousFocus?.focus();
+        closeTimer = setTimeout(() => {
+            if (!isPhoneOpen) phoneUI.style.pointerEvents = 'none';
         }, 300);
         
         // Show toggle button when phone is closed
@@ -398,9 +446,17 @@ export const togglePhone = () => {
 export const initializePhoneKeyboard = () => {
     document.addEventListener('keydown', (event) => {
         // Only handle 'f' key
+        if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+        if (event.key === 'Escape' && isPhoneOpen) { togglePhone(); return; }
+        if (event.key === 'Tab' && isPhoneOpen) {
+            const elements = [...phoneUI.querySelectorAll('button, select, audio, [tabindex]')];
+            const first = elements[0], last = elements.at(-1);
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
         if (event.key === 'f' || event.key === 'F') {
             // Don't toggle if typing in an input field
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            if (event.target.closest?.('input, textarea, select, [contenteditable]')) {
                 return;
             }
             
@@ -439,7 +495,7 @@ export const triggerPhoneGlow = (colorHex) => {
     svg.style.stroke = color;
 
     glowTimeout = setTimeout(() => {
-        svg.style.stroke = 'transparent';
+        svg.style.stroke = '#88FFE6';
         glowTimeout = null;
     }, 2500);
 };

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 
 // Renderer configuration
 const pixelRatio = 1.0;
-let renderer, renderTarget, postBufferA, postBufferB;
+let renderer, renderTarget;
 let postCamera, postMaterial, postQuad, postScene;
 
 // Initialize renderer
@@ -25,16 +25,6 @@ export const initializePostProcessing = () => {
     const renderTargetHeight = Math.floor(window.innerHeight * pixelRatio);
     
     renderTarget = new THREE.WebGLRenderTarget(renderTargetWidth, renderTargetHeight);
-    
-    postBufferA = new THREE.WebGLRenderTarget(renderTargetWidth, renderTargetHeight, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter
-    });
-    
-    postBufferB = new THREE.WebGLRenderTarget(renderTargetWidth, renderTargetHeight, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter
-    });
     
     postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     
@@ -72,8 +62,6 @@ export const initializePostProcessing = () => {
     
     return {
         renderTarget,
-        postBufferA,
-        postBufferB,
         postCamera,
         postMaterial,
         postQuad,
@@ -110,12 +98,6 @@ export const handleResize = () => {
     if (renderTarget) {
         renderTarget.setSize(renderTargetWidth, renderTargetHeight);
     }
-    if (postBufferA) {
-        postBufferA.setSize(renderTargetWidth, renderTargetHeight);
-    }
-    if (postBufferB) {
-        postBufferB.setSize(renderTargetWidth, renderTargetHeight);
-    }
     if (postMaterial) {
         postMaterial.uniforms.resolution.value.set(renderTargetWidth, renderTargetHeight);
     }
@@ -126,9 +108,7 @@ export const getRenderer = () => renderer;
 
 // Get render targets
 export const getRenderTargets = () => ({
-    renderTarget,
-    postBufferA,
-    postBufferB
+    renderTarget
 });
 
 // Get post-processing elements
