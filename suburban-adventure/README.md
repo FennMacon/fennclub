@@ -57,3 +57,5 @@ On real phones, check simultaneous move/look with running toggled on, finger can
 `world/zipper.js` builds the portable trailer, A-frame, oblong truss, end pulleys and 12 enclosed capsules. `world/zipper-motion.js` uses a constant-speed stadium cable path and a boom rotating in the same vertical plane. Each capsule has one off-center hinge, driven by gravity and the acceleration of its moving anchor, integrated at a fixed step. This is a visual approximation, not an engineering simulation. Boom/cable speeds follow the Chance Rides specification (7.5/4 RPM).
 
 Open `/tests/zipper-preview.html` to inspect the isolated ride from the front or at an angle, with pause/resume controls. See `MUSIC-IMPLEMENTATION.md` for the discovered-song player design and provisional title-to-recording mapping.
+
+Carnival: eight animated rides, including Chance-inspired Pharaoh’s Fury, Freestyle, Wipeout, carousel, and Yo-Yo. See CARNIVAL-IMPLEMENTATION.md for sources and /tests/carnival-preview.html for the animated preview.

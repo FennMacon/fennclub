@@ -37,3 +37,48 @@ Colorful balloons pinned to a backboard. Three darts, a dollar.
 NAME: Bottle Knockdown
 
 Milk bottles stacked in a pyramid. Throw a ball, knock them down.
+
+=== CARNIVAL_FURY ===
+NAME: Pharaoh’s Fury
+
+Ten rows face the center of a gold-trimmed ship. Twin arms carry it higher with every pass, until the midway drops out from under the bow. The empty benches come back through with a rush of wind.
+
+=== CARNIVAL_FREESTYLE ===
+NAME: Freestyle
+
+Twenty-four outward-facing seats line a bright circular rim. The turret turns one way, the rim the other, and the whole assembly leans into the sky. Shoulder bars wait above the empty seats.
+
+=== CARNIVAL_WIPEOUT ===
+NAME: Wipeout
+
+Face-to-face benches circle a tilted platform. The spinning disk rolls through a slow wave, lifting one side while the other skims the loading deck. A faded surf motif promises a day at the beach.
+
+=== CARNIVAL_CAROUSEL ===
+NAME: Midway Carousel
+
+Fourteen painted horses rise and fall beneath a striped roof. Brass poles catch the warm bulbs; a small chariot follows at the back. For a moment, the rest of the carnival feels far away.
+
+=== CARNIVAL_YOYO ===
+NAME: Yo-Yo
+
+Thirty-two chain-hung chairs spread outward around a broad crown. The tower stays still while the canopy turns above it. Empty swings trace the same circle, over and over, without touching.
+
+=== CARNIVAL_DUCK_POND ===
+NAME: Duck Pond
+
+Little yellow ducks crowd a shallow blue pool. Each has a number underneath, and the handwritten sign says every duck wins. The smallest prizes hang closest to the counter.
+
+=== CARNIVAL_BASKETBALL ===
+NAME: Hoop Shot
+
+Three balls wait beneath a hoop that looks just a little too small. A row of stuffed bears watches from the rafters. You can almost hear the ball rattling around the rim.
+
+=== CARNIVAL_SKEEBALL ===
+NAME: Skee Ball
+
+Two wooden lanes lead to rings of bright targets. The polished ramps remember thousands of attempts. Fifty points sits at the top, looking closer than it is.
+
+=== CARNIVAL_TEACUPS ===
+NAME: Twilight Teacups
+
+Six pastel cups circle a teapot under warm bulbs. Each has a handwheel for adding your own spin, and a gap in the bowl where you climb inside. Even empty, they never quite agree on which way to turn.

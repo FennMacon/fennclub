@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Carnival preview</title><style>body{margin:0;background:#101a2a;color:#ecffff;font:14px Arial}canvas{display:block}#tools{position:fixed;top:12px;left:12px;max-width:90vw;background:#111c2dee;padding:12px;border:1px solid #487785;border-radius:8px}button,select{min-height:44px;margin:4px;color:#fff;background:#244052;border:1px solid #88ffe6;border-radius:6px}#status{margin-top:6px}</style></head><body><div id="tools"><strong>CARNIVAL • 8 animated rides</strong><div><select id="ride" aria-label="Preview ride"><option value="all">Whole midway</option><option value="fury">Pharaoh’s Fury</option><option value="freestyle">Freestyle</option><option value="wipeout">Wipeout</option><option value="carousel">Carousel</option><option value="yoyo">Yo-Yo</option><option value="teacups">Teacups</option><option value="food">Food alley</option><option value="games">Game alley</option><option value="zipper-road">Zipper from road</option></select><button id="pause">Pause</button></div><div id="status">Loading…</div></div><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><script type="module">
+import * as THREE from 'three';
+import { createCarnival } from '../world/landmarks.js';
+import { CARNIVAL_ADDITIONS } from '../world/carnival-rides.js';
+import { loadAllContent } from '../content-loader.js';
+import { ZONE_W_CARNIVAL } from '../world/config.js';
+await loadAllContent();
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101a2a);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,600);
+const carnival=createCarnival(scene), center=ZONE_W_CARNIVAL;
+const ground=new THREE.GridHelper(220,44,0x426576,0x243647);ground.position.x=center.x;scene.add(ground);
+const road=new THREE.Mesh(new THREE.PlaneGeometry(220,22),new THREE.MeshBasicMaterial({color:0x263745,side:THREE.DoubleSide}));road.rotation.x=-Math.PI/2;road.position.set(center.x,.01,11);scene.add(road);
+const frame = () => {
+    const value = document.getElementById('ride').value;
+    const spec = CARNIVAL_ADDITIONS.find(s => s.kind === value);
+    const wide = innerWidth < 600 ? 1.5 : 1;
+    if (spec) {
+        camera.position.set(center.x + spec.x + 18 * wide, 14 * wide, spec.z + 27 * wide);
+        camera.lookAt(center.x + spec.x, 5, spec.z);
+    } else if (value === 'teacups') {
+        camera.position.set(center.x - 39, 9 * wide, 21 - 6 * (wide - 1)); camera.lookAt(center.x - 50, 1, 35);
+    } else if (value === 'food') {
+        camera.position.set(center.x + 78, 3.1, 24 - 8 * wide); camera.lookAt(center.x + 78, 2.8, 44);
+    } else if (value === 'games') {
+        camera.position.set(center.x - 54, 3.1, -2 + 8 * wide); camera.lookAt(center.x - 54, 2.8, -17);
+    } else if (value === 'zipper-road') {
+        camera.position.set(center.x + 55, 6, 14); camera.lookAt(center.x + 55, 6, 45);
+    } else {
+        camera.position.set(center.x + 135 * wide, 140 * wide, 180 * wide); camera.lookAt(center.x, 0, 0);
+    }
+};
+document.getElementById('ride').onchange=frame;frame();
+let paused=false,last=performance.now();document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';};
+const resize=()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();frame();};window.addEventListener('resize',resize);resize();
+requestAnimationFrame(function animate(now){requestAnimationFrame(animate);if(!paused)carnival.updateCarnival(Math.min(.05,(now-last)/1000));last=now;renderer.render(scene,camera);document.getElementById('status').textContent=carnival.interactiveItems.length+' discoveries • '+renderer.info.render.calls+' draw calls';});
+</script></body></html>

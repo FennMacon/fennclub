@@ -34,6 +34,40 @@ try {
     const buildings = await import('../buildings.js');
     const renderer = await import('../renderer.js');
     const canvas = renderer.getRenderer().domElement;
+    await check('carnival builds eight rides and food/game alleys; animation stays finite', async () => {
+        const { createCarnival } = await import('../world/landmarks.js');
+        const { CARNIVAL_ADDITIONS } = await import('../world/carnival-motion.js');
+        const carnival = createCarnival(new THREE.Scene());
+        assert(carnival.interactiveItems.length === 17, 'Expected eleven booths and six entrances');
+        for (const spec of CARNIVAL_ADDITIONS) {
+            assert(carnival.group.getObjectByName(spec.name), spec.name);
+            assert(carnival.interactiveItems.some(sign => sign.name === spec.name + ' entrance' && sign.userData.flavorText), 'Missing discovery');
+        }
+        const zipper = carnival.group.getObjectByName('Zipper');
+        assert(Math.abs(zipper.rotation.y - Math.PI) < 1e-9, 'Zipper must face road');
+        const teacups = carnival.group.getObjectByName('TeacupRide');
+        const rotor = teacups.getObjectByName('TeacupTurntable');
+        assert(rotor.children.filter(child => /^Teacup[1-6]$/.test(child.name)).length === 6, 'Six independent cups');
+        assert(carnival.group.getObjectByName('FOOD ALLEY') && carnival.group.getObjectByName('GAME ALLEY'), 'Separate alleys');
+        const { MIDWAY_STALLS } = await import('../world/carnival-midway-layout.js');
+        carnival.group.updateMatrixWorld(true);
+        for (const spec of MIDWAY_STALLS) {
+            const counter = carnival.group.getObjectByName(spec.label + ' counter');
+            const position = counter.getWorldPosition(new THREE.Vector3());
+            const visitor = position.clone().add(new THREE.Vector3(Math.sin(spec.rotation), 0, 0));
+            visitor.y = 2;
+            assert(visitor.distanceTo(position) < 2.5, 'Counter approachable from aisle');
+        }
+
+        for (let i = 0; i < 600; i++) carnival.updateCarnival(1 / 60);
+        assert(teacups.rotation.y === 0 && rotor.rotation.y !== 0, 'Only teacup turntable rotates');
+        assert(carnival.interactiveItems.every(item => item.userData.flavorText), 'Discoveries have text');
+        carnival.group.traverse(object => assert([...object.position.toArray(), ...object.quaternion.toArray()].every(Number.isFinite), object.name));
+        const geometries = new Set(), materials = new Set();
+        carnival.group.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) materials.add(object.material); });
+        geometries.forEach(geometry => geometry.dispose());
+        materials.forEach(material => { material.map?.dispose(); material.dispose(); });
+    });
     await check('movement matches at 30, 60, 120 and 240 FPS', () => {
         const distances = [];
         controls.resetControls(); controls.setYaw(0); controls.keyboard.w = true;

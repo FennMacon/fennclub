@@ -1,3 +1,6 @@
+import { createTeacups } from './teacups.js';
+import { createCarnivalMidway } from './carnival-midway.js';
+import { CARNIVAL_ADDITIONS, createCarnivalRide } from './carnival-rides.js';
 import { createZipper } from './zipper.js';
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
@@ -194,12 +197,7 @@ export const createForestClearings = (scene) => {
     return { group, interactiveItems };
 };
 
-/** Carnival in ZONE_W - Ferris wheel, Zipper, swings, teacups, stalls.
- * Ferris: Eli Bridge–style circular rim, 16 spoke pairs, drive rims, A-frame towers.
- * Zipper: Chance Rides 1968 - 56ft vertical oval boom, 12 wire-mesh cages, cable-driven,
- * dual rotation (boom 7.5 rpm, cars ~4 rpm), chaotic tumbling.
- * Swings: 12 seats, centrifugal swing physics, crown hub, loading platform.
- * Teacups: 6 cups on turntable, dual rotation (platform + per-cup spin). */
+/** Eight animated rides arranged around the open central road, with inspectable entrances. */
 export const createCarnival = (scene) => {
     const group = new THREE.Group();
     group.name = "Carnival";
@@ -438,112 +436,29 @@ export const createCarnival = (scene) => {
     group.add(ferrisGroup);
 
     const zipper = createZipper(cx + 55, cz + 45);
+    zipper.group.rotation.y = Math.PI;
     group.add(zipper.group);
 
-    // --- SWING RIDE (12 seats, centrifugal swing physics, crown hub, loading platform) ---
-    const swingGroup = new THREE.Group();
-    swingGroup.name = "SwingRide";
-    swingGroup.position.set(cx + 35, 0, cz - 35);
-    const sPole = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.8, 14, 8), mat(0x0088FF));
-    sPole.position.y = 7;
-    swingGroup.add(sPole);
-    const sSeatCount = 12;
-    const sArmRadius = 5.5;
-    const sChainLength = 2.8;
-    const sHubY = 14;
-    const swingSeats = [];
-    for (let i = 0; i < sSeatCount; i++) {
-        const a = (i / sSeatCount) * Math.PI * 2;
-        const armGroup = new THREE.Group();
-        armGroup.userData.baseAngle = a;
-        const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, sChainLength, 6), mat(0x666666));
-        chain.rotation.x = Math.PI / 2;
-        chain.position.set(0, -sChainLength / 2, 0);
-        armGroup.add(chain);
-        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.35), mat(0x00AA00));
-        seat.position.set(0, -sChainLength, 0);
-        armGroup.add(seat);
-        armGroup.position.set(Math.sin(a) * sArmRadius, sHubY, Math.cos(a) * sArmRadius);
-        armGroup.rotation.y = -a;
-        swingGroup.add(armGroup);
-        swingSeats.push(armGroup);
-    }
-    const sHub = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 0.6, 12), mat(0xFF6600));
-    sHub.position.y = sHubY;
-    swingGroup.add(sHub);
-    const SWING_ANGLE_MAX = Math.PI / 4;
-    const swingAnglePhase = swingSeats.map(() => Math.random() * Math.PI * 2);
-    const loadingPlatform = new THREE.Mesh(new THREE.CylinderGeometry(8, 8.5, 0.3, 16), mat(0x555555));
-    loadingPlatform.position.y = 0.15;
-    swingGroup.add(loadingPlatform);
-    const loadingSkirt = new THREE.Mesh(new THREE.CylinderGeometry(8.5, 8.5, 1.2, 16, 1, true), mat(0x444444));
-    loadingSkirt.position.y = 0.9;
-    swingGroup.add(loadingSkirt);
-    group.add(swingGroup);
-
-    // --- TEACUP RIDE (6 cups on turntable, dual rotation) ---
-    const teacupGroup = new THREE.Group();
-    teacupGroup.name = "TeacupRide";
-    teacupGroup.position.set(cx - 50, 0, cz + 35);
-    const tPlatformRadius = 5.5;
-    const tCupCount = 6;
-    const mainTurntable = new THREE.Mesh(new THREE.CylinderGeometry(tPlatformRadius, tPlatformRadius + 0.3, 0.2, 24), mat(0x6B4423));
-    mainTurntable.position.y = 0.1;
-    teacupGroup.add(mainTurntable);
-    const teacupCups = [];
-    for (let i = 0; i < tCupCount; i++) {
-        const a = (i / tCupCount) * Math.PI * 2;
-        const cupGroup = new THREE.Group();
-        cupGroup.userData.spinPhase = Math.random() * Math.PI * 2;
-        const cupRad = 3.5;
-        cupGroup.position.set(Math.sin(a) * cupRad, 0, Math.cos(a) * cupRad);
-        const smallTurntable = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.9, 0.15, 16), mat(0x8B4513));
-        smallTurntable.position.y = 0.08;
-        cupGroup.add(smallTurntable);
-        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.5, 0.7, 12), mat(0xFF69B4));
-        cup.position.y = 0.5;
-        cupGroup.add(cup);
-        const cupHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.4, 8), mat(0xFFD700));
-        cupHandle.position.set(0.4, 0.75, 0);
-        cupHandle.rotation.z = -Math.PI / 3;
-        cupGroup.add(cupHandle);
-        teacupGroup.add(cupGroup);
-        teacupCups.push(cupGroup);
-    }
-    group.add(teacupGroup);
-
-    // --- FOOD & GAME STALLS ---
-    const stalls = [
-        { x: cx - 52, z: cz - 55, contentId: 'CARNIVAL_COTTON_CANDY' },
-        { x: cx - 67, z: cz - 40, contentId: 'CARNIVAL_FRIED_DOUGH' },
-        { x: cx - 57, z: cz + 60, contentId: 'CARNIVAL_HOT_DOGS' },
-        { x: cx + 53, z: cz + 65, contentId: 'CARNIVAL_LEMONADE' },
-        { x: cx + 58, z: cz - 45, contentId: 'CARNIVAL_FUNNEL_CAKE' },
-        { x: cx - 39, z: cz - 60, contentId: 'CARNIVAL_RING_TOSS' },
-        { x: cx + 28, z: cz - 55, contentId: 'CARNIVAL_BALLOON_DARTS' },
-        { x: cx - 32, z: cz + 55, contentId: 'CARNIVAL_BOTTLE_KNOCKDOWN' }
-    ];
-    stalls.forEach(({ x, z, contentId }) => {
-        const stall = new THREE.Group();
-        const base = new THREE.Mesh(new THREE.BoxGeometry(4, 2, 2.5), mat(0x8B4513));
-        base.position.y = 1;
-        stall.add(base);
-        const awning = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.3, 2.8), mat(0xFF2222));
-        awning.position.y = 2.8;
-        awning.rotation.z = 0.1;
-        stall.add(awning);
-        stall.position.set(x, 0, z);
-        const c = getFlavorContent(contentId);
-        stall.userData.isInteractive = true;
-        stall.userData.name = c.name;
-        stall.userData.flavorText = c.flavorText;
-        group.add(stall);
-        interactiveItems.push(stall);
+    const addedRides = CARNIVAL_ADDITIONS.map(spec => {
+        const ride = createCarnivalRide(spec, cx, cz);
+        const content = getFlavorContent(spec.contentId);
+        ride.sign.userData = { isInteractive: true, name: content.name, flavorText: content.flavorText };
+        group.add(ride.group);
+        interactiveItems.push(ride.sign);
+        return ride;
     });
 
-    const FERRIS_SPEED = 0.008, SWING_SPEED = 0.012;
-    const TEACUP_PLATFORM_SPEED = 0.006;
-    const TEACUP_CUP_SPEED = 0.03;
+    const teacups = createTeacups(cx, cz);
+    const teacupContent = getFlavorContent('CARNIVAL_TEACUPS');
+    teacups.entrance.userData = { isInteractive: true, name: teacupContent.name, flavorText: teacupContent.flavorText };
+    group.add(teacups.group);
+    interactiveItems.push(teacups.entrance);
+
+    const midway = createCarnivalMidway(cx, cz);
+    group.add(midway.group);
+    interactiveItems.push(...midway.interactiveItems);
+
+    const FERRIS_SPEED = 0.008;
 
     const updateCarnival = (deltaTime = 1 / 60) => {
         const frameScale = deltaTime * 60;
@@ -553,16 +468,8 @@ export const createCarnival = (scene) => {
             gondola.rotation.x = -ferrisWheelRotating.rotation.x;
         });
 
-        swingGroup.rotation.y += SWING_SPEED * frameScale;
-        const swingAngle = SWING_ANGLE_MAX * 0.85;
-        swingSeats.forEach((arm, i) => {
-            arm.rotation.x = swingAngle + Math.sin(swingAnglePhase[i] + swingGroup.rotation.y) * 0.08;
-        });
-        teacupGroup.rotation.y += TEACUP_PLATFORM_SPEED * frameScale;
-        teacupCups.forEach((cup) => {
-            cup.userData.spinPhase += TEACUP_CUP_SPEED * frameScale;
-            cup.rotation.y = cup.userData.spinPhase;
-        });
+        addedRides.forEach(ride => ride.update(deltaTime));
+        teacups.update(deltaTime);
         zipper.update(deltaTime);
     };
 
