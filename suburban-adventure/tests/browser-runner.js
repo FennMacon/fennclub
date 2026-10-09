@@ -75,6 +75,36 @@ try {
             assert(trail&&trail.children[1].geometry.attributes.position.count>100,'Smooth trail '+name);
         }
     });
+    await check('clearings use forest ground and pond water is solid with steam retained', () => {
+        const {scene,streetElements}=game.getRuntimeState();
+        const settings=scene.getObjectByName('ForestClearings').children.filter(o=>o.name.startsWith('ClearingSetting:'));
+        assert(settings.every(setting=>!setting.children.some(o=>o.geometry?.type==='ShapeGeometry')),'Clearing ground patches remain');
+        const pond=streetElements.pond;
+        const surfaces=pond.children.filter(o=>o.isMesh&&!o.userData.isMist);
+        assert(surfaces.length===5 && surfaces.every(o=>!o.material.wireframe&&o.material.color.getHex()===0x1a3a52),'Solid unified water surface');
+        assert(pond.children.filter(o=>o.userData.isMist).length===30,'Pond steam changed');
+    });
+    await check('number keys teleport across areas, respect editing and modals, and leave interiors', async () => {
+        const press=(number,extra={})=>document.dispatchEvent(new KeyboardEvent('keydown',{code:'Digit'+number,key:String(number),bubbles:true,...extra}));
+        for(let number=1;number<=9;number++) {
+            press(number);const pos=scenes.getAreaTestPosition(number,'suburban');
+            assert(game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(pos.x,2,pos.z))<1e-8,'Area '+number);
+        }
+        const before=game.getRuntimeState().camera.position.clone();
+        press(1,{ctrlKey:true});press(1,{repeat:true});
+        assert(game.getRuntimeState().camera.position.equals(before),'Modified/repeated shortcut moved camera');
+        const input=document.createElement('input');document.body.append(input);input.focus();press(1);
+        assert(game.getRuntimeState().camera.position.equals(before),'Typing caused teleport');input.remove();
+        phone.togglePhone();press(1);
+        assert(game.getRuntimeState().camera.position.equals(before),'Phone allowed teleport');phone.togglePhone();
+        dialogue.startConversation('Maya','PLAZA');press(1);
+        assert(game.getRuntimeState().camera.position.equals(before),'Conversation allowed teleport');dialogue.endConversation();
+        game.switchScene('MANSION_INTERIOR');await frame();press(6);await frame();
+        assert(game.getRuntimeState().sceneKey==='PLAZA'&&game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(333,2,0))<1e-8,'Interior shortcut exit');
+        document.dispatchEvent(new KeyboardEvent('keydown',{code:'Numpad5',key:'5',bubbles:true}));
+        assert(game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(0,2,0))<1e-8,'Numpad shortcut');
+        assert(renderer.getRenderer().domElement===canvas,'Teleport replaced renderer');
+    });
     await check('carnival builds eight rides and food/game alleys; animation stays finite', async () => {
         const { createCarnival } = await import('../world/landmarks.js');
         const { CARNIVAL_ADDITIONS } = await import('../world/carnival-motion.js');
@@ -304,6 +334,7 @@ try {
     await check('subway switches maps without recreating renderer', async () => {
         assert(game.performMapSwitch(), 'map switch unavailable'); await frame();
         assert(scenes.getCurrentMap() === 'city' && game.getRuntimeState().sceneKey === 'CITY_PLAZA', 'city arrival failed');
+        assert(game.teleportToArea(3) && game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(333,2,333))<1e-8,'City area shortcut');
         assert(game.getRuntimeState().streetElements.zoneRootGroups.length === 3, 'city missing zones');
         assert(game.performMapSwitch(), 'return unavailable'); await frame();
         assert(scenes.getCurrentMap() === 'suburban', 'suburban arrival failed');

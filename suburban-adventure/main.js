@@ -15,7 +15,7 @@ import { createCar, getRandomCarColor } from './utils.js';
 import { loadAllContent } from './content-loader.js';
 import { INTERIOR_TARGET_SIZE } from './buildings.js';
 import { initializeNPCInteraction, checkNearbyNPCs, checkNearbyItems, checkBusStopProximity, initializeConversationHandlers, getNextSceneInfo, handleInteractionInput } from './npcs.js';
-import { getCurrentScene, getPlazaConfig, SCENE_CONFIGS, UNIFIED_MAP, getBuildingPortalDestination, getBusStopArrivalPosition, getCurrentMap, setCurrentMap, getSubwayArrivalPosition } from './scenes.js';
+import { getCurrentScene, getPlazaConfig, SCENE_CONFIGS, UNIFIED_MAP, getBuildingPortalDestination, getBusStopArrivalPosition, getCurrentMap, setCurrentMap, getSubwayArrivalPosition, getAreaTestPosition } from './scenes.js';
 import { hasActiveConversation } from './dialogue.js';
 import { initializeControls, updateCameraPosition, isMobile } from './controls.js';
 import { initializeMobileControls, updateMobileActionButton } from './mobile-controls.js';
@@ -373,6 +373,22 @@ export const performMapSwitch = () => {
     return false;
 };
 
+// Quick area inspection, including returning directly from an interior.
+export const teleportToArea = number => {
+    if (getPhoneOpenState() || hasActiveConversation()) return false;
+    const destination = getAreaTestPosition(number);
+    if (!destination) return false;
+    resetNPCInteraction(); resetControls(); resetMobileControls();
+    if (PLAZA_CONFIG.IS_INTERIOR) {
+        for (const key of ['interiorCameraPosition', 'buildingPortalPosition', 'buildingReturnYaw', 'isFarBuilding', 'previousExteriorScene']) storage.removeItem(key);
+        storage.setItem('suburbanAdventureScene', getCurrentMap() === 'city' ? 'CITY_PLAZA' : 'PLAZA');
+        storage.setItem('busStopCameraPosition', JSON.stringify(destination));
+        rebuildWorld();
+    } else camera.position.set(destination.x, destination.y, destination.z);
+    setYaw(0); setPitch(0); camera.rotation.set(0, 0, 0, 'YXZ');
+    return true;
+};
+
 // =====================================================
 // KEYBOARD EVENT HANDLERS
 // =====================================================
@@ -389,6 +405,11 @@ document.addEventListener('keydown', (event) => {
         if (performMapSwitch()) return;
     }
     if (inInput || event.target.closest?.('button, [contenteditable]') || getPhoneOpenState() || event.repeat) return;
+    if (!hasActiveConversation() && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey
+        && !document.activeElement?.isContentEditable && document.activeElement?.tagName !== 'SELECT') {
+        const digit = /^(?:Digit|Numpad)([1-9])$/.exec(event.code);
+        if (digit && teleportToArea(Number(digit[1]))) { event.preventDefault(); return; }
+    }
     if (event.code === 'Space') {
         event.preventDefault();
         handleActionInput();

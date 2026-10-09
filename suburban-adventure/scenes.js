@@ -72,6 +72,13 @@ export const CITY_MAP_ZONE_OFFSETS = {
     CITY_SE: { x: 333, z: -333 }
 };
 
+// Number keys follow the map reading order: northwest to southeast.
+export const getAreaTestPosition = (number, map = getCurrentMap()) => {
+    if (!Number.isInteger(number) || number < 1 || number > 9) return null;
+    const zone = (map === 'city' ? CITY_MAP_ZONES : UNIFIED_MAP_ZONES)[number - 1];
+    return { x: zone.x, y: 2, z: zone.z };
+};
+
 // Subway stop positions (world x, z) - used for interaction and arrival spawn
 export const SUBWAY_POSITIONS = {
     suburban: { x: -290, z: -333 },

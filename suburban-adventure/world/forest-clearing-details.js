@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { createTree, createWireframeMaterial } from '../utils.js';
 import { getFlavorContent } from '../content-loader.js';
-import { GROUND_LAYERS } from './constants.js';
 import { nearTrail } from './trail-layout.js';
 
 export const createClearingDetails = (clearing, paths) => {
@@ -11,14 +10,6 @@ export const createClearingDetails = (clearing, paths) => {
         const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material(color));
         mesh.name=name;mesh.position.set(x,y,z);group.add(mesh);return mesh;
     };
-    const shape=new THREE.Shape();
-    for(let i=0;i<=32;i++) {
-        const angle=i/32*Math.PI*2,r=clearing.radius*(.76+.06*Math.sin(angle*5+.8));
-        const x=Math.cos(angle)*r,z=Math.sin(angle)*r;
-        if(i===0)shape.moveTo(x,z);else shape.lineTo(x,z);
-    }
-    const patch=new THREE.Mesh(new THREE.ShapeGeometry(shape),new THREE.MeshBasicMaterial({color:0x35452d,side:THREE.DoubleSide}));
-    patch.rotation.x=-Math.PI/2;patch.position.y=GROUND_LAYERS.base+.008;group.add(patch);
     // Small edge trees and understory frame the clearing without growing across a trail.
     for(let i=0;i<12;i++) {
         const a=i/12*Math.PI*2,r=clearing.radius-2,x=Math.cos(a)*r,z=Math.sin(a)*r;

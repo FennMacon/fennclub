@@ -1451,6 +1451,8 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     
     // The Pond - large oval water feature
     const pondGroup = new THREE.Group();
+    pondGroup.name = "PondWater";
+    const waterMaterial = new THREE.MeshBasicMaterial({ color: 0x1a3a52, side: THREE.DoubleSide });
     
     // Create organic pond shape with multiple segments
     const pondSegments = [];
@@ -1458,7 +1460,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     // Main pond body (irregular oval)
     const mainPondGeometry = new THREE.CircleGeometry(18, 32);
     mainPondGeometry.scale(1.2, 0.7, 1); // More elongated
-    const mainPondMaterial = createWireframeMaterial(0x1a3a52);
+    const mainPondMaterial = waterMaterial;
     const mainPond = new THREE.Mesh(mainPondGeometry, mainPondMaterial);
     mainPond.rotation.x = -Math.PI / 2;
     mainPond.position.y = -0.15;
@@ -1469,7 +1471,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     // Jutting out sections
     const jut1Geometry = new THREE.CircleGeometry(8, 16);
     jut1Geometry.scale(0.8, 1.2, 1);
-    const jut1Material = createWireframeMaterial(0x1a3a52);
+    const jut1Material = waterMaterial;
     const jut1 = new THREE.Mesh(jut1Geometry, jut1Material);
     jut1.rotation.x = -Math.PI / 2;
     jut1.position.y = -0.15;
@@ -1479,7 +1481,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     
     const jut2Geometry = new THREE.CircleGeometry(6, 16);
     jut2Geometry.scale(1.3, 0.6, 1);
-    const jut2Material = createWireframeMaterial(0x1a3a52);
+    const jut2Material = waterMaterial;
     const jut2 = new THREE.Mesh(jut2Geometry, jut2Material);
     jut2.rotation.x = -Math.PI / 2;
     jut2.position.y = -0.15;
@@ -1489,7 +1491,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     
     const jut3Geometry = new THREE.CircleGeometry(5, 16);
     jut3Geometry.scale(0.9, 1.1, 1);
-    const jut3Material = createWireframeMaterial(0x1a3a52);
+    const jut3Material = waterMaterial;
     const jut3 = new THREE.Mesh(jut3Geometry, jut3Material);
     jut3.rotation.x = -Math.PI / 2;
     jut3.position.y = -0.15;
@@ -1500,7 +1502,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     // Pond depth effect (follows main shape)
     const pondDepthGeometry = new THREE.CircleGeometry(16, 32);
     pondDepthGeometry.scale(1.2, 0.7, 1);
-    const pondDepthMaterial = createWireframeMaterial(0x0d1f2d);
+    const pondDepthMaterial = waterMaterial;
     const pondDepth = new THREE.Mesh(pondDepthGeometry, pondDepthMaterial);
     pondDepth.rotation.x = -Math.PI / 2;
     pondDepth.position.y = -0.2;

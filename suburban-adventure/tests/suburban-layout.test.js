@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS, CITY_MAP_ZONES, SUBWAY_POSITIONS, getSubwayArrivalPosition } from '../scenes.js';
+import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS, CITY_MAP_ZONES, SUBWAY_POSITIONS, getSubwayArrivalPosition, getAreaTestPosition } from '../scenes.js';
 import { CARNIVAL_CONFIG, MANSION_CONFIG, FOREST_CLEARINGS, FOREST_PATH_WAYPOINTS, RIVER_CONFIG } from '../world/config.js';
 import { getHorizontalBounds, SUBURBAN_RIGHT_CORNER_X, SUBURBAN_RIGHT_OUTER_CORNER_X } from '../roads.js';
 
@@ -30,4 +30,12 @@ test('suburban streets extend east and stop before the west river', () => {
     assert.deepEqual(getHorizontalBounds('city'), { xMin: -500, xMax: 500 });
     assert.equal(SUBURBAN_RIGHT_CORNER_X, 165.05);
     assert.equal(SUBURBAN_RIGHT_OUTER_CORNER_X, 174.95);
+});
+
+test('number shortcuts follow the nine-zone grid on both maps', () => {
+    for(const map of ['suburban','city']) for(let number=1;number<=9;number++) {
+        const zone=(map==='city'?CITY_MAP_ZONES:UNIFIED_MAP_ZONES)[number-1];
+        assert.deepEqual(getAreaTestPosition(number,map),{x:zone.x,y:2,z:zone.z});
+    }
+    for(const bad of [0,10,1.5,NaN,'3'])assert.equal(getAreaTestPosition(bad),null);
 });
