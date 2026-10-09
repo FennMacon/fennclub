@@ -1,5 +1,5 @@
 # Carnival expansion
-Eight rides surround the central road: the existing Ferris wheel, Zipper and teacups, four additions, and a rebuilt Yo-Yo. Six ride entrance signs and eleven booth counters support INSPECT and the discovery journal. Rides are scenery; boarding remains future work.
+Eight rides surround the central road: the existing Ferris wheel, Zipper and teacups, four additions, and a rebuilt Yo-Yo. Six ride entrance rails and eleven booth counters support INSPECT and the discovery journal. Rides are scenery; boarding remains future work.
 
 ## Manufacturer references
 - [Pharaoh’s Fury](https://www.chancerides.com/pharaohsfury-portable/): horizontal axle, twin hangers, ten rows in a swinging boat. The model uses a periodic 64° pendulum arc; timing is artistic.
@@ -11,13 +11,22 @@ Eight rides surround the central road: the existing Ferris wheel, Zipper and tea
 ## Layout and rendering
 Positions and reserved radii live in world/carnival-motion.js. Footprints clear the street at z=0–22, other rides, stalls and the tree boundary. Shared low-segment geometry and rigid pieces merged by material reduce draw calls while preserving moving assemblies. No point lights or added external assets.
 
-Open /tests/carnival-preview.html for the whole midway or individual rides, pause and draw-call display. Use entrance signs for discoveries in the game.
+Open /tests/carnival-preview.html for the whole midway or individual rides, pause and draw-call display. Use entrance rails and booth counters for discoveries in the game.
 
 ## Teacups and themed alleys
-Twilight Teacups has six open curved bowls with entry gaps, handles, saucers, benches and handwheels. Cup pivots and the main turntable rotate independently; the perimeter, gate and entrance sign remain stationary. A teapot occupies the center. Motion is artistic.
+Twilight Teacups has six open curved bowls with entry gaps, handles, saucers, benches and handwheels. Cup pivots and the main turntable rotate independently; the perimeter, gate and entrance rail remain stationary. A teapot occupies the center. Motion is artistic.
 
-The Zipper group rotates 180° around Y, putting its front sign toward the road north of it.
+The Zipper group rotates 180° around Y, putting its capsules and entrance side toward the road north of it.
 
 Food Alley sits south of the road at x=78, with five vendors. Game Alley sits north at x=-54, with six games. Facing rows leave a seven-unit walking aisle, under overhead bulbs. New Duck Pond, Hoop Shot and Skee Ball discoveries supplement the original stall content. Canopies, prizes and food props are batched by material. Inspection targets sit at the counters, accessible from the aisle at the normal two-unit camera height.
 
 Layout definitions are in world/carnival-midway-layout.js; tests check road, trees, ride clearance and aisle width. The preview offers teacups, both alleys, and the Zipper as seen from the road.
+
+## Spacing and directions
+Printed panels have been removed from rides, booth marquees, menus and alley gateways. Discoveries remain on visible entrance rails and counter surfaces.
+
+The carousel horses face their direction of travel, and its chariot uses the free eighth station; Yo-Yo chairs also face their travel direction. The carousel and Pharaoh’s Fury entrances rotate 180° to face the central road. Teacup handle openings face the bowl, with both tips attached on the cup side.
+
+The Ferris wheel lives in world/ferris-wheel.js. Sixteen pivots are equally spaced on a radius-12 rim. Each bucket hangs 1.55 units below its pivot and counter-rotates to stay upright. Two hub braces meet each rim station; the extra overlapping spoke webs have been removed. Fixed A-frame towers meet the horizontal axle, and the lowest cart clears the platform.
+
+The carnival ground stays open between the rides and booths, with no added path network.

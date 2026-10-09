@@ -5,7 +5,7 @@ import { TEACUPS, sampleTeacupMotion } from './carnival-midway-layout.js';
 export function createTeacups(cx, cz) {
     const group = new THREE.Group(); group.name = 'TeacupRide';
     group.position.set(cx + TEACUPS.x, 0, cz + TEACUPS.z);
-    const { mesh, box, beam, bulb, sign } = createCarnivalKit();
+    const { mesh, box, beam, bulb } = createCarnivalKit();
     const palette = [0xef85be, 0x83e7df, 0xffd47d, 0xa296ee, 0xec8b71, 0x89b9ff];
     mesh(group, new THREE.CylinderGeometry(6.4, 6.5, 0.35, 48), [0, 0.25, 0], 0xcbd6e0);
     // A fixed perimeter and entrance facing the central road (-Z).
@@ -20,8 +20,9 @@ export function createTeacups(cx, cz) {
     box(group, [2.3, 0.13, 1.4], [0, 0.1, -6.6], 0xcbd6e0);
     const entrance = new THREE.Group(); entrance.name = 'Teacups entrance';
     entrance.position.set(1.8, 0, -6.3); entrance.rotation.y = Math.PI; group.add(entrance);
-    beam(entrance, [0, 0, 0], [0, 2.3, 0], 0.07, 0xffd47d);
-    sign(entrance, 'TWILIGHT TEACUPS', [0, 2.3, 0], 3.6, 'SIX CUPS • ENDLESS CIRCLES');
+    entrance.position.y = 1;
+    beam(entrance, [0, -0.7, -0.7], [0, 0.1, -0.7], 0.045, 0xffd47d);
+    beam(entrance, [0, 0.1, -0.7], [0, 0.1, 0.7], 0.045, 0xffd47d);
     const rotor = new THREE.Group(); rotor.name = 'TeacupTurntable'; group.add(rotor);
     mesh(rotor, new THREE.CylinderGeometry(5.8, 5.8, 0.16, 48), [0, 0.48, 0], 0x987dcb);
     for (let i = 0; i < 24; i++) {
@@ -42,8 +43,10 @@ export function createTeacups(cx, cz) {
         mesh(cup, bowl, [0, 0.06, 0], palette[i]);
         mesh(cup, new THREE.CylinderGeometry(0.65, 0.65, 0.08, 16), [0, 0.18, 0], palette[i]);
         box(cup, [1.1, 0.12, 0.32], [0, 0.36, -0.48], 0xffe3ac);
-        const handle = mesh(cup, new THREE.TorusGeometry(0.35, 0.07, 6, 16, Math.PI * 1.6), [1.04, 0.61, 0], palette[i]);
-        handle.rotation.z = Math.PI * 0.2;
+        const handlePivot = new THREE.Group(); handlePivot.name = 'TeacupHandle' + (i + 1); cup.add(handlePivot);
+        const handle = mesh(handlePivot, new THREE.TorusGeometry(0.35, 0.07, 6, 16, Math.PI * 1.6), [1.04, 0.61, 0], palette[i]);
+        // The opening faces into the bowl, so both ends attach to the cup.
+        handle.rotation.z = Math.PI * 1.2;
         beam(cup, [0, 0.2, 0], [0, 0.66, 0], 0.045, 0xffe3ac);
         const wheel = mesh(cup, new THREE.TorusGeometry(0.28, 0.035, 5, 16), [0, 0.66, 0], 0xffe3ac);
         wheel.rotation.x = Math.PI / 2;

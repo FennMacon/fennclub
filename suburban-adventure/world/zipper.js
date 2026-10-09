@@ -91,11 +91,6 @@ export function createZipper(x, z) {
         beam(hinge, [0, 0, -0.7], [0, 0, 0.7], 0.065, steel);
         return hinge;
     });
-    const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 64;
-    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#152033'; ctx.fillRect(0, 0, 256, 64);
-    ctx.font = 'bold 43px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffe37e'; ctx.fillText('ZIPPER', 128, 48);
-    const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), side: THREE.DoubleSide }));
-    sign.position.set(0, 2, 2.8); group.add(sign);
     const update = deltaTime => {
         motion.update(deltaTime);
         const angle = sampleAnchor(motion.time, 0).boomAngle;

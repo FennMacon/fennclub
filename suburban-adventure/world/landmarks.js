@@ -1,3 +1,4 @@
+import { createFerrisWheel } from './ferris-wheel.js';
 import { createTeacups } from './teacups.js';
 import { createCarnivalMidway } from './carnival-midway.js';
 import { CARNIVAL_ADDITIONS, createCarnivalRide } from './carnival-rides.js';
@@ -205,235 +206,8 @@ export const createCarnival = (scene) => {
     const mat = (c, o = 1) => createWireframeMaterial(c, o);
     const interactiveItems = [];
 
-    // --- FERRIS WHEEL (rebuilt: RingGeometry rim, Cylinder spokes, explicit YZ plane) ---
-    const ferrisGroup = new THREE.Group();
-    ferrisGroup.name = "FerrisWheel";
-    ferrisGroup.position.set(cx - 25, 0, cz - 40);
-
-    // Chassis/base (trailer platform towers sit on)
-    const chassisW = 20;
-    const chassisD = 14;
-    const chassis = new THREE.Mesh(new THREE.BoxGeometry(chassisW, 0.4, chassisD), mat(0x444444));
-    chassis.position.y = 0.2;
-    ferrisGroup.add(chassis);
-
-    const fRadius = 12;
-    const wheelBottomY = 0.5;  // lowest gondola at y=0.5
-    const axleHeight = wheelBottomY + fRadius;
-    const towerXOffset = 2.8;  // supports sit just outside wheel rims
-    const axleLength = towerXOffset * 2; // light-red hub axle ends at leg connection points
-    const SPOKE_COUNT = 16;
-    const gondolaAngles = [];
-
-    // Rotating wheel group at axle height
-    const ferrisWheelRotating = new THREE.Group();
-    ferrisWheelRotating.position.set(0, axleHeight, 0);
-
-    // Hub/axle (axis along X) - red center
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, axleLength, 12), mat(0xCC0000));
-    hub.rotation.z = Math.PI / 2;
-    ferrisWheelRotating.add(hub);
-
-    // Dual rims: red circles on either side of gondolas (like real ferris wheel structure)
-    const rimOffset = 1.2;  // distance from center along X to each rim
-    const gondolaWidth = rimOffset * 2; // make carts span between both red rims
-    for (const xOff of [-rimOffset, rimOffset]) {
-        const rim = new THREE.Mesh(new THREE.RingGeometry(fRadius - 0.3, fRadius + 0.3, 32), mat(0xAA0000));
-        rim.rotation.y = Math.PI / 2;
-        rim.position.x = xOff;
-        ferrisWheelRotating.add(rim);
-    }
-
-    const createFerrisGondola = () => {
-        const gondola = new THREE.Group();
-
-        const bodyMat = mat(0x0066FF);
-        const trimMat = mat(0x003C99);
-        const lightTrimMat = mat(0x66B3FF);
-        const roofMat = mat(0x1E90FF);
-        const supportMat = mat(0xFFD54A);
-
-        // Main bucket body
-        const body = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth * 0.9, 0.55, 1.05), bodyMat);
-        body.position.y = 0.02;
-        gondola.add(body);
-
-        // Lower lip for the classic open cart silhouette
-        const lowerLip = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth * 0.96, 0.14, 1.14), trimMat);
-        lowerLip.position.y = -0.28;
-        gondola.add(lowerLip);
-
-        // Side rails around the open top
-        const railHeight = 0.33;
-        const sideRailLeft = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 1.12), lightTrimMat);
-        sideRailLeft.position.set(-gondolaWidth * 0.45, railHeight, 0);
-        gondola.add(sideRailLeft);
-        const sideRailRight = sideRailLeft.clone();
-        sideRailRight.position.x = gondolaWidth * 0.45;
-        gondola.add(sideRailRight);
-        const frontRail = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth * 0.84, 0.3, 0.08), lightTrimMat);
-        frontRail.position.set(0, railHeight, 0.52);
-        gondola.add(frontRail);
-        const backRail = frontRail.clone();
-        backRail.position.z = -0.52;
-        gondola.add(backRail);
-
-        // Bench seat
-        const seat = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth * 0.66, 0.12, 0.42), trimMat);
-        seat.position.set(0, -0.03, -0.12);
-        gondola.add(seat);
-        const seatBack = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth * 0.66, 0.28, 0.1), trimMat);
-        seatBack.position.set(0, 0.12, -0.3);
-        gondola.add(seatBack);
-
-        // Canopy and supports
-        const canopy = new THREE.Mesh(new THREE.BoxGeometry(gondolaWidth + 0.25, 0.12, 1.25), roofMat);
-        canopy.position.y = 0.78;
-        gondola.add(canopy);
-        const supportLength = 0.5;
-        const supportGeom = new THREE.CylinderGeometry(0.03, 0.03, supportLength, 8);
-        const supportOffsets = [
-            [-gondolaWidth * 0.34, 0.56, 0.42],
-            [gondolaWidth * 0.34, 0.56, 0.42],
-            [-gondolaWidth * 0.34, 0.56, -0.42],
-            [gondolaWidth * 0.34, 0.56, -0.42]
-        ];
-        supportOffsets.forEach(([x, y, z]) => {
-            const post = new THREE.Mesh(supportGeom, supportMat);
-            post.position.set(x, y, z);
-            gondola.add(post);
-        });
-
-        // Classic hanger arm and pivot cap
-        const hangerArm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.62, 8), supportMat);
-        hangerArm.position.y = 1.1;
-        gondola.add(hangerArm);
-        const yoke = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, gondolaWidth * 0.58, 8), supportMat);
-        yoke.rotation.z = Math.PI / 2;
-        yoke.position.y = 1.36;
-        gondola.add(yoke);
-        const pivotCap = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), mat(0xFFAA00));
-        pivotCap.position.y = 1.36;
-        gondola.add(pivotCap);
-
-        return gondola;
-    };
-
-    // 16 gondolas
-    const ferrisGondolas = [];
-    for (let i = 0; i < SPOKE_COUNT; i++) {
-        const a = (i / SPOKE_COUNT) * Math.PI * 2;
-        const p = { y: Math.cos(a) * fRadius, z: Math.sin(a) * fRadius };
-        gondolaAngles.push(a);
-
-        const gondola = createFerrisGondola();
-        gondola.position.set(0, p.y, p.z);
-        gondola.rotation.x = 0;
-        gondola.userData.kind = 'ferrisGondola';
-        ferrisGondolas.push(gondola);
-        ferrisWheelRotating.add(gondola);
-    }
-
-    let spokeSetCallIndex = 0;
-    const outerEndpointAngleKeys = new Set();
-    const outerSpokeXOffsets = [];
-    let outerSpokeCountObserved = 0;
-    const outerInnerPhaseDeltas = new Set();
-    const outerAnchorSampleDeg = [];
-    const addSpokeSet = (count, phase, xOffset, thickness, radius = fRadius) => {
-        spokeSetCallIndex += 1;
-        const gondolaStep = (Math.PI * 2) / SPOKE_COUNT;
-        const normalizedPhase = ((phase % gondolaStep) + gondolaStep) % gondolaStep;
-        for (let i = 0; i < count; i++) {
-            const a = (i / count) * Math.PI * 2 + phase;
-            const p = { y: Math.cos(a) * radius, z: Math.sin(a) * radius };
-            const angle = -Math.atan2(p.z, p.y);
-            const spoke = new THREE.Mesh(new THREE.CylinderGeometry(thickness, thickness, radius, 6), mat(0xE6B800));
-            spoke.position.set(xOffset, p.y / 2, p.z / 2);
-            spoke.rotation.x = angle;
-            spoke.userData.kind = 'ferrisSpoke';
-            ferrisWheelRotating.add(spoke);
-            if (radius === fRadius && xOffset !== 0) {
-                outerSpokeCountObserved += 1;
-                outerSpokeXOffsets.push(xOffset);
-                const angleDeg = ((a * 180 / Math.PI) % 360 + 360) % 360;
-                outerEndpointAngleKeys.add(angleDeg.toFixed(3));
-            }
-        }
-    };
-    const addSpokeBetweenPoints = (start, end, thickness) => {
-        const delta = new THREE.Vector3().subVectors(end, start);
-        const length = delta.length();
-        if (length <= 0.0001) return;
-        const spoke = new THREE.Mesh(new THREE.CylinderGeometry(thickness, thickness, length, 6), mat(0xE6B800));
-        spoke.position.copy(start).add(end).multiplyScalar(0.5);
-        spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.normalize());
-        spoke.userData.kind = 'ferrisSpoke';
-        ferrisWheelRotating.add(spoke);
-    };
-    const addBracedOuterSpokeSet = (count, phase, xOffset, thickness, innerAnchorRadius = fRadius * 0.18) => {
-        spokeSetCallIndex += 1;
-        const cartAttachRadius = fRadius - 0.6; // 0.6 = half gondola depth (1.2), so spokes meet cart edge
-        for (let i = 0; i < count; i++) {
-            const gondolaAngle = (i / count) * Math.PI * 2;
-            const anchorAngle = gondolaAngle + phase;
-            const outerPoint = new THREE.Vector3(xOffset, Math.cos(gondolaAngle) * cartAttachRadius, Math.sin(gondolaAngle) * cartAttachRadius);
-            const innerPoint = new THREE.Vector3(0, Math.cos(anchorAngle) * innerAnchorRadius, Math.sin(anchorAngle) * innerAnchorRadius);
-            addSpokeBetweenPoints(innerPoint, outerPoint, thickness);
-
-            outerSpokeCountObserved += 1;
-            outerSpokeXOffsets.push(xOffset);
-            const endAngleDeg = ((gondolaAngle * 180 / Math.PI) % 360 + 360) % 360;
-            outerEndpointAngleKeys.add(endAngleDeg.toFixed(3));
-            const phaseDelta = (((anchorAngle - gondolaAngle) * 180 / Math.PI) % 360 + 360) % 360;
-            outerInnerPhaseDeltas.add(phaseDelta.toFixed(3));
-            if (i === 0) {
-                outerAnchorSampleDeg.push({
-                    phaseDeg: Number((phase * 180 / Math.PI).toFixed(3)),
-                    gondola0Deg: Number((gondolaAngle * 180 / Math.PI).toFixed(3)),
-                    anchor0Deg: Number((anchorAngle * 180 / Math.PI).toFixed(3))
-                });
-            }
-        }
-    };
-
-    // Keep a compact inner center web near the hub
-    addSpokeSet(SPOKE_COUNT * 4, 0, 0, 0.06, fRadius * 0.45);
-
-    // Outer spoke copies: quadrupled phase sets (0/45/90/135), each still ending at every gondola
-    const outerX = rimOffset;
-    const outerPhases = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4];
-    outerPhases.forEach((phase) => {
-        addBracedOuterSpokeSet(SPOKE_COUNT, phase, -outerX, 0.06);
-        addBracedOuterSpokeSet(SPOKE_COUNT, phase, outerX, 0.06);
-    });
-
-    // A-frame towers: two legs per side, bases on chassis, meeting at axle height
-    const towerHeight = axleHeight;
-    const towerBaseSpread = 3.6;  // tighter base for a cleaner ^ silhouette
-    const towerPinLength = towerXOffset * 2; // pin ends meet the tower apex points
-    const legAngle = Math.atan2(towerBaseSpread / 2, towerHeight);
-    [-1, 1].forEach((side) => {
-        const tower = new THREE.Group();
-        tower.position.set(side * towerXOffset, 0, 0);
-        tower.rotation.y = Math.PI / 2;
-        for (const legSide of [-1, 1]) {
-            const legGroup = new THREE.Group();
-            legGroup.position.set(legSide * (towerBaseSpread / 2), 0, 0);
-            const leg = new THREE.Mesh(new THREE.BoxGeometry(0.45, towerHeight, 0.45), mat(0xAA0000));
-            leg.position.y = towerHeight / 2;
-            legGroup.rotation.z = legSide * legAngle;
-            legGroup.add(leg);
-            tower.add(legGroup);
-        }
-        ferrisGroup.add(tower);
-    });
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, towerPinLength), mat(0x990000));
-    arm.rotation.y = Math.PI / 2;
-    arm.position.set(0, towerHeight, 0);
-    ferrisGroup.add(arm);
-    ferrisGroup.add(ferrisWheelRotating);
-    group.add(ferrisGroup);
+    const ferris = createFerrisWheel(cx, cz);
+    group.add(ferris.group);
 
     const zipper = createZipper(cx + 55, cz + 45);
     zipper.group.rotation.y = Math.PI;
@@ -442,9 +216,9 @@ export const createCarnival = (scene) => {
     const addedRides = CARNIVAL_ADDITIONS.map(spec => {
         const ride = createCarnivalRide(spec, cx, cz);
         const content = getFlavorContent(spec.contentId);
-        ride.sign.userData = { isInteractive: true, name: content.name, flavorText: content.flavorText };
+        ride.entrance.userData = { isInteractive: true, name: content.name, flavorText: content.flavorText };
         group.add(ride.group);
-        interactiveItems.push(ride.sign);
+        interactiveItems.push(ride.entrance);
         return ride;
     });
 
@@ -458,16 +232,9 @@ export const createCarnival = (scene) => {
     group.add(midway.group);
     interactiveItems.push(...midway.interactiveItems);
 
-    const FERRIS_SPEED = 0.008;
 
     const updateCarnival = (deltaTime = 1 / 60) => {
-        const frameScale = deltaTime * 60;
-        ferrisWheelRotating.rotation.x += FERRIS_SPEED * frameScale;
-        ferrisGondolas.forEach((gondola) => {
-            // Counter wheel spin so carts always stay upright.
-            gondola.rotation.x = -ferrisWheelRotating.rotation.x;
-        });
-
+        ferris.update(deltaTime);
         addedRides.forEach(ride => ride.update(deltaTime));
         teacups.update(deltaTime);
         zipper.update(deltaTime);

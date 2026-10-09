@@ -1,3 +1,4 @@
+import { FERRIS, sampleFerrisAnchor } from '../world/ferris-layout.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MIDWAY_ALLEYS, MIDWAY_STALLS, TEACUPS, sampleTeacupMotion } from '../world/carnival-midway-layout.js';
@@ -15,14 +16,14 @@ test('ride footprints clear the road, trees, legacy rides and each other', () =>
         for(const [x,z] of stalls)assert.ok(Math.hypot(ride.x-x,ride.z-z)>ride.radius+4,ride.name+' stall');
     }
 });
-test('all five entrance signs have authored discovery text',async()=>{
+test('all five ride entrances have authored discovery text',async()=>{
     const content=parseFlavorFile(await readFile(new URL('../content/flavor/carnival.txt',import.meta.url),'utf8'));
     for(const ride of CARNIVAL_ADDITIONS)assert.ok(content[ride.contentId]?.flavorText,ride.contentId);
 });
 test('motion is bounded, with opposing Freestyle drives and specified carousel speed',()=>{
     for(let time=0;time<300;time+=.13)for(const ride of CARNIVAL_ADDITIONS){const state=sampleRideMotion(ride.kind,time);assert.ok(Object.values(state).every(Number.isFinite));if(ride.kind==='freestyle')assert.ok(state.tilt<=50*Math.PI/180+1e-9);}
     const free=sampleRideMotion('freestyle',60);assert.ok(Math.abs(free.turret-20*Math.PI)<1e-9);assert.ok(Math.abs(free.rim+44*Math.PI)<1e-9);
-    assert.ok(Math.abs(sampleRideMotion('carousel',60).spin+13*Math.PI)<1e-9);
+    assert.ok(Math.abs(sampleRideMotion('carousel',60).spin-13*Math.PI)<1e-9);
 });
 
 test('midway alleys preserve walking widths and keep booth footprints clear', () => {
@@ -49,4 +50,20 @@ test('new discoveries have text and cup motion is independent of frame sampling'
         let time = 0; for (let i = 0; i < fps * 10; i++) time += 1 / fps;
         assert.ok(Math.abs(sampleTeacupMotion(time, 2).cup - sampleTeacupMotion(10, 2).cup) < 1e-9);
     }
+});
+
+test('Ferris hinges have uniform rim spacing and buckets clear the platform', () => {
+    const spacings = [];
+    for (let i = 0; i < FERRIS.count; i++) {
+        const a = sampleFerrisAnchor(i), b = sampleFerrisAnchor((i + 1) % FERRIS.count);
+        assert.ok(Math.abs(Math.hypot(a.y, a.z) - FERRIS.radius) < 1e-9);
+        spacings.push(Math.hypot(a.y - b.y, a.z - b.z));
+    }
+    assert.ok(Math.max(...spacings) - Math.min(...spacings) < 1e-9);
+    assert.ok(FERRIS.pivotHeight - FERRIS.radius - FERRIS.hangerDrop - 0.33 > 0.5);
+});
+test('corrected ride directions and entrances face their intended way', () => {
+    assert.equal(sampleRideMotion('yoyo', 1).spin < 0, true);
+    assert.equal(sampleRideMotion('carousel', 1).spin > 0, true);
+    for (const kind of ['fury', 'carousel']) assert.equal(CARNIVAL_ADDITIONS.find(ride => ride.kind === kind).rotation, Math.PI);
 });

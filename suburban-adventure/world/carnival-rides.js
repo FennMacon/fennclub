@@ -6,7 +6,7 @@ import { sampleRideMotion } from './carnival-motion.js';
 export { CARNIVAL_ADDITIONS } from './carnival-motion.js';
 
 export function createCarnivalRide(spec, cx = 0, cz = 0) {
-    const group = new THREE.Group(); group.name = spec.name; group.position.set(cx + spec.x, 0, cz + spec.z);
+    const group = new THREE.Group(); group.name = spec.name; group.position.set(cx + spec.x, 0, cz + spec.z); group.rotation.y = spec.rotation || 0;
     const steel = createWireframeMaterial(0xb8d9e4), gold = createWireframeMaterial(0xffd46b);
     const colors = [0xf06b9d, 0x63e3d6, 0x9776ee, 0xffa24b];
     const paint = colors.map(createColor => createWireframeMaterial(createColor));
@@ -25,15 +25,16 @@ export function createCarnivalRide(spec, cx = 0, cz = 0) {
     const deckRadius = spec.kind === 'carousel' ? 4.15 : spec.kind === 'fury' ? 7 : 8;
     const deck = new THREE.Mesh(spec.kind === 'fury' ? new THREE.BoxGeometry(14, 0.3, 7) : new THREE.CylinderGeometry(deckRadius, deckRadius, 0.3, 32), steel); deck.position.y = 0.25; group.add(deck);
     const entranceDepth = spec.kind === 'fury' ? 3.5 : deckRadius;
-    // Entrance rails flank an open gate and low step; the sign is the inspect target.
-    for (const side of [-1, 1]) { beam(group, [side * 1.3, 0.3, entranceDepth], [side * 1.3, 1.3, entranceDepth + 3]); beam(group, [side * 1.3, 0.1, entranceDepth + 3], [side * 1.3, 1.3, entranceDepth + 3]); }
+    // Keep an inspectable entrance rail after removing the printed ride signs.
+    beam(group, [-1.3, 0.3, entranceDepth], [-1.3, 1.3, entranceDepth + 3], 0.06);
+    beam(group, [-1.3, 0.1, entranceDepth + 3], [-1.3, 1.3, entranceDepth + 3], 0.06);
     box(group, [2.5, 0.12, 1.5], [0, 0.12, entranceDepth + 0.5]);
-    const sign = new THREE.Group(); sign.position.set(2.4, 0, entranceDepth + 2); sign.name = `${spec.name} entrance`;
-    beam(sign, [0, 0, 0], [0, 2.4, 0], 0.08);
-    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
-    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#132539'; ctx.fillRect(0, 0, 512, 128); ctx.strokeStyle = '#ffdb75'; ctx.lineWidth = 6; ctx.strokeRect(4, 4, 504, 120);
-    ctx.fillStyle = '#ffdb75'; ctx.textAlign = 'center'; ctx.font = 'bold 38px sans-serif'; ctx.fillText(spec.name.toUpperCase(), 256, 58); ctx.font = '22px sans-serif'; ctx.fillText('MIDWAY • INSPECT', 256, 100);
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.75), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), side: THREE.DoubleSide })); panel.position.y = 2.3; sign.add(panel); group.add(sign);
+    const entrance = new THREE.Group();
+    entrance.position.set(1.3, 1, entranceDepth + 1.5);
+    entrance.name = spec.name + ' entrance';
+    beam(entrance, [0, -0.7, -1.5], [0, 0.3, 1.5], 0.06);
+    beam(entrance, [0, -0.9, 1.5], [0, 0.3, 1.5], 0.06);
+    group.add(entrance);
     let animate;
     if (spec.kind === 'fury') {
         // Two A frames, a horizontal axle, twin hanger arms and a curved ten-row boat.
@@ -69,15 +70,19 @@ export function createCarnivalRide(spec, cx = 0, cz = 0) {
         const rotor=new THREE.Group(); group.add(rotor); ring(rotor,3,0.45); beam(rotor,[0,0.4,0],[0,5.8,0],0.35,gold);
         const roof = new THREE.Mesh(new THREE.ConeGeometry(3.15,1.5,16),paint[0]); roof.position.y=5.15; rotor.add(roof); ring(rotor,3.15,4.4); lights(rotor,3.15,4.4); lights(rotor,2.7,0.5);
         const horses=[];
-        for(let i=0;i<14;i++) { const a=Math.floor(i/2)*Math.PI*2/8, r=i%2?2.6:1.8, x=Math.cos(a)*r,z=Math.sin(a)*r; beam(rotor,[x,0.4,z],[x,4.4,z],0.035,gold); const horse=new THREE.Group(); horse.position.set(x,1.4,z); horse.rotation.y=-a; rotor.add(horse); box(horse,[0.38,0.55,0.95],[0,0,0],paint[i%4]); const neck=box(horse,[0.28,0.65,0.3],[0,0.4,-0.4],paint[i%4]); neck.rotation.x=-0.35; box(horse,[0.3,0.3,0.5],[0,0.75,-0.55],paint[i%4]); box(horse,[0.4,0.12,0.4],[0,0.32,0.05],gold); for(const side of [-1,1])for(const end of [-1,1])beam(horse,[side*0.15,-0.2,end*0.3],[side*0.22,-0.7,end*0.47],0.055,paint[i%4]); beam(horse,[0,0.15,0.4],[0,-0.35,0.8],0.08,gold); horses.push(horse); }
-        const chariot=seat(rotor,[0,0.75,-2.3],paint[2],1.4); box(chariot,[1.7,0.2,1.1],[0,-0.2,0],gold);
+        for(let i=0;i<14;i++) { const a=Math.floor(i/2)*Math.PI*2/8, r=i%2?2.6:1.8, x=Math.cos(a)*r,z=Math.sin(a)*r; beam(rotor,[x,0.4,z],[x,4.4,z],0.035,gold); const horse=new THREE.Group(); horse.name='CarouselHorse'+(i+1); horse.position.set(x,1.4,z); horse.rotation.y=-a; rotor.add(horse); box(horse,[0.38,0.55,0.95],[0,0,0],paint[i%4]); const neck=box(horse,[0.28,0.65,0.3],[0,0.4,-0.4],paint[i%4]); neck.rotation.x=-0.35; box(horse,[0.3,0.3,0.5],[0,0.75,-0.55],paint[i%4]); box(horse,[0.4,0.12,0.4],[0,0.32,0.05],gold); for(const side of [-1,1])for(const end of [-1,1])beam(horse,[side*0.15,-0.2,end*0.3],[side*0.22,-0.7,end*0.47],0.055,paint[i%4]); beam(horse,[0,0.15,0.4],[0,-0.35,0.8],0.08,gold); horses.push(horse); }
+        // The eighth station is reserved for the chariot; seven stations hold horse pairs.
+        const chariotAngle = 7 * Math.PI / 4;
+        const chariot = seat(rotor, [Math.cos(chariotAngle) * 2.3, 0.75, Math.sin(chariotAngle) * 2.3], paint[2], 1.4);
+        chariot.name = 'CarouselChariot'; chariot.rotation.y = Math.PI - chariotAngle;
+        box(chariot, [1.7, 0.2, 1.1], [0, -0.2, 0], gold);
         animate=state=>{rotor.rotation.y=state.spin;horses.forEach((horse,i)=>horse.position.y=1.4+Math.sin(state.bob+i*Math.PI/2)*0.25);};
     } else {
         beam(group,[0,0.4,0],[0,8,0],0.5,paint[1]);
-        const crown=new THREE.Group(); crown.position.y=8; group.add(crown);
+        const crown=new THREE.Group(); crown.name='YoYoCrown'; crown.position.y=8; group.add(crown);
         const canopy=new THREE.Mesh(new THREE.ConeGeometry(5.2,1.8,32),paint[2]);canopy.position.y=0.8;crown.add(canopy);ring(crown,5.2,0);lights(crown,5.2,0);
         const hangers=[];
-        for(let i=0;i<32;i++){const a=i*Math.PI*2/32, r=i%2?5.2:4.4;const radial=new THREE.Group();radial.rotation.y=-a;crown.add(radial);const hinge=new THREE.Group();hinge.position.x=r;radial.add(hinge);for(const z of [-0.2,0.2])beam(hinge,[0,0,z],[0,-3.4,z],0.025);seat(hinge,[0,-3.4,0],paint[i%4]);hangers.push(hinge);}
+        for(let i=0;i<32;i++){const a=i*Math.PI*2/32, r=i%2?5.2:4.4;const radial=new THREE.Group();radial.rotation.y=-a;crown.add(radial);const hinge=new THREE.Group();hinge.position.x=r;radial.add(hinge);for(const z of [-0.2,0.2])beam(hinge,[0,0,z],[0,-3.4,z],0.025);seat(hinge,[0,-3.4,0],paint[i%4]).name='YoYoSeat'+(i+1);hangers.push(hinge);}
         animate=state=>{crown.rotation.y=state.spin;hangers.forEach(hinge=>hinge.rotation.z=state.flare);};
     }
     // Batch rigid pieces inside each moving assembly to limit mobile draw calls.
@@ -98,5 +103,5 @@ export function createCarnivalRide(spec, cx = 0, cz = 0) {
     batch(group);
     let time=0;
     const update=delta=>{time+=Math.max(0,Math.min(delta,0.1));animate(sampleRideMotion(spec.kind,time));}; update(0);
-    return {group,sign,update};
+    return {group,entrance,update};
 }

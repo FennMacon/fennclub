@@ -62,6 +62,48 @@ try {
         for (let i = 0; i < 600; i++) carnival.updateCarnival(1 / 60);
         assert(teacups.rotation.y === 0 && rotor.rotation.y !== 0, 'Only teacup turntable rotates');
         assert(carnival.interactiveItems.every(item => item.userData.flavorText), 'Discoveries have text');
+        carnival.group.updateMatrixWorld(true);
+        const q = new THREE.Quaternion(), world = new THREE.Vector3();
+        const ferris = carnival.group.getObjectByName('FerrisWheel');
+        const ferrisRotor = ferris.getObjectByName('FerrisRotor');
+        const gondolas = ferrisRotor.children.filter(child => /^FerrisGondola[0-9]+$/.test(child.name));
+        assert(gondolas.length === 16, 'Sixteen evenly spaced rim pivots');
+        for (const pivot of gondolas) {
+            assert(Math.abs(pivot.position.length() - 12) < 1e-9, 'Hinge sits on rim');
+            assert(Math.abs(pivot.getWorldQuaternion(q).x) < 1e-8, 'Cart remains upright');
+            const bucket = pivot.children.find(child => /^FerrisBucket/.test(child.name));
+            const delta = bucket.getWorldPosition(world).sub(pivot.getWorldPosition(new THREE.Vector3()));
+            assert(Math.abs(delta.y + 1.55) < 1e-8 && Math.abs(delta.z) < 1e-8, 'Bucket hangs beneath actual hinge');
+        }
+        for (const [rideName, prefix, facing, direction] of [['Carousel', 'CarouselHorse', -1, 1], ['Yo-Yo', 'YoYoSeat', 1, -1]]) {
+            const ride = carnival.group.getObjectByName(rideName);
+            const center = ride.getWorldPosition(new THREE.Vector3());
+            ride.traverse(object => {
+                if (!object.name.startsWith(prefix)) return;
+                const radial = object.getWorldPosition(new THREE.Vector3()).sub(center);
+                const tangent = new THREE.Vector3(radial.z * direction, 0, -radial.x * direction).normalize();
+                const forward = new THREE.Vector3(0, 0, facing).applyQuaternion(object.getWorldQuaternion(new THREE.Quaternion()));
+                assert(forward.dot(tangent) > 0.99, rideName + ' riders face travel');
+            });
+        }
+        const carousel = carnival.group.getObjectByName('Carousel');
+        const chariot = carousel.getObjectByName('CarouselChariot');
+        assert(chariot, 'Chariot has its own station');
+        carousel.traverse(object => {
+            if (object.name.startsWith('CarouselHorse'))
+                assert(Math.hypot(object.position.x - chariot.position.x, object.position.z - chariot.position.z) > 1.4, 'Chariot clears horse stations');
+        });
+        for (let i = 1; i <= 6; i++) {
+            const handle = teacups.getObjectByName('TeacupHandle' + i).children[0];
+            const angle = handle.rotation.z;
+            assert(Math.cos(angle) < 0 && Math.cos(angle + Math.PI * 1.6) < 0, 'Both handle tips face bowl');
+        }
+        for (const name of ['Pharaoh’s Fury', 'Carousel']) assert(Math.abs(carnival.group.getObjectByName(name).rotation.y - Math.PI) < 1e-9, 'Entrance faces road');
+        carnival.group.traverse(object => {
+            const materials = object.material ? (Array.isArray(object.material) ? object.material : [object.material]) : [];
+            assert(materials.every(material => !material.map), 'No printed ride or booth signs');
+        });
+
         carnival.group.traverse(object => assert([...object.position.toArray(), ...object.quaternion.toArray()].every(Number.isFinite), object.name));
         const geometries = new Set(), materials = new Set();
         carnival.group.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) materials.add(object.material); });

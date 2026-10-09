@@ -6,7 +6,7 @@ import { getFlavorContent } from '../content-loader.js';
 export function createCarnivalMidway(cx, cz) {
     const group = new THREE.Group(); group.name = 'CarnivalMidway';
     group.position.set(cx, 0, cz);
-    const { mesh, box, beam, bulb, sign } = createCarnivalKit();
+    const { mesh, box, beam, bulb } = createCarnivalKit();
     const interactiveItems = [];
     const colors = [0xed6f99, 0x64c9cb, 0xa686e1, 0xf1ae64];
     const sphere = new THREE.SphereGeometry(0.2, 8, 6);
@@ -27,16 +27,13 @@ export function createCarnivalMidway(cx, cz) {
     for (const alley of MIDWAY_ALLEYS) {
         const aisle = new THREE.Group(); aisle.name = alley.name;
         aisle.position.set(alley.x, 0, alley.z); group.add(aisle);
-        const path = mesh(aisle, new THREE.PlaneGeometry(alley.width, alley.length), [0, -0.16, 0],
-            new THREE.MeshBasicMaterial({ color: alley.kind === 'food' ? 0x453b35 : 0x323b4c, side: THREE.DoubleSide }));
-        path.rotation.x = -Math.PI / 2;
         const gateway = new THREE.Group();
         gateway.name = alley.name + ' gateway'; gateway.position.set(alley.x, 0, alley.entranceZ);
         // Food fronts north; games fronts south, toward the road.
         gateway.rotation.y = alley.direction === 1 ? Math.PI : 0; group.add(gateway);
         for (const side of [-1, 1]) beam(gateway, [side * 4.2, 0, 0], [side * 4.2, 4.8, 0], 0.1, 0xffdb85);
         beam(gateway, [-4.2, 4.8, 0], [4.2, 4.8, 0], 0.09, 0xffdb85);
-        sign(gateway, alley.name, [0, 4.6, 0.05], 6.5, alley.kind === 'food' ? 'SWEET • SALTY • FRESH' : 'STEP RIGHT UP');
+        for (let i = 0; i < 20; i++) bulb(gateway, [(i - 9.5) * 0.4, 4.8, 0], i);
         // Sagging strands sit above walking height, with no light objects.
         for (let row = 0; row < 4; row++) {
             const z = -alley.length / 2 + 5 + row * 8;
@@ -68,7 +65,6 @@ export function createCarnivalMidway(cx, cz) {
             roof.rotation.x = 0.12;
             box(stall, [0.5, 0.3, 0.08], [(strip - 4.5) * 0.5, 2.7, 2.05], strip % 2 ? 0xffedc1 : color);
         }
-        sign(stall, spec.label, [0, 3.55, 1.75], 4.5);
         for (let i = 0; i < 12; i++) bulb(stall, [(i - 5.5) * 0.4, 3.15, 1.8], i);
         if (spec.alley === 'games') prizes(stall, color);
         if (spec.kind === 'rings') {
@@ -113,8 +109,7 @@ export function createCarnivalMidway(cx, cz) {
                 for (const r of [0.22, 0.4, 0.58]) mesh(target, new THREE.TorusGeometry(r, 0.03, 5, 16), [0, 0, 0], 0xffdc85);
             }
         } else {
-            // Food counters have distinct serving props and a menu board.
-            sign(stall, spec.kind === 'lemonade' ? 'FRESH SQUEEZED' : 'MADE TO ORDER', [0, 2.15, -1.2], 2.6);
+            // Food counters have distinct serving props.
             if (spec.kind === 'cotton') for (let i = 0; i < 4; i++) {
                 const x = (i - 1.5) * 0.65;
                 beam(stall, [x, 1.25, 0.9], [x, 1.8, 0.9], 0.025, 0xffedc1);

@@ -27,19 +27,7 @@ export function createCarnivalKit() {
     };
     const bulbMaterials = [0xffdc85, 0x91ffe8].map(color => new THREE.MeshBasicMaterial({ color }));
     const bulb = (parent, position, index) => mesh(parent, bulbGeometry, position, bulbMaterials[index % 2]);
-    const sign = (parent, label, position, width = 4, subtitle = '') => {
-        const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 160;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#15283a'; ctx.fillRect(0, 0, 768, 160);
-        ctx.strokeStyle = '#ffdd85'; ctx.lineWidth = 6; ctx.strokeRect(4, 4, 760, 152);
-        ctx.fillStyle = '#ffdd85'; ctx.textAlign = 'center';
-        ctx.font = 'bold 48px sans-serif';
-        ctx.fillText(label, 384, subtitle ? 70 : 100, 730);
-        if (subtitle) { ctx.font = '26px sans-serif'; ctx.fillText(subtitle, 384, 125, 730); }
-        return mesh(parent, new THREE.PlaneGeometry(width, width * 160 / 768), position,
-            new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), side: THREE.DoubleSide }));
-    };
-    return { mesh, box, beam, bulb, sign, material };
+    return { mesh, box, beam, bulb, material };
 }
 
 // Only merge siblings: cup pivots, booth roots and sign interaction targets survive.
