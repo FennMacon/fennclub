@@ -34,6 +34,28 @@ try {
     const buildings = await import('../buildings.js');
     const renderer = await import('../renderer.js');
     const canvas = renderer.getRenderer().domElement;
+    await check('suburban outer columns, roads and subway move together', async () => {
+        const { scene, streetElements } = game.getRuntimeState();
+        const { CARNIVAL_CONFIG, MANSION_CONFIG, FOREST_CLEARINGS, RIVER_CONFIG } = await import('../world/config.js');
+        const { getHorizontalBounds } = await import('../roads.js');
+        scene.updateMatrixWorld(true);
+        const ferris = scene.getObjectByName('FerrisWheel').getWorldPosition(new THREE.Vector3());
+        assert(Math.abs(ferris.x - (CARNIVAL_CONFIG.x - 25)) < 1e-9 && ferris.x > 0, 'Carnival east');
+        const mansion = scene.getObjectByName('MansionCompound');
+        assert(mansion.position.x === MANSION_CONFIG.x && Math.abs(mansion.rotation.y - Math.PI) < 1e-9, 'Mansion east, entrance inward');
+        assert(mansion.getObjectByName('MansionTrail').geometry.attributes.position.count > 200, 'Continuous winding approach is built');
+        const river = scene.getObjectByName('River').children.find(object => object.isMesh);
+        assert(river.getWorldPosition(new THREE.Vector3()).x === RIVER_CONFIG.x && RIVER_CONFIG.x < 0, 'River west');
+        const clearing = scene.getObjectByName('ForestClearings');
+        for (const prop of clearing.children.filter(object => object.userData.isInteractive))
+            assert(FOREST_CLEARINGS.some(config => Math.abs(config.x - prop.getWorldPosition(new THREE.Vector3()).x) < 1e-9), 'Clearing moved');
+        const subway = scene.getObjectByName('SubwayStop').getWorldPosition(new THREE.Vector3());
+        assert(subway.x === -290 && subway.z === -333, 'Subway southwest');
+        const street = streetElements.street, bounds = getHorizontalBounds('suburban');
+        assert(Math.abs(street.position.x - street.geometry.parameters.width / 2 - bounds.xMin) < 1e-9, 'West road end');
+        assert(Math.abs(street.position.x + street.geometry.parameters.width / 2 - bounds.xMax) < 1e-9, 'East road end');
+        assert(streetElements.cars.filter(car => car.userData.roadType === 'horizontal').every(car => car.userData.bounds.xMin === bounds.xMin && car.userData.bounds.xMax === bounds.xMax), 'Traffic bounds moved');
+    });
     await check('carnival builds eight rides and food/game alleys; animation stays finite', async () => {
         const { createCarnival } = await import('../world/landmarks.js');
         const { CARNIVAL_ADDITIONS } = await import('../world/carnival-motion.js');
@@ -237,6 +259,7 @@ try {
         assert(game.getRuntimeState().streetElements.zoneRootGroups.length === 3, 'city missing zones');
         assert(game.performMapSwitch(), 'return unavailable'); await frame();
         assert(scenes.getCurrentMap() === 'suburban', 'suburban arrival failed');
+        assert(game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(-290, 2, -328)) < 1e-9, 'Return to west subway');
         assert(renderer.getRenderer().domElement === canvas, 'canvas changed');
     });
     await check('reward dismissal works with mobile action button', () => {

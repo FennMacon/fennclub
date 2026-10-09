@@ -137,8 +137,8 @@ export const createConnectorRoads = (scene) => {
             connectorGroup.add(mesh);
         });
 
-        // Outer line: left connector gapped; right connector (river side) full length so white continues across
-        if (isLeftConnector) {
+        // Outer line: east connector gapped; west connector (river side) full length so white continues across
+        if (!isLeftConnector) {
             const outerSegments = buildSegments(innerRanges);
             outerSegments.forEach(({ mesh }) => {
                 mesh.position.x = outerX;

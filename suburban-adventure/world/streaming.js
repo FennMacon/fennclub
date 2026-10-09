@@ -2,11 +2,11 @@
 import * as THREE from 'three';
 import { createTree } from '../utils.js';
 import { createParkElements, createTripleDeckerBuilding, createSimpleTower } from '../buildings.js';
-import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS } from '../scenes.js';
-import { VERTICAL_BOUNDS, ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, CITY_CONNECTOR_X } from '../roads.js';
+import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS, SUBWAY_POSITIONS } from '../scenes.js';
+import { VERTICAL_BOUNDS, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, CITY_CONNECTOR_X } from '../roads.js';
 import { ZONE_SIZE, STREET_DEPTH, CONNECTOR_ROAD_WIDTH, CONNECTOR_SIDEWALK_DEPTH } from './constants.js';
 
-import { ZONE_NW_MANSION, ZONE_W_CARNIVAL, ZONE_SW_CLEARING_CONFIG, ZONE_SW_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
+import { MANSION_CONFIG, getMansionPathSamples, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
 const TD_CORE_RADIUS = 100;
 const TD_FORWARD_RADIUS = 200;
 const TD_LATERAL_SPAN = 140;
@@ -293,14 +293,14 @@ export const createUnifiedMapTrees = (scene) => {
     const FOREST_Z = UNIFIED_MAP_ZONE_OFFSETS.FOREST_SUBURBAN.z;
     const POND_Z = UNIFIED_MAP_ZONE_OFFSETS.POND.z;
     const stDep = STREET_DEPTH / 2;
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, PLAZA_Z + 11 - stDep, PLAZA_Z + 11 + stDep));
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, FOREST_Z + 11 - stDep, FOREST_Z + 11 + stDep));
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, POND_Z + 11 - stDep, POND_Z + 11 + stDep));
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, PLAZA_Z + 11 - stDep, PLAZA_Z + 11 + stDep));
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, FOREST_Z + 11 - stDep, FOREST_Z + 11 + stDep));
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, POND_Z + 11 - stDep, POND_Z + 11 + stDep));
 
     // PLAZA sidewalks, parking, buildings (world = local for plaza at 0,0)
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, -1, 5));   // near sidewalk
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, 17, 23));  // far sidewalk
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, 27, 87));  // parking (after buffer fix)
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, -1, 5));   // near sidewalk
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, 17, 23));  // far sidewalk
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, 27, 87));  // parking (after buffer fix)
     exclusions.push(rect(-70, 70, -10, 15));
     exclusions.push(rect(-70, 70, 20, 50));
     exclusions.push(rect(-50, 50, 50, 70));
@@ -310,8 +310,8 @@ export const createUnifiedMapTrees = (scene) => {
 
     // FOREST zone sidewalks, buildings, park (world = local + FOREST_Z)
     const fz = FOREST_Z;
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, fz - 1, fz + 5));
-    exclusions.push(rect(ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, fz + 17, fz + 23));
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, fz - 1, fz + 5));
+    exclusions.push(rect(SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, fz + 17, fz + 23));
     exclusions.push(rect(-70, 70, fz - 10, fz + 15));
     exclusions.push(rect(-70, 70, fz + 20, fz + 50));
     exclusions.push(rect(-50, 50, fz + 50, fz + 70));
@@ -327,13 +327,13 @@ export const createUnifiedMapTrees = (scene) => {
     exclusions.push(rect(-8, 8, pz, pz + 125));
     exclusions.push(rect(12, 58, pz - 20, pz));
 
-    // ZONE_SW forest clearings + path
-    ZONE_SW_CLEARING_CONFIG.forEach((c) => {
+    // Southeast forest clearings + path
+    FOREST_CLEARINGS.forEach((c) => {
         exclusions.push(rect(c.x - c.radius, c.x + c.radius, c.z - c.radius, c.z + c.radius));
     });
-    for (let i = 0; i < ZONE_SW_PATH_WAYPOINTS.length - 1; i++) {
-        const p1 = ZONE_SW_PATH_WAYPOINTS[i];
-        const p2 = ZONE_SW_PATH_WAYPOINTS[i + 1];
+    for (let i = 0; i < FOREST_PATH_WAYPOINTS.length - 1; i++) {
+        const p1 = FOREST_PATH_WAYPOINTS[i];
+        const p2 = FOREST_PATH_WAYPOINTS[i + 1];
         const halfW = 2.5;
         const minX = Math.min(p1.x, p2.x) - halfW;
         const maxX = Math.max(p1.x, p2.x) + halfW;
@@ -342,16 +342,16 @@ export const createUnifiedMapTrees = (scene) => {
         exclusions.push(rect(minX, maxX, minZ, maxZ));
     }
 
-    // ZONE_W carnival - no trees on grounds
+    // East carnival - no trees on grounds
     exclusions.push(rect(
-        ZONE_W_CARNIVAL.x - ZONE_W_CARNIVAL.radius,
-        ZONE_W_CARNIVAL.x + ZONE_W_CARNIVAL.radius,
-        ZONE_W_CARNIVAL.z - ZONE_W_CARNIVAL.radius,
-        ZONE_W_CARNIVAL.z + ZONE_W_CARNIVAL.radius
+        CARNIVAL_CONFIG.x - CARNIVAL_CONFIG.radius,
+        CARNIVAL_CONFIG.x + CARNIVAL_CONFIG.radius,
+        CARNIVAL_CONFIG.z - CARNIVAL_CONFIG.radius,
+        CARNIVAL_CONFIG.z + CARNIVAL_CONFIG.radius
     ));
 
-    // ZONE_NW mansion compound
-    const m = ZONE_NW_MANSION;
+    // Northeast mansion compound
+    const m = MANSION_CONFIG;
     exclusions.push(rect(
         m.x - m.width / 2,
         m.x + m.width / 2,
@@ -359,7 +359,7 @@ export const createUnifiedMapTrees = (scene) => {
         m.z + m.depth / 2
     ));
 
-    // River (right column) - no trees in water, plus 10 feet buffer on each bank
+    // River (west column) - no trees in water, plus 10 feet buffer on each bank
     const r = RIVER_CONFIG;
     const RIVER_TREE_BUFFER = 10;
     exclusions.push(rect(
@@ -369,7 +369,12 @@ export const createUnifiedMapTrees = (scene) => {
         r.zMax
     ));
 
+    const subway = SUBWAY_POSITIONS.suburban;
+    exclusions.push(rect(subway.x - 8, subway.x + 8, subway.z - 8, subway.z + 10));
+
+    const mansionTrail = getMansionPathSamples();
     const isExcluded = (wx, wz) => {
+        if (mansionTrail.some(p => Math.hypot(wx - p.x, wz - p.z) < 4.5)) return true;
         for (const r of exclusions) if (inRect(wx, wz, r)) return true;
         return false;
     };

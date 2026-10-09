@@ -3,12 +3,12 @@ import * as THREE from 'three';
 import { createCarnival } from '../world/landmarks.js';
 import { CARNIVAL_ADDITIONS } from '../world/carnival-rides.js';
 import { loadAllContent } from '../content-loader.js';
-import { ZONE_W_CARNIVAL } from '../world/config.js';
+import { CARNIVAL_CONFIG } from '../world/config.js';
 await loadAllContent();
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x101a2a);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));document.body.append(renderer.domElement);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,600);
-const carnival=createCarnival(scene), center=ZONE_W_CARNIVAL;
+const carnival=createCarnival(scene), center=CARNIVAL_CONFIG;
 const ground=new THREE.GridHelper(220,44,0x426576,0x243647);ground.position.x=center.x;scene.add(ground);
 const road=new THREE.Mesh(new THREE.PlaneGeometry(220,22),new THREE.MeshBasicMaterial({color:0x263745,side:THREE.DoubleSide}));road.rotation.x=-Math.PI/2;road.position.set(center.x,.01,11);scene.add(road);
 const frame = () => {

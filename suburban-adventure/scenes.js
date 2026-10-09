@@ -39,19 +39,17 @@ export const FOG_PRESETS = {
     FOREST_CLEARINGS: { color: 0x1a2a1e, near: 35, far: 220 }
 };
 
-// 9-zone grid for 1000x1000 map - ground tiles + which zones have content
-// Left column: Mansion (NW), Hill (W), Forest clearings (SW)
-// Right column: River runs through NE, E, SE
+// Nine suburb sections. Outer columns: west river; east landmarks.
 export const UNIFIED_MAP_ZONES = [
-    { key: 'ZONE_SW', x: -333, z: -333, groundType: 'grass', config: 'FOREST_CLEARINGS' },
-    { key: 'PLAZA', x: 0, z: 0, groundType: 'concrete', config: 'PLAZA' },
-    { key: 'ZONE_SE', x: 333, z: -333, groundType: 'grass', config: 'RIVER' },
-    { key: 'ZONE_W', x: -333, z: 0, groundType: 'grass', config: 'CARNIVAL' },
+    { key: 'ZONE_NW', x: -333, z: 333, groundType: 'grass', config: 'RIVER' },
     { key: 'FOREST_SUBURBAN', x: 0, z: 333, groundType: 'grass', config: 'FOREST_SUBURBAN' },
-    { key: 'ZONE_E', x: 333, z: 0, groundType: 'grass', config: 'RIVER' },
-    { key: 'ZONE_NW', x: -333, z: 333, groundType: 'grass', config: 'MANSION' },
+    { key: 'ZONE_NE', x: 333, z: 333, groundType: 'grass', config: 'MANSION' },
+    { key: 'ZONE_W', x: -333, z: 0, groundType: 'grass', config: 'RIVER' },
+    { key: 'PLAZA', x: 0, z: 0, groundType: 'concrete', config: 'PLAZA' },
+    { key: 'ZONE_E', x: 333, z: 0, groundType: 'grass', config: 'CARNIVAL' },
+    { key: 'ZONE_SW', x: -333, z: -333, groundType: 'grass', config: 'RIVER' },
     { key: 'POND', x: 0, z: -333, groundType: 'grass', config: 'POND' },
-    { key: 'ZONE_NE', x: 333, z: 333, groundType: 'grass', config: 'RIVER' }
+    { key: 'ZONE_SE', x: 333, z: -333, groundType: 'grass', config: 'FOREST_CLEARINGS' }
 ];
 
 // 9-zone city map (Allston-style) - asphalt/concrete, no grass
@@ -76,7 +74,7 @@ export const CITY_MAP_ZONE_OFFSETS = {
 
 // Subway stop positions (world x, z) - used for interaction and arrival spawn
 export const SUBWAY_POSITIONS = {
-    suburban: { x: 290, z: -333 },
+    suburban: { x: -290, z: -333 },
     city: { x: 333, z: -290 }
 };
 

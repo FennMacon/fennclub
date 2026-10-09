@@ -4,7 +4,7 @@ import { createWireframeMaterial, createCar, getRandomCarColor, createTree } fro
 import { createBuildingFacade, createParkElements, createPondElements } from '../buildings.js';
 import { createNPCs } from '../npcs.js';
 import { UNIFIED_MAP_ZONES, UNIFIED_MAP, CITY_MAP_ZONES } from '../scenes.js';
-import { HORIZONTAL_BOUNDS, CONNECTOR_X, ZONE_STREET_WIDTH, ZONE_STREET_X_MIN, ZONE_STREET_X_MAX, SUBURBAN_ZONE_STREET_WIDTH, SUBURBAN_ZONE_STREET_X_MAX, SUBURBAN_LEFT_CORNER_X, SUBURBAN_LEFT_OUTER_CORNER_X, SUBURBAN_HORIZONTAL_BOUNDS, CITY_CONNECTOR_X } from '../roads.js';
+import { HORIZONTAL_BOUNDS, CONNECTOR_X, ZONE_STREET_WIDTH, ZONE_STREET_X_MIN, ZONE_STREET_X_MAX, SUBURBAN_ZONE_STREET_WIDTH, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, SUBURBAN_RIGHT_CORNER_X, SUBURBAN_RIGHT_OUTER_CORNER_X, SUBURBAN_HORIZONTAL_BOUNDS, CITY_CONNECTOR_X } from '../roads.js';
 import { GROUND_COLORS, ZONE_SIZE, GROUND_LAYERS, SIDEWALK_DEPTH } from './constants.js';
 
 import { getShopsForZone } from './config.js';
@@ -464,8 +464,8 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     const isCityMap = zoneSceneKey.startsWith('CITY_');
 
     // Main street (where cars drive). City map: connector roads provide asphalt; only suburbs draw zone street.
-    // Suburban: street stops before river (x=280); city uses full extent.
-    const streetCenterX = isCityMap ? 0 : (ZONE_STREET_X_MIN + SUBURBAN_ZONE_STREET_X_MAX) / 2;
+    // Suburban: street stops at the west connector and extends through the east carnival.
+    const streetCenterX = isCityMap ? 0 : (SUBURBAN_ZONE_STREET_X_MIN + SUBURBAN_ZONE_STREET_X_MAX) / 2;
     const streetWidth = isCityMap ? ZONE_STREET_WIDTH : SUBURBAN_ZONE_STREET_WIDTH;
     let street = null;
     if (!isCityMap) {
@@ -581,7 +581,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
         };
 
         const sidewalkXMax = isCityMap ? ZONE_STREET_X_MAX : SUBURBAN_ZONE_STREET_X_MAX;
-        for (let x = ZONE_STREET_X_MIN; x <= sidewalkXMax; x += 6) {
+        for (let x = isCityMap ? ZONE_STREET_X_MIN : SUBURBAN_ZONE_STREET_X_MIN; x <= sidewalkXMax; x += 6) {
             if (inJunctionClip(x)) continue;
             const lineGeometry = new THREE.PlaneGeometry(0.1, 6, 1, 1);
             const line = new THREE.Mesh(lineGeometry, lineMaterial.clone());
@@ -610,12 +610,12 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
         
         // Double yellow center line - gapped where vertical connectors cross (horizontal road runs in X)
         const yellowGapHalf = 10;
-        const xMin = ZONE_STREET_X_MIN;
+        const xMin = isCityMap ? ZONE_STREET_X_MIN : SUBURBAN_ZONE_STREET_X_MIN;
         const xMax = isCityMap ? ZONE_STREET_X_MAX : SUBURBAN_ZONE_STREET_X_MAX;
         const allConnectorCrossings = isCityMap
             ? [...CITY_CONNECTOR_X].sort((a, b) => a - b)
             : [CONNECTOR_X.LEFT, CONNECTOR_X.RIGHT].sort((a, b) => a - b);
-        // Only gap for connectors that cross through; suburban right: yellow ends 5 units before white (165.05)
+        // Only gap for connectors that cross through; suburban west: yellow ends 5 units inward from white
         const connectorCrossings = allConnectorCrossings.filter((cx) => cx > xMin + yellowGapHalf && cx < xMax - yellowGapHalf);
         const yellowXRanges = [];
         let prevX = xMin;
@@ -626,14 +626,8 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
             prevX = Math.max(prevX, gapEnd);
         }
         if (prevX < xMax) yellowXRanges.push([prevX, xMax]);
-        // Suburban river end: yellow 5 units shorter than white (stops at 160.05, white at 165.05)
-        if (!isCityMap) {
-            const lastIdx = yellowXRanges.length - 1;
-            const last = yellowXRanges[lastIdx];
-            if (last && last[1] === xMax) {
-                yellowXRanges[lastIdx] = [last[0], xMax - 5];
-            }
-        }
+        // Yellow ends five units inward from the west river-side white edge.
+        if (!isCityMap && yellowXRanges[0]?.[0] === xMin) yellowXRanges[0][0] += 5;
 
         const addYellowSegment = (xStart, xEnd, zOffset) => {
             const len = xEnd - xStart;
@@ -651,7 +645,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
             addYellowSegment(xStart, xEnd, -0.1);
         });
         
-        // White lane dividers - 165.05 corner match on both sides (gap at left junction, segment resumes at -165.05)
+        // White lane dividers join the east connector and terminate at the west connector
         const addWhiteSegment = (xStart, xEnd, zOffset) => {
             const len = xEnd - xStart;
             if (len <= 0) return;
@@ -665,14 +659,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
         };
         const whiteXRanges = isCityMap
             ? yellowXRanges
-            : (() => {
-                if (yellowXRanges.length < 2) return yellowXRanges;
-                const [first] = yellowXRanges;
-                return [
-                    [first[0], SUBURBAN_LEFT_OUTER_CORNER_X],  // Carnival side: extend to connector outer (-175)
-                    [SUBURBAN_LEFT_CORNER_X, xMax]             // River side: always to 165.05 (independent of yellow)
-                ];
-            })();
+            : [[xMin, SUBURBAN_RIGHT_CORNER_X], [SUBURBAN_RIGHT_OUTER_CORNER_X, xMax]];
         whiteXRanges.forEach(([xStart, xEnd]) => {
             addWhiteSegment(xStart, xEnd, 5);   // Left lane divider
             addWhiteSegment(xStart, xEnd, -5);  // Right lane divider

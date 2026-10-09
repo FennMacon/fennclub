@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MIDWAY_ALLEYS, MIDWAY_STALLS, TEACUPS, sampleTeacupMotion } from '../world/carnival-midway-layout.js';
 import { CARNIVAL_ADDITIONS, sampleRideMotion } from '../world/carnival-motion.js';
-import { ZONE_W_CARNIVAL, CARNIVAL_ROAD_EXCLUSION } from '../world/config.js';
+import { CARNIVAL_CONFIG, CARNIVAL_ROAD_EXCLUSION } from '../world/config.js';
 import { readFile } from 'node:fs/promises';
 import { parseFlavorFile } from '../content-loader.js';
 test('ride footprints clear the road, trees, legacy rides and each other', () => {
@@ -11,7 +11,7 @@ test('ride footprints clear the road, trees, legacy rides and each other', () =>
     const stalls = MIDWAY_STALLS.map(stall => [stall.x, stall.z]);
     for(const [i,ride] of CARNIVAL_ADDITIONS.entries()) {
         assert.ok(ride.z+ride.radius<CARNIVAL_ROAD_EXCLUSION.zMin || ride.z-ride.radius>CARNIVAL_ROAD_EXCLUSION.zMax, ride.name+' road');
-        assert.ok(Math.hypot(ride.x,ride.z)+ride.radius<ZONE_W_CARNIVAL.radius,ride.name+' trees');
+        assert.ok(Math.hypot(ride.x,ride.z)+ride.radius<CARNIVAL_CONFIG.radius,ride.name+' trees');
         for(const other of [...legacy,...CARNIVAL_ADDITIONS.slice(i+1)])assert.ok(Math.hypot(ride.x-other.x,ride.z-other.z)>ride.radius+other.radius,ride.name+' overlap');
         for(const [x,z] of stalls)assert.ok(Math.hypot(ride.x-x,ride.z-z)>ride.radius+4,ride.name+' stall');
     }

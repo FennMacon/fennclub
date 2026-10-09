@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Suburbs map</title><style>body{margin:0;background:#101820;color:#e8efed;font:15px system-ui,sans-serif}main{max-width:850px;margin:auto;padding:24px}h1{font-size:24px;margin:0 0 8px}p{color:#aabfbd;margin:0 0 20px}svg{width:100%;height:auto;background:#17282b;border-radius:16px}text{font-family:system-ui,sans-serif;fill:#edf5ed;font-size:24px;font-weight:600}.detail{font-size:17px;font-weight:400;fill:#b7cac4}</style></head><body><main><h1>Suburbs · current layout</h1><p>North ↑ · Nine continuous sections · River west, landmarks east</p><svg id="map" viewBox="0 0 1000 1000" role="img" aria-label="Map of the suburbs"></svg></main><script type="module">
+import { UNIFIED_MAP_ZONES, SUBWAY_POSITIONS } from '../scenes.js';
+import { CARNIVAL_CONFIG, MANSION_CONFIG, RIVER_CONFIG, FOREST_CLEARINGS } from '../world/config.js';
+import { SUBURBAN_HORIZONTAL_BOUNDS, CONNECTOR_X } from '../roads.js';
+const svg=document.getElementById('map'), ns='http://www.w3.org/2000/svg';
+const add=(tag,attrs,text)=>{const e=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text)e.textContent=text;svg.append(e);return e;};
+const X=x=>x+500,Y=z=>500-z;
+const names={RIVER:'River & woods',MANSION:'Mansion grounds',CARNIVAL:'Carnival',FOREST_CLEARINGS:'Forest clearings',PLAZA:'Massachusetts Plaza',FOREST_SUBURBAN:'Forest Suburban Plaza',POND:'Pond area'};
+for(const zone of UNIFIED_MAP_ZONES){const x=X(zone.x)-166.5,y=Y(zone.z)-166.5;add('rect',{x,y,width:333,height:333,fill:zone.config==='RIVER'?'#1a3038':zone.config==='PLAZA'?'#2f3538':'#233b31',stroke:'#50615a','stroke-width':1});}
+add('rect',{x:X(RIVER_CONFIG.x-RIVER_CONFIG.halfWidth),y:0,width:RIVER_CONFIG.halfWidth*2,height:1000,fill:'#417fa1'});
+for(const x of [CONNECTOR_X.LEFT,CONNECTOR_X.RIGHT])add('rect',{x:X(x)-6,y:0,width:12,height:1000,fill:'#8c9394'});
+for(const z of [344,11,-322])add('rect',{x:X(SUBURBAN_HORIZONTAL_BOUNDS.xMin),y:Y(z)-6,width:SUBURBAN_HORIZONTAL_BOUNDS.xMax-SUBURBAN_HORIZONTAL_BOUNDS.xMin,height:12,fill:'#8c9394'});
+for(const zone of UNIFIED_MAP_ZONES)add('text',{x:X(zone.x),y:Y(zone.z)-110,'text-anchor':'middle'},names[zone.config]);
+add('circle',{cx:X(CARNIVAL_CONFIG.x),cy:Y(CARNIVAL_CONFIG.z),r:CARNIVAL_CONFIG.radius,fill:'#735073',stroke:'#d6a8ce','stroke-width':2});
+add('text',{x:X(CARNIVAL_CONFIG.x),y:Y(CARNIVAL_CONFIG.z)+4,'text-anchor':'middle'},'8 rides · food · games');
+add('rect',{x:X(MANSION_CONFIG.x)-55,y:Y(MANSION_CONFIG.z)-30,width:110,height:60,rx:8,fill:'#897c62',stroke:'#e3d3a1','stroke-width':2});
+for(const prop of FOREST_CLEARINGS)add('circle',{cx:X(prop.x),cy:Y(prop.z),r:12,fill:'#8fc39a'});
+const subway=SUBWAY_POSITIONS.suburban;
+add('circle',{cx:X(subway.x),cy:Y(subway.z),r:19,fill:'#82d19c',stroke:'#c8f4d1','stroke-width':2});
+add('text',{x:X(subway.x),y:Y(subway.z)+8,'text-anchor':'middle',fill:'#112c1a'},'T');
+add('text',{x:35,y:930,class:'detail'},'Subway to the city');
+add('text',{x:365,y:940,class:'detail'},'Center column unchanged');
+</script></body></html>

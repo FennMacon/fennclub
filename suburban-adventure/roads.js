@@ -9,11 +9,12 @@ export const ZONE_STREET_X_MAX = 500;
 export const ZONE_STREET_WIDTH = ZONE_STREET_X_MAX - ZONE_STREET_X_MIN;
 
 // Suburban map: white lines meet connector lines for clean 90° corners
-export const SUBURBAN_ZONE_STREET_X_MAX = 165.05;
-export const SUBURBAN_LEFT_CORNER_X = -165.05;  // Inner (river side): horizontal meets connector inner
-export const SUBURBAN_LEFT_OUTER_CORNER_X = -174.95;  // Outer (carnival side): horizontal meets connector outer
-export const SUBURBAN_ZONE_STREET_WIDTH = SUBURBAN_ZONE_STREET_X_MAX - ZONE_STREET_X_MIN;
-export const SUBURBAN_HORIZONTAL_BOUNDS = { xMin: ZONE_STREET_X_MIN, xMax: SUBURBAN_ZONE_STREET_X_MAX };
+export const SUBURBAN_ZONE_STREET_X_MIN = -165.05;
+export const SUBURBAN_ZONE_STREET_X_MAX = 500;
+export const SUBURBAN_RIGHT_CORNER_X = 165.05;  // East junction inner edge
+export const SUBURBAN_RIGHT_OUTER_CORNER_X = 174.95;  // East junction outer edge
+export const SUBURBAN_ZONE_STREET_WIDTH = SUBURBAN_ZONE_STREET_X_MAX - SUBURBAN_ZONE_STREET_X_MIN;
+export const SUBURBAN_HORIZONTAL_BOUNDS = { xMin: SUBURBAN_ZONE_STREET_X_MIN, xMax: SUBURBAN_ZONE_STREET_X_MAX };
 
 export const HORIZONTAL_BOUNDS = { xMin: ZONE_STREET_X_MIN, xMax: ZONE_STREET_X_MAX };
 

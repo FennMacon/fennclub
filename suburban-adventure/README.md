@@ -59,3 +59,7 @@ On real phones, check simultaneous move/look with running toggled on, finger can
 Open `/tests/zipper-preview.html` to inspect the isolated ride from the front or at an angle, with pause/resume controls. See `MUSIC-IMPLEMENTATION.md` for the discovered-song player design and provisional title-to-recording mapping.
 
 Carnival: eight animated rides, including Chance-inspired Pharaoh’s Fury, Freestyle, Wipeout, carousel, and Yo-Yo. See CARNIVAL-IMPLEMENTATION.md for sources and /tests/carnival-preview.html for the animated preview.
+
+Suburb layout (north at top): river / Forest Suburban Plaza / mansion; river / Massachusetts Plaza / carnival; river and subway / pond / forest clearings. The outer columns are now west river and east landmarks. /tests/suburban-map-preview.html shows the layout from the live configuration.
+
+The northeast mansion sits deep in the woods, reached by a narrow winding dirt trail from the road. Its sheltered courtyard, gate, and garage sit together near the house.

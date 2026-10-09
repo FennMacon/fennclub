@@ -10,7 +10,7 @@ import { getFlavorContent } from '../content-loader.js';
 import { createBuildingFacade, createTripleDeckerBuilding } from '../buildings.js';
 import { GROUND_LAYERS } from './constants.js';
 
-import { ZONE_NW_MANSION, ZONE_W_CARNIVAL, ZONE_SW_CLEARING_CONFIG, ZONE_SW_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
+import { MANSION_CONFIG, getMansionPathSamples, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
 const createWoodsChair = (mat) => {
     const group = new THREE.Group();
     const seat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 1), mat(0x333333));
@@ -173,7 +173,7 @@ const addPathSegments = (group, waypoints, pathMat, pathWidth = 3.5, pathY = -0.
     }
 };
 
-/** Forest clearings in ZONE_SW (left column, bottom). Trees excluded via createUnifiedMapTrees. */
+/** Forest clearings in the southeast. Trees excluded via createUnifiedMapTrees. */
 export const createForestClearings = (scene) => {
     const group = new THREE.Group();
     group.name = "ForestClearings";
@@ -181,9 +181,9 @@ export const createForestClearings = (scene) => {
     const interactiveItems = [];
 
     const pathMat = createWireframeMaterial(0x3E3A32);
-    addPathSegments(group, ZONE_SW_PATH_WAYPOINTS, pathMat);
+    addPathSegments(group, FOREST_PATH_WAYPOINTS, pathMat);
 
-    for (const c of ZONE_SW_CLEARING_CONFIG) {
+    for (const c of FOREST_CLEARINGS) {
         const prop = createPropByType(c.type, mat);
         prop.position.set(c.x, 0, c.z);
         const content = getFlavorContent(c.contentId);
@@ -202,7 +202,7 @@ export const createForestClearings = (scene) => {
 export const createCarnival = (scene) => {
     const group = new THREE.Group();
     group.name = "Carnival";
-    const { x: cx, z: cz } = ZONE_W_CARNIVAL;
+    const { x: cx, z: cz } = CARNIVAL_CONFIG;
     const mat = (c, o = 1) => createWireframeMaterial(c, o);
     const interactiveItems = [];
 
@@ -244,79 +244,83 @@ export const createCarnival = (scene) => {
     return { group, updateCarnival, interactiveItems };
 };
 
-/** Mansion compound in ZONE_NW (left column, top) - wealthy residential corner. */
+/** Mansion compound in the northeast - wealthy residential corner. */
 export const createMansionCompound = (scene) => {
     const group = new THREE.Group();
     group.name = "MansionCompound";
 
-    const { x: zoneX, z: zoneZ } = ZONE_NW_MANSION;
+    const { x: centerX, z: centerZ } = MANSION_CONFIG;
+    group.position.set(centerX, 0, centerZ);
+    group.rotation.y = Math.PI; // Gate and driveway face west toward the center column.
+    const zoneX = 0, zoneZ = 0;
     const mat = (c, o = 1) => createWireframeMaterial(c, o);
     const interactiveItems = [];
 
-    // Main mansion (~22 wide, 14 tall, 16 deep) - faces east toward connector
+    // Main mansion (~22 wide, 14 tall, 16 deep) - faces west toward the courtyard
     const mansion = createBuildingFacade(22, 14, 16, 'mansion', '', 0xFFFFFF);
     mansion.position.set(zoneX - 20, 0, zoneZ);
     mansion.rotation.y = -Math.PI / 2;
     group.add(mansion);
 
-    // Gate and wall segments (gate closer to road at x=-170)
-    const wallMat = mat(0x8B8680);
+    // Small sheltered courtyard and a modest gate, well away from the road.
+    const courtyard = new THREE.Mesh(new THREE.CircleGeometry(14, 32), mat(0x716653));
+    courtyard.rotation.x = -Math.PI / 2;
+    courtyard.position.set(8, GROUND_LAYERS.base + 0.018, 0);
+    group.add(courtyard);
     const gateMat = mat(0x6B6560);
-
-    const gateWidth = 8;
-    const gateHeight = 3;
-    const gatePost = new THREE.Mesh(new THREE.BoxGeometry(0.6, gateHeight + 2, 0.6), gateMat);
-    gatePost.position.set(zoneX + 35, gateHeight / 2 + 1, zoneZ - 18);
-    group.add(gatePost);
-    const gatePostR = gatePost.clone();
-    gatePostR.position.set(zoneX + 35, gateHeight / 2 + 1, zoneZ + 18);
-    group.add(gatePostR);
-    const gateBar = new THREE.Mesh(new THREE.BoxGeometry(gateWidth + 1.2, 0.3, 0.2), gateMat);
-    gateBar.position.set(zoneX + 35, gateHeight + 1, zoneZ);
-    group.add(gateBar);
-
-    const wallHeight = 2;
-    const wallDepth = 0.4;
-    const addWallSeg = (wx, wz, w, rotY) => {
-        const seg = new THREE.Mesh(new THREE.BoxGeometry(w, wallHeight, wallDepth), wallMat);
-        seg.position.set(wx, wallHeight / 2, wz);
-        seg.rotation.y = rotY;
-        group.add(seg);
-    };
-    addWallSeg(zoneX + 50, zoneZ - 25, 20, 0);
-    addWallSeg(zoneX + 50, zoneZ + 25, 20, 0);
-    addWallSeg(zoneX + 35, zoneZ - 35, 35, Math.PI / 2);
-    addWallSeg(zoneX + 35, zoneZ + 35, 35, Math.PI / 2);
-
-    const drivewayMat = mat(0x4a4a48);
-    const driveway = new THREE.Mesh(
-        new THREE.PlaneGeometry(12, 45),
-        drivewayMat
-    );
-    driveway.rotation.x = -Math.PI / 2;
-    driveway.position.set(zoneX + 35, GROUND_LAYERS.base + 0.02, zoneZ);
-    group.add(driveway);
-
-    const garage = new THREE.Mesh(
-        new THREE.BoxGeometry(12, 5, 8),
-        mat(0xA09888)
-    );
-    garage.position.set(zoneX + 55, 2.5, zoneZ - 25);
-    garage.rotation.y = Math.PI / 2;
+    for (const z of [-5, 5]) {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.8, 3.5, 0.8), gateMat);
+        post.position.set(25, 1.75, z);
+        group.add(post);
+        const wall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.6, 10), mat(0x8B8680));
+        wall.position.set(25, 0.8, z < 0 ? -10 : 10);
+        group.add(wall);
+    }
+    const garage = new THREE.Mesh(new THREE.BoxGeometry(12, 5, 8), mat(0xA09888));
+    garage.position.set(-13, 2.5, -20);
     group.add(garage);
-    const garageRoof = new THREE.Mesh(
-        new THREE.BoxGeometry(13, 1, 9),
-        mat(0x2a2a2a)
-    );
-    garageRoof.position.set(zoneX + 55, 5.5, zoneZ - 25);
-    garageRoof.rotation.y = Math.PI / 2;
+    const garageRoof = new THREE.Mesh(new THREE.BoxGeometry(13, 1, 9), mat(0x2a2a2a));
+    garageRoof.position.set(-13, 5.5, -20);
     group.add(garageRoof);
+
+    // A continuous irregular ribbon, with a wider faded edge beneath the dirt.
+    const samples = getMansionPathSamples();
+    const makeTrail = (edge) => {
+        const vertices = [], indices = [];
+        samples.forEach((point, i) => {
+            const before = samples[Math.max(0, i - 1)];
+            const after = samples[Math.min(samples.length - 1, i + 1)];
+            const dx = after.x - before.x, dz = after.z - before.z;
+            const length = Math.hypot(dx, dz);
+            const halfWidth = 1.8 + 0.25 * Math.sin(i * 0.27) + edge;
+            for (const side of [-1, 1]) {
+                vertices.push(centerX - (point.x + side * dz / length * halfWidth),
+                    GROUND_LAYERS.base + (edge ? 0.012 : 0.022),
+                    centerZ - (point.z - side * dx / length * halfWidth));
+            }
+            if (i) {
+                const n = i * 2;
+                indices.push(n - 2, n - 1, n, n - 1, n + 1, n);
+            }
+        });
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+        const material = new THREE.MeshBasicMaterial({ color: edge ? 0x606047 : 0x77684e,
+            side: THREE.DoubleSide, transparent: !!edge, opacity: edge ? 0.45 : 1 });
+        const trail = new THREE.Mesh(geometry, material);
+        trail.name = edge ? 'MansionTrailEdge' : 'MansionTrail';
+        group.add(trail);
+    };
+    makeTrail(0.8);
+    makeTrail(0);
 
     scene.add(group);
     return { group, interactiveItems };
 };
 
-/** River running through the right column (ZONE_NE, ZONE_E, ZONE_SE). Flow lines move right-to-left (+z toward -z). */
+/** River running through the west column (ZONE_NW, ZONE_W, ZONE_SW). Flow lines move right-to-left (+z toward -z). */
 export const createRiver = (scene) => {
     const group = new THREE.Group();
     group.name = "River";
