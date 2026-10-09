@@ -65,3 +65,5 @@ Suburb layout (north at top): river / Forest Suburban Plaza / mansion; river / M
 The northeast mansion sits deep in the woods, reached by a narrow winding dirt trail from the road. Its sheltered courtyard, gate, and garage sit together near the house.
 
 The woodland mansion faces its courtyard and has an enterable regal interior: nine chambers joined by offset doorways, including a library, portrait gallery, throne room, and secluded treasury. Interior walls block movement on desktop and mobile; the front doors return to the courtyard facing the woodland trail. Preview it at `/tests/mansion-interior-preview.html`.
+
+Floating candles light every mansion chamber. Woodland trails share smooth, uneven dirt ribbons and matching tree clearance; pond approaches now join the road correctly. The southeast woods contain seven developed clearings and fourteen discoveries along two branching trail systems. Preview the woods and pond at `/tests/woodland-preview.html`.

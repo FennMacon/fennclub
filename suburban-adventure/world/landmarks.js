@@ -1,3 +1,6 @@
+import { createWoodlandTrail } from './trails.js';
+import { createClearingDetails } from './forest-clearing-details.js';
+import { sampleTrail } from './trail-layout.js';
 import { createFerrisWheel } from './ferris-wheel.js';
 import { createTeacups } from './teacups.js';
 import { createCarnivalMidway } from './carnival-midway.js';
@@ -10,7 +13,7 @@ import { getFlavorContent } from '../content-loader.js';
 import { createBuildingFacade, createTripleDeckerBuilding } from '../buildings.js';
 import { GROUND_LAYERS } from './constants.js';
 
-import { MANSION_CONFIG, getMansionPathSamples, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
+import { MANSION_CONFIG, MANSION_PATH_WAYPOINTS, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_TRAILS, RIVER_CONFIG } from './config.js';
 const createWoodsChair = (mat) => {
     const group = new THREE.Group();
     const seat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 1), mat(0x333333));
@@ -154,25 +157,6 @@ const createPropByType = (type, mat) => {
     }
 };
 
-const addPathSegments = (group, waypoints, pathMat, pathWidth = 3.5, pathY = -0.2) => {
-    for (let i = 0; i < waypoints.length - 1; i++) {
-        const p1 = waypoints[i];
-        const p2 = waypoints[i + 1];
-        const dx = p2.x - p1.x;
-        const dz = p2.z - p1.z;
-        const length = Math.sqrt(dx * dx + dz * dz);
-        const angle = Math.atan2(dz, dx);
-        const seg = new THREE.Mesh(
-            new THREE.PlaneGeometry(length, pathWidth),
-            pathMat
-        );
-        seg.rotation.x = -Math.PI / 2;
-        seg.rotation.z = angle;
-        seg.position.set((p1.x + p2.x) / 2, pathY, (p1.z + p2.z) / 2);
-        group.add(seg);
-    }
-};
-
 /** Forest clearings in the southeast. Trees excluded via createUnifiedMapTrees. */
 export const createForestClearings = (scene) => {
     const group = new THREE.Group();
@@ -180,8 +164,8 @@ export const createForestClearings = (scene) => {
     const mat = (c, o = 1) => createWireframeMaterial(c, o);
     const interactiveItems = [];
 
-    const pathMat = createWireframeMaterial(0x3E3A32);
-    addPathSegments(group, FOREST_PATH_WAYPOINTS, pathMat);
+    const trailSamples=FOREST_TRAILS.map(points=>sampleTrail(points));
+    FOREST_TRAILS.forEach((points,i)=>group.add(createWoodlandTrail(points,{name:'ClearingTrail'+i,width:3.2})));
 
     for (const c of FOREST_CLEARINGS) {
         const prop = createPropByType(c.type, mat);
@@ -192,6 +176,8 @@ export const createForestClearings = (scene) => {
         prop.userData.flavorText = content.flavorText;
         group.add(prop);
         interactiveItems.push(prop);
+        const setting=createClearingDetails(c,trailSamples);
+        group.add(setting.group);interactiveItems.push(setting.observation);
     }
 
     scene.add(group);
@@ -297,38 +283,9 @@ export const createMansionCompound = (scene) => {
     garageRoof.position.set(-13, 5.5, -20);
     group.add(garageRoof);
 
-    // A continuous irregular ribbon, with a wider faded edge beneath the dirt.
-    const samples = getMansionPathSamples();
-    const makeTrail = (edge) => {
-        const vertices = [], indices = [];
-        samples.forEach((point, i) => {
-            const before = samples[Math.max(0, i - 1)];
-            const after = samples[Math.min(samples.length - 1, i + 1)];
-            const dx = after.x - before.x, dz = after.z - before.z;
-            const length = Math.hypot(dx, dz);
-            const halfWidth = 1.8 + 0.25 * Math.sin(i * 0.27) + edge;
-            for (const side of [-1, 1]) {
-                vertices.push(centerX - (point.x + side * dz / length * halfWidth),
-                    GROUND_LAYERS.base + (edge ? 0.012 : 0.022),
-                    centerZ - (point.z - side * dx / length * halfWidth));
-            }
-            if (i) {
-                const n = i * 2;
-                indices.push(n - 2, n - 1, n, n - 1, n + 1, n);
-            }
-        });
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geometry.setIndex(indices);
-        geometry.computeVertexNormals();
-        const material = new THREE.MeshBasicMaterial({ color: edge ? 0x606047 : 0x77684e,
-            side: THREE.DoubleSide, transparent: !!edge, opacity: edge ? 0.45 : 1 });
-        const trail = new THREE.Mesh(geometry, material);
-        trail.name = edge ? 'MansionTrailEdge' : 'MansionTrail';
-        group.add(trail);
-    };
-    makeTrail(0.8);
-    makeTrail(0);
+    const trail=createWoodlandTrail(MANSION_PATH_WAYPOINTS.map(p=>({x:centerX-p.x,z:centerZ-p.z})),{name:'MansionApproach'});
+    trail.children[1].name='MansionTrail';
+    group.add(trail);
 
     scene.add(group);
     group.updateMatrixWorld(true);

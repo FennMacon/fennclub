@@ -1,3 +1,5 @@
+import { sampleTrail, nearTrail, POND_TRAILS } from './trail-layout.js';
+import { SCENE_CONFIGS } from '../scenes.js';
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
 import { createTree } from '../utils.js';
@@ -6,7 +8,7 @@ import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS, SUBWAY_POSITIONS } from '.
 import { VERTICAL_BOUNDS, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, CITY_CONNECTOR_X } from '../roads.js';
 import { ZONE_SIZE, STREET_DEPTH, CONNECTOR_ROAD_WIDTH, CONNECTOR_SIDEWALK_DEPTH } from './constants.js';
 
-import { MANSION_CONFIG, getMansionPathSamples, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_PATH_WAYPOINTS, RIVER_CONFIG } from './config.js';
+import { MANSION_CONFIG, getMansionPathSamples, CARNIVAL_CONFIG, FOREST_CLEARINGS, FOREST_TRAILS, RIVER_CONFIG } from './config.js';
 const TD_CORE_RADIUS = 100;
 const TD_FORWARD_RADIUS = 200;
 const TD_LATERAL_SPAN = 140;
@@ -322,26 +324,15 @@ export const createUnifiedMapTrees = (scene) => {
     exclusions.push(rect(-156, 150, pz - 10, pz + 30));
     exclusions.push(rect(-94, -88, pz - 150, pz + 150));
     exclusions.push(rect(-112, -106, pz - 150, pz + 150));
-    exclusions.push(rect(-37, 37, pz + 75, pz + 125));
+    exclusions.push(rect(-37, 37, pz + 70, pz + 130));
     exclusions.push(rect(20, 75, pz - 100, pz - 25));
-    exclusions.push(rect(-8, 8, pz, pz + 125));
-    exclusions.push(rect(12, 58, pz - 20, pz));
+
+
 
     // Southeast forest clearings + path
     FOREST_CLEARINGS.forEach((c) => {
         exclusions.push(rect(c.x - c.radius, c.x + c.radius, c.z - c.radius, c.z + c.radius));
     });
-    for (let i = 0; i < FOREST_PATH_WAYPOINTS.length - 1; i++) {
-        const p1 = FOREST_PATH_WAYPOINTS[i];
-        const p2 = FOREST_PATH_WAYPOINTS[i + 1];
-        const halfW = 2.5;
-        const minX = Math.min(p1.x, p2.x) - halfW;
-        const maxX = Math.max(p1.x, p2.x) + halfW;
-        const minZ = Math.min(p1.z, p2.z) - halfW;
-        const maxZ = Math.max(p1.z, p2.z) + halfW;
-        exclusions.push(rect(minX, maxX, minZ, maxZ));
-    }
-
     // East carnival - no trees on grounds
     exclusions.push(rect(
         CARNIVAL_CONFIG.x - CARNIVAL_CONFIG.radius,
@@ -373,8 +364,16 @@ export const createUnifiedMapTrees = (scene) => {
     exclusions.push(rect(subway.x - 8, subway.x + 8, subway.z - 8, subway.z + 10));
 
     const mansionTrail = getMansionPathSamples();
+    const forestTrails=FOREST_TRAILS.map(points=>sampleTrail(points));
+    const pondOffset=POND_Z+SCENE_CONFIGS.POND.FRONT_SHOPS_Z;
+    const pondTrails=Object.values(POND_TRAILS).map(points=>sampleTrail(points).map(p=>({x:p.x,z:p.z+pondOffset})));
+
+    const woodlandTrails=[mansionTrail,...forestTrails,...pondTrails].map(samples=>({
+        samples,minX:Math.min(...samples.map(p=>p.x))-4.5,maxX:Math.max(...samples.map(p=>p.x))+4.5,
+        minZ:Math.min(...samples.map(p=>p.z))-4.5,maxZ:Math.max(...samples.map(p=>p.z))+4.5
+    }));
     const isExcluded = (wx, wz) => {
-        if (mansionTrail.some(p => Math.hypot(wx - p.x, wz - p.z) < 4.5)) return true;
+        if (woodlandTrails.some(path=>wx>=path.minX&&wx<=path.maxX&&wz>=path.minZ&&wz<=path.maxZ&&nearTrail(wx,wz,path.samples))) return true;
         for (const r of exclusions) if (inRect(wx, wz, r)) return true;
         return false;
     };

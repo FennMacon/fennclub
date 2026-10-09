@@ -1,3 +1,4 @@
+import { createFloatingCandles } from './floating-candles.js';
 import * as THREE from 'three';
 import { createInteriorBounds } from './shared.js';
 import { MANSION_ROOMS, MANSION_CONNECTIONS, roomCenter, getMansionWalls } from './mansion-layout.js';
@@ -96,5 +97,6 @@ export const createMansionInterior = scene => {
     const exit = box('Courtyard doors',0,1.8,24,3.6,3.6,.18,wood);
     exit.userData.isExitPortal=true;
     box('Entrance arch',0,4,24,4.5,.4,.4,gold);
+    group.userData.update=createFloatingCandles(group);
     scene.add(group); return group;
 };

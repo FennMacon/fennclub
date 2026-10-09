@@ -46,3 +46,52 @@ NAME: Abandoned Cart
 An abandoned shopping cart. One wheel is bent.
 
 How did it get here?
+
+=== CLEARING_DETAIL_CHAIR ===
+NAME: Forgotten Thermos
+
+A thermos beside the old overlook bench. Its lid has been carefully screwed back on.
+
+The chair faces a gap in the trees. There is nothing on the other side to watch.
+
+=== CLEARING_DETAIL_LAMP ===
+NAME: Timetable Without a Route
+
+A timetable case beneath a shelter stranded in the woods. Every departure has the same time.
+
+The paving ends after six slabs. The lamp keeps waiting for a bus.
+
+=== CLEARING_DETAIL_STONECIRCLE ===
+NAME: Weathered Plinth
+
+Seven standing stones surround a low, weathered plinth. Whatever rested here left a pale square behind.
+
+The smaller stones make a second circle inside the first.
+
+=== CLEARING_DETAIL_ODDPATCH ===
+NAME: Empty Seed Box
+
+An empty seed box in a greenhouse without glass. The growing beds are dry, but the grass beneath the chair is dark.
+
+Someone kept the frame long after they stopped growing anything.
+
+=== CLEARING_DETAIL_EMPTYTABLE ===
+NAME: Sealed Invitation
+
+An unopened invitation among the garden-party chairs. No name, no date, just a careful wax seal.
+
+The lantern is cold. One chair is still pulled back from the table.
+
+=== CLEARING_DETAIL_TRAFFICCONE ===
+NAME: Abandoned Tool Chest
+
+A tool chest beside an unfinished footbridge. The planks cross no stream.
+
+The barriers mark a job that was stopped before anyone decided where it was going.
+
+=== CLEARING_DETAIL_SHOPPINGCART ===
+NAME: Receipt Tin
+
+A tin of faded receipts beside the rusted fence and delivery crates. The totals have vanished.
+
+The shopping cart is pointed toward a gate that no longer exists.

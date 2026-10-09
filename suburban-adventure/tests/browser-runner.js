@@ -64,6 +64,17 @@ try {
         assert(Math.abs(street.position.x + street.geometry.parameters.width / 2 - bounds.xMax) < 1e-9, 'East road end');
         assert(streetElements.cars.filter(car => car.userData.roadType === 'horizontal').every(car => car.userData.bounds.xMin === bounds.xMin && car.userData.bounds.xMax === bounds.xMax), 'Traffic bounds moved');
     });
+    await check('woodland settings and smooth pond trails are connected and discoverable', () => {
+        const { scene,streetElements }=game.getRuntimeState();
+        const clearings=scene.getObjectByName('ForestClearings');
+        assert(clearings.children.filter(o=>o.name.startsWith('ClearingSetting:')).length===7,'Seven developed woodland settings');
+        const observations=streetElements.interactiveItems.filter(o=>o.parent?.name.startsWith('ClearingSetting:'));
+        assert(observations.length===7 && observations.every(o=>o.userData.flavorText&&!o.userData.name.includes('Unknown')),'New observations have authored content');
+        for(const name of ['PondApproachTrail','CampsiteTrail','PondShoreTrail','ClearingTrail0','ClearingTrail1']) {
+            const trail=scene.getObjectByName(name);
+            assert(trail&&trail.children[1].geometry.attributes.position.count>100,'Smooth trail '+name);
+        }
+    });
     await check('carnival builds eight rides and food/game alleys; animation stays finite', async () => {
         const { createCarnival } = await import('../world/landmarks.js');
         const { CARNIVAL_ADDITIONS } = await import('../world/carnival-motion.js');
@@ -272,6 +283,12 @@ try {
         let inside = game.getRuntimeState();
         assert(inside.sceneKey === 'MANSION_INTERIOR', 'Actual front door did not enter mansion');
         assert(inside.streetElements.interactiveItems.length === 9 && inside.streetElements.interiorCollisionRects.length > 15, 'Maze rooms and walls built');
+        const mansion=inside.streetElements.interiorGroup;
+        assert(mansion.userData.floatingCandles.length===27&&mansion.userData.candleLights.length===9,'Floating candles light all chambers');
+        const before=mansion.userData.floatingCandles[0].group.position.y;
+        inside.streetElements.interiorUpdate(.1);
+        assert(mansion.userData.floatingCandles[0].group.position.y!==before,'Candles float');
+        assert(mansion.userData.candleLights.every(light=>light.intensity>17&&light.distance===24&&!light.castShadow),'Warm lights remain bounded for mobile');
         inside.camera.position.set(0,2,0); controls.setYaw(0); controls.keyboard.d=true;
         controls.updateCameraPositionDesktop(inside.camera,inside.config,inside.streetElements,1);
         controls.resetControls();

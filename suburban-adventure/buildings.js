@@ -1,3 +1,5 @@
+import { createWoodlandTrail } from './world/trails.js';
+import { POND_TRAILS } from './world/trail-layout.js';
 // buildings.js - Building creation and management
 import * as THREE from 'three';
 import { createWireframeMaterial } from './utils.js';
@@ -1525,31 +1527,10 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     frontGroup.add(pondGroup);
     pondElements.pond = pondGroup;
     
-    // Walking path around pond
-    const pathRadius = 22;
-    const pathSegments = 64;
-    for (let i = 0; i < pathSegments; i++) {
-        const angle = (i / pathSegments) * Math.PI * 2;
-        const nextAngle = ((i + 1) / pathSegments) * Math.PI * 2;
-        
-        const x1 = Math.cos(angle) * pathRadius;
-        const z1 = Math.sin(angle) * pathRadius * 0.875;
-        const x2 = Math.cos(nextAngle) * pathRadius;
-        const z2 = Math.sin(nextAngle) * pathRadius * 0.875;
-        
-        const dx = x2 - x1;
-        const dz = z2 - z1;
-        const length = Math.sqrt(dx * dx + dz * dz);
-        const segmentAngle = Math.atan2(dz, dx);
-        
-        const pathSegmentGeometry = new THREE.BoxGeometry(length, 0.05, 3);
-        const pathSegmentMaterial = createWireframeMaterial(0x8B4513);
-        const pathSegment = new THREE.Mesh(pathSegmentGeometry, pathSegmentMaterial);
-        pathSegment.position.set(0 + (x1+x2)/2, -0.18, 150 + (z1+z2)/2);
-        pathSegment.rotation.y = segmentAngle;
-        frontGroup.add(pathSegment);
-    }
-    
+    const shorePath = createWoodlandTrail(POND_TRAILS.shore,{width:3,name:'PondShoreTrail'});
+    frontGroup.add(shorePath);
+    pondElements.shorePath=shorePath;
+
     // Dying Campfire
     const campfireGroup = new THREE.Group();
     
@@ -1773,81 +1754,11 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     });
     pondElements.cups = cups;
     
-    // Left path to pond area (back)
-    const leftPathGroup = new THREE.Group();
-    
-    // Add connecting segment from road to path start
-    const roadToLeftPathGeometry = new THREE.PlaneGeometry(15, 4.0);
-    const roadToLeftPathMaterial = createWireframeMaterial(0x8B4513);
-    const roadToLeftPath = new THREE.Mesh(roadToLeftPathGeometry, roadToLeftPathMaterial);
-    roadToLeftPath.rotation.x = -Math.PI / 2;
-    roadToLeftPath.rotation.z = Math.PI / 2;
-    roadToLeftPath.position.set(-10, -0.17, -5);
-    leftPathGroup.add(roadToLeftPath);
-    
-    const leftPathPoints = [
-        {x: -20, z: 0}, {x: -15, z: 20}, {x: -10, z: 40},
-        {x: -5, z: 60}, {x: 0, z: 75}, {x: 0, z: 100},
-        {x: 0, z: 120}
-    ];
-    
-    for (let i = 0; i < leftPathPoints.length - 1; i++) {
-        const p1 = leftPathPoints[i];
-        const p2 = leftPathPoints[i + 1];
-        const dx = p2.x - p1.x;
-        const dz = p2.z - p1.z;
-        const length = Math.sqrt(dx * dx + dz * dz);
-        const angle = Math.atan2(dz, dx);
-        
-        const pathSegmentGeometry = new THREE.PlaneGeometry(length, 4.0);
-        const pathSegmentMaterial = createWireframeMaterial(0x8B4513);
-        const pathSegment = new THREE.Mesh(pathSegmentGeometry, pathSegmentMaterial);
-        pathSegment.rotation.x = -Math.PI / 2;
-        pathSegment.rotation.z = angle;
-        pathSegment.position.set((p1.x + p2.x) / 2, -0.17, (p1.z + p2.z) / 2);
-        leftPathGroup.add(pathSegment);
-    }
-    
-    frontGroup.add(leftPathGroup);
-    pondElements.leftPath = leftPathGroup;
-    
-    // Right path to campsite area (front)
-    const rightPathGroup = new THREE.Group();
-    
-    // Add connecting segment from road to path start
-    const roadToRightPathGeometry = new THREE.PlaneGeometry(15, 4.0);
-    const roadToRightPathMaterial = createWireframeMaterial(0x8B4513);
-    const roadToRightPath = new THREE.Mesh(roadToRightPathGeometry, roadToRightPathMaterial);
-    roadToRightPath.rotation.x = -Math.PI / 2;
-    roadToRightPath.rotation.z = Math.PI / 2;
-    roadToRightPath.position.set(35, -0.17, -5);
-    rightPathGroup.add(roadToRightPath);
-    
-    const rightPathPoints = [
-        {x: 20, z: 0}, {x: 25, z: -5}, {x: 30, z: -10},
-        {x: 35, z: -15}, {x: 39, z: -18}, {x: 44, z: -19}
-    ];
-    
-    for (let i = 0; i < rightPathPoints.length - 1; i++) {
-        const p1 = rightPathPoints[i];
-        const p2 = rightPathPoints[i + 1];
-        const dx = p2.x - p1.x;
-        const dz = p2.z - p1.z;
-        const length = Math.sqrt(dx * dx + dz * dz);
-        const angle = Math.atan2(dz, dx);
-        
-        const pathSegmentGeometry = new THREE.PlaneGeometry(length, 3.0);
-        const pathSegmentMaterial = createWireframeMaterial(0x8B4513);
-        const pathSegment = new THREE.Mesh(pathSegmentGeometry, pathSegmentMaterial);
-        pathSegment.rotation.x = -Math.PI / 2;
-        pathSegment.rotation.z = angle;
-        pathSegment.position.set((p1.x + p2.x) / 2, -0.17, (p1.z + p2.z) / 2);
-        rightPathGroup.add(pathSegment);
-    }
-    
-    frontGroup.add(rightPathGroup);
-    pondElements.rightPath = rightPathGroup;
-    
+    const leftPathGroup=createWoodlandTrail(POND_TRAILS.pond,{name:'PondApproachTrail'});
+    const rightPathGroup=createWoodlandTrail(POND_TRAILS.campsite,{width:3,name:'CampsiteTrail'});
+    frontGroup.add(leftPathGroup,rightPathGroup);
+    pondElements.leftPath=leftPathGroup;pondElements.rightPath=rightPathGroup;
+
     // Collect all campsite objects for animation, ordered by proximity to campfire
     // Objects closer to campfire (index 0) will glow more intensely, further objects glow more gently
     const campsiteObjects = [

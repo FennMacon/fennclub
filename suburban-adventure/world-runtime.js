@@ -62,6 +62,7 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
     
         // Store reference for exit portal and interior bounds
         streetElements.interiorGroup = interiorGroup;
+        streetElements.interiorUpdate = interiorGroup.userData.update;
         streetElements.interiorBounds = interiorGroup.userData.bounds;
         streetElements.interiorCollisionRects = interiorGroup.userData.collisionRects;
         streetElements.exitPortal = null; // Will be set by finding the exit door

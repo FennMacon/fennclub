@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Woodland trails and clearings</title><style>body{margin:0;background:#101a20;color:#e7efd9;font:16px Georgia}header{position:absolute;top:16px;left:20px;padding:12px;background:#12201cdd;border:1px solid #60735e}select{display:block;margin-top:8px;padding:8px;background:#20372a;color:#fff;border:1px solid #6a8269}canvas{display:block}</style></head><body><header>Woodland trails & clearings<select aria-label="Woodland view"><option value="forest">Forest clearings</option><option value="pond">Pond and campsite</option><option value="stones">Standing stones</option><option value="shelter">Stranded shelter</option></select></header><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><script type="module">
+import * as THREE from 'three';
+import { createForestClearings } from '../world/landmarks.js';
+import { createPondElements } from '../buildings.js';
+import { createTree } from '../utils.js';
+import { FOREST_CLEARINGS,FOREST_TRAILS } from '../world/config.js';
+import { sampleTrail,nearTrail,POND_TRAILS } from '../world/trail-layout.js';
+import { SCENE_CONFIGS } from '../scenes.js';
+import { loadAllContent } from '../content-loader.js';
+await loadAllContent();
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,1200);
+const forest=new THREE.Scene(),pond=new THREE.Scene();
+for(const scene of [forest,pond]){scene.background=new THREE.Color(0x101a20);scene.add(new THREE.AmbientLight(0xffffff,1));}
+const ground=(scene,x,z,w,d)=>{const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color:0x28422d}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x,-.25,z);scene.add(mesh);};
+const road=(scene,x,z,w)=>{const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,22),new THREE.MeshBasicMaterial({color:0x34383b}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x,-.12,z);scene.add(mesh);};
+ground(forest,335,-333,330,330);road(forest,335,-322,330);createForestClearings(forest);
+const forestSamples=FOREST_TRAILS.map(p=>sampleTrail(p));
+for(let x=190;x<494;x+=16)for(let z=-490;z<-174;z+=16){if(Math.abs(z+322)<15||FOREST_CLEARINGS.some(c=>Math.hypot(x-c.x,z-c.z)<c.radius)||forestSamples.some(p=>nearTrail(x,z,p,6)))continue;forest.add(createTree(x,z,.7));}
+ground(pond,0,60,300,260);road(pond,0,61,300);
+const front=new THREE.Group();pond.add(front);createPondElements(front,SCENE_CONFIGS.POND,pond);
+const pondSamples=Object.values(POND_TRAILS).map(p=>sampleTrail(p));
+for(let x=-140;x<140;x+=14)for(let z=-60;z<180;z+=14){if(Math.abs(z-61)<15||(Math.abs(x)<38&&z>115)||(x>16&&x<80&&z<5)||pondSamples.some(p=>nearTrail(x,z,p,6)))continue;pond.add(createTree(x,z,.7));}
+const render=()=>{const view=document.querySelector('select').value;let scene=forest;if(view==='pond'){scene=pond;camera.position.set(160,190,250);camera.lookAt(0,0,65);}else if(view==='stones'){camera.position.set(340,16,-385);camera.lookAt(320,1,-415);}else if(view==='shelter'){camera.position.set(270,10,-360);camera.lookAt(250,1,-380);}else{camera.position.set(335,350,-110);camera.lookAt(335,0,-333);}renderer.render(scene,camera);};
+document.querySelector('select').addEventListener('change',render);render();
+</script></body></html>

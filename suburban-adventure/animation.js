@@ -775,6 +775,7 @@ export const createAnimationLoop = (
         if (streetElements.riverUpdate) {
             streetElements.riverUpdate(deltaTime);
         }
+        if (streetElements.interiorUpdate) streetElements.interiorUpdate(deltaTime);
         if (streetElements.carnivalUpdate) {
             streetElements.carnivalUpdate(deltaTime);
         }
