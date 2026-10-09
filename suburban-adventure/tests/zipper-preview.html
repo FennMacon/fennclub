@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zipper ride preview</title><style>body{margin:0;background:#0d1422;color:#ecffff;font:14px Arial}canvas{display:block}#tools{position:fixed;top:16px;left:16px;background:#111c2dcc;padding:12px;border:1px solid #446;border-radius:8px}button{min-height:44px;margin:4px;color:#fff;background:#244052;border:1px solid #88ffe6;border-radius:6px}#status{margin:8px 0 0}</style></head><body><div id="tools"><strong>ZIPPER — ride preview</strong><div>12 capsules · horizontal shaft · independent cable circuit</div><button id="pause">Pause</button><button id="front">Front view</button><button id="angle">Angled view</button><div id="status">Loading…</div></div><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script><script type="module">
+import * as THREE from 'three';
+import { createZipper } from '../world/zipper.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101a2a);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,100);camera.position.set(15,11,25);camera.lookAt(0,8,0);
+const ride=createZipper(0,0);scene.add(ride.group);
+const grid=new THREE.GridHelper(40,20,0x426576,0x243647);scene.add(grid);
+let paused=false,last=performance.now();
+document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';};
+document.getElementById('front').onclick=()=>{camera.position.set(0,9,30);camera.lookAt(0,8,0);};
+document.getElementById('angle').onclick=()=>{camera.position.set(15,11,25);camera.lookAt(0,8,0);};
+const resize=()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();};window.addEventListener('resize',resize);resize();
+const animate=now=>{requestAnimationFrame(animate);if(!paused)ride.update(Math.min(.05,(now-last)/1000));last=now;renderer.render(scene,camera);document.getElementById('status').textContent=`Boom: 7.5 RPM · cable: 4 RPM · ${ride.motion.time.toFixed(1)} seconds`;};requestAnimationFrame(animate);
+</script></body></html>

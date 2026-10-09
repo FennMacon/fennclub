@@ -1,3 +1,4 @@
+import { getRecording, getRecordingURL, loadMusicCatalog } from './music-library.js';
 // phone-ui.js - Retro flip phone UI for songs and items
 
 import { getUnlockedSongs, getEncounteredItems, hasActiveConversation, resetGameProgress } from './dialogue.js';
@@ -9,6 +10,8 @@ let lastContentKey = '';
 let closeTimer;
 let previousFocus;
 let journal;
+let audioPlayer, nowPlaying;
+let selectedSong = null;
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
 // Debug info state
@@ -104,30 +107,50 @@ export const initializePhoneUI = (options = {}) => {
     journal = document.createElement('div');
     contentArea.append(journal);
     const soundtrack = document.createElement('section');
-    const heading = document.createElement('h3');
-    heading.textContent = 'Neighborhood soundtrack';
-    const select = document.createElement('select');
-    select.setAttribute('aria-label', 'Choose a soundtrack');
-    select.style.cssText = 'width:100%; min-height:44px; margin-bottom:8px;';
-    const tracks = ['machinery .mp3', 'hospital.mp3', 'halloween carnival.mp3', 'little orchestral.mp3', 'weird night music.mp3', 'Dark Tech Lab.mp3', 'twistery.mp3', 'Crush Theme 1.mp3', 'crush theme 3.mp3', 'crush theme 2.mp3', 'Magazine Cover.mp3', 'Anxiety Shopping.mp3', 'interlude.mp3', 'denouement.mp3'];
-    for (const file of tracks) {
-        const option = document.createElement('option');
-        option.value = file;
-        option.textContent = file.replace(/\.mp3$/, '').trim();
-        select.append(option);
-    }
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.preload = 'none';
-    audio.style.width = '100%';
-    audio.setAttribute('aria-label', 'Soundtrack player');
-    const setTrack = () => { audio.src = new URL(`music/${encodeURIComponent(select.value)}`, import.meta.url).href; };
-    setTrack();
-    select.addEventListener('change', setTrack);
-    const hint = document.createElement('p');
-    hint.textContent = 'Choose a track and press play. Use the player to pause or change volume.';
-    soundtrack.append(heading, select, audio, hint);
+    nowPlaying = document.createElement('p');
+    nowPlaying.setAttribute('aria-live', 'polite');
+    nowPlaying.textContent = 'Discover a song, then tap it to listen.';
+    audioPlayer = document.createElement('audio');
+    audioPlayer.controls = true;
+    audioPlayer.preload = 'none';
+    audioPlayer.style.width = '100%';
+    audioPlayer.setAttribute('aria-label', 'Discovered song player');
+    soundtrack.append(nowPlaying, audioPlayer);
     contentArea.append(soundtrack);
+    const syncPlayback = () => {
+        if (selectedSong) nowPlaying.textContent = `${audioPlayer.paused ? 'Paused' : 'Playing'}: ${selectedSong}`;
+        journal.querySelectorAll('[data-song]').forEach(button => {
+            const active = button.dataset.song === selectedSong && !audioPlayer.paused;
+            button.setAttribute('aria-pressed', String(active));
+            button.querySelector('.song-play-state').textContent = active ? 'PAUSE' : 'PLAY';
+        });
+    };
+    for (const event of ['play', 'pause', 'ended']) audioPlayer.addEventListener(event, syncPlayback);
+    audioPlayer.addEventListener('error', () => {
+        nowPlaying.textContent = 'This recording could not play. Tap the song to retry.';
+        syncPlaybackButtons();
+    });
+    journal.addEventListener('click', async event => {
+        const button = event.target.closest('[data-song]');
+        if (!button) return;
+        const title = button.dataset.song;
+        if (!getUnlockedSongs().some(song => song.name === title)) return;
+        const recording = getRecording(title);
+        if (!recording) return;
+        const same = selectedSong === title;
+        if (same && !audioPlayer.paused) { audioPlayer.pause(); return; }
+        selectedSong = title;
+        const url = getRecordingURL(recording);
+        if (!same || audioPlayer.src !== url || audioPlayer.error) { audioPlayer.src = url; audioPlayer.load(); }
+        try { await audioPlayer.play(); }
+        catch {
+            if (selectedSong !== title) return;
+            nowPlaying.textContent = 'Tap the song again to start playback.';
+            syncPlaybackButtons();
+            return;
+        }
+        if (selectedSong === title) syncPlayback();
+    });
 
     // Custom scrollbar styling
     contentArea.style.scrollbarWidth = 'thin';
@@ -316,8 +339,17 @@ export const initializePhoneUI = (options = {}) => {
     
     document.body.appendChild(phoneButton);
     
-    // Initialize content
+    // Retry catalog loading if startup could not fetch it.
+    loadMusicCatalog().then(updatePhoneContent).catch(() => { nowPlaying.textContent = 'Recordings unavailable. Reopen the phone to retry.'; });
     updatePhoneContent();
+};
+
+const syncPlaybackButtons = () => {
+    journal?.querySelectorAll('[data-song]').forEach(button => {
+        const active = button.dataset.song === selectedSong && !audioPlayer.paused && !audioPlayer.error;
+        button.setAttribute('aria-pressed', String(active));
+        button.querySelector('.song-play-state').textContent = active ? 'PAUSE' : 'PLAY';
+    });
 };
 
 // Update phone content with current songs and items
@@ -329,7 +361,14 @@ const updatePhoneContent = () => {
     
     const songs = getUnlockedSongs();
     const items = getEncounteredItems();
-    const key = JSON.stringify([songs, items, debugInfo.scene]);
+    if (selectedSong && !songs.some(song => song.name === selectedSong)) {
+        audioPlayer.pause();
+        audioPlayer.removeAttribute('src');
+        audioPlayer.load();
+        selectedSong = null;
+        nowPlaying.textContent = 'Discover a song, then tap it to listen.';
+    }
+    const key = JSON.stringify([songs.map(song => ({ ...song, recording: getRecording(song.name) })), items, debugInfo.scene]);
     if (key === lastContentKey) return;
     lastContentKey = key;
     
@@ -345,9 +384,12 @@ const updatePhoneContent = () => {
         html += '<p>No discoveries yet. Meet a neighbor or inspect an object to begin.</p>';
     } else {
         songs.forEach(song => {
-            html += '<div style="margin-bottom: 12px; padding: 8px; background: rgba(58, 58, 58, 0.3); border-radius: 4px; border-left: 3px solid #88FFE6;">';
-            html += `<div style="color: #CCFFFF; font-weight: bold; margin-bottom: 4px;">${escapeHTML(song.unlockedBy)} — ${escapeHTML(song.name)}</div>`;
-            html += '</div>';
+            const recording = getRecording(song.name);
+            if (recording) {
+                html += `<button class="song-row" data-song="${escapeHTML(song.name)}" aria-pressed="false" aria-label="Play ${escapeHTML(song.name)}"><span>${escapeHTML(song.name)}<small>Discovered through ${escapeHTML(song.unlockedBy)}</small></span><span class="song-play-state">PLAY</span></button>`;
+            } else {
+                html += `<div class="song-row"><span>${escapeHTML(song.name)}<small>Recording unavailable</small></span></div>`;
+            }
         });
     }
     
@@ -372,6 +414,7 @@ const updatePhoneContent = () => {
     const scroll = contentArea.scrollTop;
     journal.innerHTML = html;
     contentArea.scrollTop = scroll;
+    syncPlaybackButtons();
 };
 
 // Update debug info in phone UI
@@ -403,6 +446,7 @@ export const togglePhone = () => {
     document.dispatchEvent(new Event('game-modal-change'));
     
     if (isPhoneOpen) {
+        loadMusicCatalog().then(updatePhoneContent).catch(() => { nowPlaying.textContent = 'Recordings unavailable. Reopen the phone to retry.'; });
         previousFocus = document.activeElement;
         phoneUI.querySelector('button:last-child').focus();
         // Exit pointer lock to free the cursor

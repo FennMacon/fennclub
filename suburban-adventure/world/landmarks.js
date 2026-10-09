@@ -1,3 +1,4 @@
+import { createZipper } from './zipper.js';
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
 import { createWireframeMaterial, createTree } from '../utils.js';
@@ -436,136 +437,8 @@ export const createCarnival = (scene) => {
     ferrisGroup.add(ferrisWheelRotating);
     group.add(ferrisGroup);
 
-    // --- ZIPPER (Chance 1968: vertical oval boom, 12 wire-mesh cages, central tower) ---
-    const zipperGroup = new THREE.Group();
-    zipperGroup.name = "Zipper";
-    zipperGroup.position.set(cx + 55, 0, cz + 45);
-    const zStructMat = mat(0xEEEEEE);  // White/light grey framework (per reference)
-    const zLightMat = mat(0xFFDD00);   // Yellow/orange bulbs
-    const zBoomVert = 14, zBoomHoriz = 1.2, zTowerHeight = 16;  // 1.2 so path curvature at bottom aligns with grey wheel rim (radius 1.2)
-    const zOval = (a) => ({ y: Math.cos(a) * zBoomVert, z: Math.sin(a) * zBoomHoriz });
-    const CAGE_COLORS = [0xFFFF00, 0xFF69B4, 0x9932CC, 0xFF4444, 0x00CED1, 0xFFA500, 0x00FF7F, 0xFF1493, 0x00BFFF, 0xFF6347, 0x9370DB, 0x32CD32];
-
-    // Central tower (lattice look, portable base)
-    const tower = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.8, zTowerHeight, 8), zStructMat);
-    tower.position.y = zTowerHeight / 2;
-    zipperGroup.add(tower);
-    const basePlate = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 0.4, 8), mat(0x888888));
-    basePlate.position.y = 0.2;
-    zipperGroup.add(basePlate);
-
-    // Rotating boom group (spins at 7.5 rpm around vertical axis)
-    const zipperBoomRotating = new THREE.Group();
-    zipperBoomRotating.position.set(0, zTowerHeight, 0);
-    // Oval track frame
-    const zBoomTrack = new THREE.Mesh(new THREE.TorusGeometry(1, 0.1, 8, 32), zStructMat);
-    zBoomTrack.rotation.y = Math.PI / 2;
-    zBoomTrack.scale.set(1.02, zBoomVert * 1.02, zBoomHoriz * 1.02);
-    zipperBoomRotating.add(zBoomTrack);
-
-    // Light bulbs along boom (chevron pattern)
-    for (let i = 0; i < 24; i++) {
-        const t = (i / 24) * Math.PI * 2;
-        const p = zOval(t);
-        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 4), zLightMat);
-        bulb.position.set(0, p.y, p.z);
-        zipperBoomRotating.add(bulb);
-    }
-
-    // Two large spoked cable-drive wheels at oval ends (in boom YZ plane)
-    const createSpokedWheel = (y, z) => {
-        const wheel = new THREE.Group();
-        const rim = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.08, 16, 1), zStructMat);
-        rim.rotation.z = Math.PI / 2;
-        wheel.add(rim);
-        for (let i = 0; i < 8; i++) {
-            const a = (i / 8) * Math.PI * 2;
-            const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.2, 6), zStructMat);
-            spoke.position.set(0, Math.cos(a) * 0.6, Math.sin(a) * 0.6);
-            spoke.rotation.x = -a;
-            wheel.add(spoke);
-            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), zLightMat);
-            bulb.position.set(0, Math.cos(a) * 1.3, Math.sin(a) * 1.3);
-            wheel.add(bulb);
-        }
-        const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.12, 8, 1), zStructMat);
-        hub.rotation.z = Math.PI / 2;
-        wheel.add(hub);
-        wheel.position.set(0, y, z);
-        wheel.scale.set(1, 1, zBoomHoriz / zBoomVert);
-        return wheel;
-    };
-    zipperBoomRotating.add(createSpokedWheel(zBoomVert, 0));
-    zipperBoomRotating.add(createSpokedWheel(-zBoomVert, 0));
-
-    // "Zipper" sign (lit letters, per reference)
-    const signGroup = new THREE.Group();
-    signGroup.position.set(0, 0, zBoomHoriz + 1.2);
-    ['Z','I','P','P','E','R'].forEach((_, i) => {
-        const letter = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.5, 0.15), zLightMat);
-        letter.position.set((i - 2.5) * 0.45, 0, 0);
-        signGroup.add(letter);
-    });
-    zipperBoomRotating.add(signGroup);
-
-    // 12 wire-mesh cages (apostrophe-shaped, contoured wire mesh per Chance Zipper reference)
-    const zCages = [];
-    const createCage = (cageColor) => {
-        const cageMat = mat(cageColor);
-        const cage = new THREE.Group();
-        // Apostrophe-shaped body: teardrop profile (narrow at bottom, bulbous at top), revolved around Y
-        const profile = [
-            new THREE.Vector2(0, 0.52),
-            new THREE.Vector2(0.18, 0.5),
-            new THREE.Vector2(0.32, 0.44),
-            new THREE.Vector2(0.4, 0.28),
-            new THREE.Vector2(0.38, 0.06),
-            new THREE.Vector2(0.3, -0.12),
-            new THREE.Vector2(0.22, -0.28),
-            new THREE.Vector2(0.12, -0.38),
-            new THREE.Vector2(0, -0.4)
-        ];
-        const body = new THREE.Mesh(new THREE.LatheGeometry(profile, 12), cageMat);
-        body.position.y = 0.06;
-        cage.add(body);
-        // Floor plate (seat base)
-        const floor = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.06, 10), cageMat);
-        floor.rotation.x = Math.PI / 2;
-        floor.position.set(0, -0.32, 0);
-        cage.add(floor);
-        // Door frame (cage door on one side)
-        const bar = (wx, wy, wz, m = cageMat) => new THREE.Mesh(new THREE.BoxGeometry(wx, wy, wz), m);
-        const doorFrame = bar(0.06, 0.72, 0.06);
-        doorFrame.position.set(0.42, 0.06, 0);
-        cage.add(doorFrame);
-        // A few vertical bars to suggest wire mesh
-        [0.2, 0, -0.2].forEach((z) => {
-            const vBar = bar(0.04, 0.82, 0.04);
-            vBar.position.set(0.2, 0.06, z);
-            cage.add(vBar);
-        });
-        return cage;
-    };
-    for (let i = 0; i < 12; i++) {
-        const cage = createCage(CAGE_COLORS[i % CAGE_COLORS.length]);
-        zipperBoomRotating.add(cage);
-        zCages.push({
-            mesh: cage, index: i,
-            tumbleX: 0.006 + Math.random() * 0.004,
-            tumbleZ: 0.005 + Math.random() * 0.004,
-            accX: Math.random() * 0.5,
-            accZ: Math.random() * 0.5
-        });
-    }
-
-    zipperGroup.add(zipperBoomRotating);
-    group.add(zipperGroup);
-
-    // Zipper state for animation (car phase = position along oval, per-description dual rotation)
-    let zCarPhase = 0;
-    const ZIPPER_BOOM_RPM = 7.5;
-    const ZIPPER_CAR_RPM = 4;
-    const RPM_TO_RAD = (2 * Math.PI) / 60;
+    const zipper = createZipper(cx + 55, cz + 45);
+    group.add(zipper.group);
 
     // --- SWING RIDE (12 seats, centrifugal swing physics, crown hub, loading platform) ---
     const swingGroup = new THREE.Group();
@@ -690,19 +563,7 @@ export const createCarnival = (scene) => {
             cup.userData.spinPhase += TEACUP_CUP_SPEED * frameScale;
             cup.rotation.y = cup.userData.spinPhase;
         });
-        // Zipper: boom 7.5 rpm around vertical, cars travel oval ~4 rpm, chaotic tumble
-        const dt = deltaTime;
-        zipperBoomRotating.rotation.y += ZIPPER_BOOM_RPM * RPM_TO_RAD * dt;
-        zCarPhase += ZIPPER_CAR_RPM * RPM_TO_RAD * dt;
-        zCages.forEach((c) => {
-            const a = (c.index / 12) * Math.PI * 2 + zCarPhase;
-            const p = zOval(a);
-            c.mesh.position.set(0, p.y, p.z);
-            c.accX += c.tumbleX * frameScale;
-            c.accZ += c.tumbleZ * frameScale;
-            c.mesh.rotation.x = -Math.atan2(p.z, p.y) + c.accX;
-            c.mesh.rotation.z = c.accZ;
-        });
+        zipper.update(deltaTime);
     };
 
     scene.add(group);

@@ -10,7 +10,7 @@ button { min-height: 44px; touch-action: manipulation; }
 .joystick-knob { position: absolute; width: 36px; height: 36px; top: 50%; left: 50%; border-radius: 50%; background: #88ffe6cc; transform: translate(-50%, -50%); }
 .action-button { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 92px; height: 64px; border-radius: 18px; color: white; background: #255667; border: 2px solid #88ffe6; font-weight: bold; }
 .action-button:disabled { opacity: .55; }
-.sprint-button { position: absolute; bottom: calc(112px + env(safe-area-inset-bottom)); left: calc(16px + env(safe-area-inset-left)); width: 84px; color: white; border: 1px solid #88ffe6; border-radius: 12px; background: #122a36cc; font-size: 11px; }
+.sprint-button { position: absolute; bottom: calc(112px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); width: 84px; color: white; border: 1px solid #88ffe6; border-radius: 12px; background: #122a36cc; font-size: 11px; }
 #phone-ui { box-sizing: border-box; width: min(400px, calc(100vw - 32px)) !important; height: min(600px, calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom))) !important; }
 #phone-ui > div:first-child { min-height: 0; margin: 12px !important; }
 #phone-content { min-height: 0; overscroll-behavior: contain; touch-action: pan-y; }
@@ -19,3 +19,10 @@ button { min-height: 44px; touch-action: manipulation; }
 #startup p { max-width: 440px; line-height: 1.6; }
 @media (max-height: 480px) { #phone-ui > div:last-child { padding: 6px !important; } .game-prompt { max-height: 35dvh; } }
 @media (prefers-reduced-motion: reduce) { #phone-ui { transition: none !important; } }
+
+.sprint-button[aria-pressed="true"] { background: #88ffe6; color: #071016; }
+
+.song-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 12px; margin: 8px 0; padding: 12px; box-sizing: border-box; border: 1px solid #36524e; border-radius: 6px; background: #16312d; color: #ccffff; text-align: left; font: inherit; }
+.song-row small { display: block; color: #9bbdb6; margin-top: 4px; }
+.song-row[aria-pressed="true"] { border-color: #88ffe6; background: #244c43; }
+.song-play-state { font-size: 11px; color: #88ffe6; }

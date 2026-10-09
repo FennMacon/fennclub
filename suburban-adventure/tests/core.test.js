@@ -88,9 +88,22 @@ test('every authored dialogue location exists and every block has lines', async 
     }
 });
 
-test('all soundtrack selections have a local audio file', async () => {
-    const source = await readFile(new URL('../phone-ui.js', import.meta.url), 'utf8');
-    const files = [...source.matchAll(/'([^']+\.mp3)'/g)].map(match => match[1]);
-    assert.equal(files.length, 14);
-    await Promise.all(files.map(file => access(new URL('../music/' + encodeURIComponent(file), import.meta.url))));
+test('music catalog maps every dialogue title and uses every MP3 twice', async () => {
+    const { validateMusicCatalog } = await import('../music-library.js');
+    const data = JSON.parse(await readFile(new URL('../music/catalog.json', import.meta.url), 'utf8'));
+    const catalog = validateMusicCatalog(data);
+    assert.equal(data.recordings.length, 14);
+    assert.equal(catalog.size, 28);
+    const audio = (await readdir(new URL('../music/', import.meta.url))).filter(name => name.endsWith('.mp3'));
+    assert.deepEqual(data.recordings.map(track => track.file).sort(), audio.sort());
+    for (const track of data.recordings) {
+        assert.equal(track.rewards.length, 2);
+        await access(new URL('../music/' + encodeURIComponent(track.file), import.meta.url));
+    }
+    for (const name of await readdir(new URL('../content/dialogue/', import.meta.url))) {
+        const blocks = parseDialogueFile(await readFile(new URL('../content/dialogue/' + name, import.meta.url), 'utf8'));
+        for (const block of Object.values(blocks)) if (block.unlocks) assert.ok(catalog.has(block.unlocks), block.unlocks);
+    }
+    assert.throws(() => validateMusicCatalog({ recordings: [{ id: 'bad', file: '../outside.mp3', rewards: ['Bad'] }] }));
+    assert.throws(() => validateMusicCatalog({ recordings: [{ id: 'one', file: 'one.mp3', rewards: ['Duplicate', 'Duplicate'] }] }));
 });

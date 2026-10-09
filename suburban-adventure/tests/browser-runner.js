@@ -77,11 +77,29 @@ try {
         assert(content.scrollTop === scroll, 'scroll reset');
         phone.togglePhone();
     });
-    await check('soundtrack assets resolve from nested preview routes', async () => {
+    await check('discovered song rows control the shared player; locked tracks excluded', async () => {
+        const library = await import('../music-library.js');
+        dialogue.resetGameProgress();
+        phone.togglePhone();
+        phone.updatePhoneDebugInfo({ fps: 60 });
+        assert(!document.querySelector('[data-song]'), 'locked song exposed');
+        assert(!document.querySelector('select'), 'unrestricted dropdown still present');
+        dialogue.startConversation('Maya', 'PLAZA');
+        dialogue.unlockCurrentSong('Maya'); dialogue.endConversation();
+        phone.updatePhoneDebugInfo({ fps: 60 });
+        const button = document.querySelector('[data-song="Consistency"]');
+        assert(button, 'unlocked song not playable');
+        button.click(); await frame();
         const audio = document.querySelector('audio');
-        const options = [...document.querySelector('select').options];
-        assert(options.every(option => new URL(encodeURIComponent(option.value), audio.src).pathname.startsWith('/music/')), 'soundtrack resolved under test directory');
-        assert(new URL(audio.src).pathname.startsWith('/music/'), 'audio resolved under tests directory');
+        assert(audio.src === library.getRecordingURL(library.getRecording('Consistency')), 'wrong recording');
+        assert(new URL(audio.src).pathname.startsWith('/music/'), 'nested asset path incorrect');
+        audio.pause();
+        const player = audio;
+        phone.updatePhoneDebugInfo({ fps: 45 });
+        assert(document.querySelector('audio') === player, 'player replaced');
+        dialogue.resetGameProgress(); phone.updatePhoneDebugInfo({ fps: 60 });
+        assert(!document.querySelector('[data-song]') && !audio.getAttribute('src'), 'reset retained song');
+        phone.togglePhone();
     });
     await check('rapid close/open keeps phone interactive', async () => {
         phone.togglePhone(); phone.togglePhone(); phone.togglePhone();
@@ -106,15 +124,15 @@ try {
             assert(Math.hypot(...Object.values(mobileControls.getMobileMovement())) <= 1.001, 'stick exceeds unit circle');
             send('lostpointercapture', 3, 0, 0);
         });
-        await check('sprint releases even when nearby action changes', () => {
-            const button = document.querySelector('.sprint-button'); button.setPointerCapture = () => {};
-            button.dispatchEvent(new PointerEvent('pointerdown', { pointerId: 4 }));
-            assert(mobileControls.getMobileSprint(), 'sprint does not start');
-            button.dispatchEvent(new PointerEvent('pointerup', { pointerId: 99 }));
-            assert(mobileControls.getMobileSprint(), 'unrelated finger stopped sprint');
+        await check('running toggles independently of nearby actions', () => {
+            const button = document.querySelector('.sprint-button');
+            button.click();
+            assert(mobileControls.getMobileSprint() && button.getAttribute('aria-pressed') === 'true', 'run toggle did not enable');
             mobileControls.updateMobileActionButton('talk', 'TALK');
-            button.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 4 }));
-            assert(!mobileControls.getMobileSprint(), 'sprint stuck after action change');
+            assert(mobileControls.getMobileSprint(), 'nearby action cleared run toggle');
+            button.click();
+            assert(!mobileControls.getMobileSprint(), 'run toggle did not disable');
+            button.click();
         });
         await check('phone resets and hides mobile controls', () => {
             phone.togglePhone();

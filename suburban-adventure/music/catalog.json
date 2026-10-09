@@ -1,0 +1,18 @@
+{
+  "recordings": [
+    { "id": "crush-1", "file": "Crush Theme 1.mp3", "rewards": ["Consistency", "Promise"] },
+    { "id": "anxiety-shopping", "file": "Anxiety Shopping.mp3", "rewards": ["Tony Sucks", "The More Things Change (The More They Stay The Same)"] },
+    { "id": "magazine-cover", "file": "Magazine Cover.mp3", "rewards": ["Drama", "Plaza Finale"] },
+    { "id": "little-orchestral", "file": "little orchestral.mp3", "rewards": ["Forest (acoustic)", "Forest Talks"] },
+    { "id": "denouement", "file": "denouement.mp3", "rewards": ["Dying Embers", "Long Goodbye"] },
+    { "id": "weird-night", "file": "weird night music.mp3", "rewards": ["Pond Night", "Dying Light"] },
+    { "id": "interlude", "file": "interlude.mp3", "rewards": ["Stone Walls", "Memories"] },
+    { "id": "machinery", "file": "machinery .mp3", "rewards": ["Whirring", "Blueprints"] },
+    { "id": "hospital", "file": "hospital.mp3", "rewards": ["Nightshift", "Last Shift"] },
+    { "id": "dark-tech", "file": "Dark Tech Lab.mp3", "rewards": ["Bricks", "Minutes"] },
+    { "id": "twistery", "file": "twistery.mp3", "rewards": ["Afterhours", "Last Call"] },
+    { "id": "crush-3", "file": "crush theme 3.mp3", "rewards": ["Bloom", "Tailoring"] },
+    { "id": "crush-2", "file": "crush theme 2.mp3", "rewards": ["Memory", "Scrapbook"] },
+    { "id": "halloween-carnival", "file": "halloween carnival.mp3", "rewards": ["Watching", "Pond Ghost"] }
+  ]
+}

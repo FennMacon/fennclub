@@ -1,4 +1,4 @@
-// Each control owns its pointer, allowing simultaneous movement, look and sprint.
+// Movement and look own separate pointers; running is an independent toggle.
 import { getPhoneOpenState } from './phone-ui.js';
 import { hasActiveConversation } from './dialogue.js';
 const movement = { x: 0, y: 0 };
@@ -68,22 +68,20 @@ export const initializeMobileControls = ({ onAction } = {}) => {
     stick('Look', 'look', look);
     const sprint = document.createElement('button');
     sprint.className = 'sprint-button';
-    sprint.textContent = 'HOLD TO RUN';
+    const renderSprint = () => {
+        sprint.textContent = sprintHeld ? 'RUN: ON' : 'RUN: OFF';
+        sprint.setAttribute('aria-label', sprintHeld ? 'Turn running off' : 'Turn running on');
+        sprint.setAttribute('aria-pressed', String(sprintHeld));
+    };
     root.append(sprint);
-    let sprintPointer = null;
-    const resetSprint = () => { sprintHeld = false; sprintPointer = null; sprint.setAttribute('aria-pressed', 'false'); };
-    resets.push(resetSprint);
-    sprint.addEventListener('pointerdown', event => {
-        if (blocked() || sprintPointer !== null) return;
-        event.preventDefault();
-        sprintPointer = event.pointerId;
-        sprintHeld = true;
-        sprint.setPointerCapture(event.pointerId);
-        sprint.setAttribute('aria-pressed', 'true');
+    renderSprint();
+    resets.push(() => { sprintHeld = false; renderSprint(); });
+    sprint.addEventListener('click', () => {
+        if (blocked()) return;
+        sprintHeld = !sprintHeld;
+        renderSprint();
+        sprint.blur();
     });
-    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-        sprint.addEventListener(type, event => { if (event.pointerId === sprintPointer) resetSprint(); });
-    }
     mobileActionButton = document.createElement('button');
     mobileActionButton.className = 'action-button';
     root.append(mobileActionButton);

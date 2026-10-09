@@ -1,3 +1,4 @@
+import { loadMusicCatalog } from './music-library.js';
 import { buildWorld, disposeWorld } from './world-runtime.js';
 import { resetNPCInteraction, getMobileInteraction } from './npcs.js';
 import { setYaw, setPitch, resetControls } from './controls.js';
@@ -213,7 +214,7 @@ initializeControls(camera, renderer.domElement, shouldRotate180);
 // =====================================================
 // LOAD CONTENT (dialogue + flavor text from content/*.txt)
 // =====================================================
-await loadAllContent();
+await Promise.all([loadAllContent(), loadMusicCatalog().catch(error => console.warn('Music catalog unavailable:', error.message))]);
 console.log('Content loaded.');
 
 // =====================================================
@@ -433,7 +434,7 @@ requestAnimationFrame(animate);
 const startup = document.getElementById('startup');
 const message = document.getElementById('startup-message');
 message.textContent = isMobile
-    ? 'Move with the left stick, look with the right. Hold RUN to sprint. Tap the center action button to talk or explore. Start by finding Maya near the plaza. Your phone keeps your discoveries.'
+    ? 'Move with the left stick, look with the right. Tap RUN to toggle running. Tap the center action button to talk or explore. Start by finding Maya near the plaza. Your phone keeps your discoveries.'
     : 'WASD to move, drag to look, Shift to run, Space to interact, F for your phone. Start by finding Maya near the plaza.';
 const begin = document.createElement('button');
 begin.textContent = 'Explore the neighborhood';

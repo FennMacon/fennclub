@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Discovered music preview</title><link rel="stylesheet" href="../game.css"><style>body{background:#101a2a;color:white;font:14px monospace}p{padding:16px}</style></head>
+<body><p>Music preview: two sample discoveries, sharing one recording. Preview rewards are not saved.</p>
+<script type="module">
+import { unlockedSongs } from '../dialogue.js';
+import { loadMusicCatalog } from '../music-library.js';
+import { initializePhoneUI, togglePhone } from '../phone-ui.js';
+await loadMusicCatalog();
+unlockedSongs.clear();
+unlockedSongs.set('Consistency', { unlockedBy: 'Maya' });
+unlockedSongs.set('Promise', { unlockedBy: 'Maya' });
+initializePhoneUI({ mobileLayout: true });
+togglePhone();
+</script></body></html>

@@ -15,8 +15,8 @@ Open http://127.0.0.1:8765. Alternatively, run `python3 -m http.server 8765 --bi
 ## Controls
 
 - Desktop: WASD/arrows move, mouse drag looks, Shift runs, Space interacts, F opens the phone, Escape closes it or ends a conversation. Q/E adjust camera height.
-- Touch devices: left stick moves, right stick looks, HOLD TO RUN sprints. The center button changes to TALK, INSPECT, ENTER, EXIT, TRAVEL, or CONTINUE. Each control tracks its own finger. The × button ends a conversation.
-- The phone pauses movement and gameplay actions. It contains discoveries, exploration hints, and a soundtrack player. Playback starts only when the player presses play. The included soundtrack files are independent of discovered song titles; add an explicit title-to-file mapping before tying playback to rewards.
+- Touch devices: left stick moves, right stick looks, RUN above the right stick toggles running. The center button changes to TALK, INSPECT, ENTER, EXIT, TRAVEL, or CONTINUE. Each control tracks its own finger. The × button ends a conversation.
+- The phone pauses movement and gameplay actions. It contains discoveries, exploration hints, and a soundtrack player. Tap an unlocked song to play or pause it. `music/catalog.json` maps the original dialogue titles to recordings; each MP3 temporarily backs two rewards. The unrestricted dropdown has been removed. Playback continues through phone closure and travel.
 
 ## Project layout
 
@@ -45,9 +45,15 @@ The tests cover dialogue/flavor parsing, concurrent loading, fallback content, r
 With the server running, open:
 
 - `/tests/browser.html`: browser regression suite, including all 15 interiors and subway round trips.
-- `/tests/browser.html?mobile`: the same suite with simulated touch capability, pointer cancellation, multitouch ownership, sprint release, and modal reset checks.
+- `/tests/browser.html?mobile`: the same suite with simulated touch capability, pointer cancellation, multitouch ownership, run toggle, and modal reset checks.
 - `/tests/mobile-preview.html`: touch-control layout preview on a desktop browser.
 
 Run the browser suites one at a time. They temporarily use fixture saves and restore the origin's previous saved data afterward. Test in portrait (320×568 and 390×844) and landscape (844×390). The synthetic pointer tests stub pointer capture; they do not substitute for real iOS/Android testing.
 
-On real phones, check three-finger move/look/run, finger cancellation while switching apps, opening and scrolling the phone, rotating during movement, reward dismissal, and repeated indoor/subway travel. Verify audio playback and volume on both Safari and Chrome.
+On real phones, check simultaneous move/look with running toggled on, finger cancellation while switching apps, opening and scrolling the phone, rotating during movement, reward dismissal, and repeated indoor/subway travel. Verify audio playback and volume on both Safari and Chrome.
+
+## Zipper model
+
+`world/zipper.js` builds the portable trailer, A-frame, oblong truss, end pulleys and 12 enclosed capsules. `world/zipper-motion.js` uses a constant-speed stadium cable path and a boom rotating in the same vertical plane. Each capsule has one off-center hinge, driven by gravity and the acceleration of its moving anchor, integrated at a fixed step. This is a visual approximation, not an engineering simulation. Boom/cable speeds follow the Chance Rides specification (7.5/4 RPM).
+
+Open `/tests/zipper-preview.html` to inspect the isolated ride from the front or at an angle, with pause/resume controls. See `MUSIC-IMPLEMENTATION.md` for the discovered-song player design and provisional title-to-recording mapping.
