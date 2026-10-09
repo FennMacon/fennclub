@@ -328,6 +328,10 @@ export const SCENE_CONFIGS = {
         CAMERA_TARGET_Z: 0,
         EXIT_PORTAL_POSITION: { x: 0, z: 0 }
     },
+    MANSION_INTERIOR: {
+        name: "Regal Mansion", IS_INTERIOR: true, INTERIOR_TYPE: 'mansion',
+        CAMERA_START_Z: 20, CAMERA_TARGET_Z: 0
+    },
     HOUSE_INTERIOR: {
         name: "Colonial House Interior",
         IS_INTERIOR: true,
@@ -390,6 +394,7 @@ export const SCENE_CONFIGS = {
 export const BUILDING_PORTAL_MAP = {
     groton_church: { key: 'CHURCH_INTERIOR', name: 'Church Interior' },
     groton_townhall: { key: 'TOWNHALL_INTERIOR', name: 'Town Hall Interior' },
+    mansion: { key: 'MANSION_INTERIOR', name: 'Regal Mansion' },
     groton_colonial: { key: 'HOUSE_INTERIOR', name: 'Colonial House Interior' },
     graveyard: { key: 'GRAVEYARD_INTERIOR', name: 'Graveyard' },
     hospital: { key: 'HOSPITAL_INTERIOR', name: 'Hospital Interior' },

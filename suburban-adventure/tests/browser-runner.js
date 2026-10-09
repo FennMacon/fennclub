@@ -44,6 +44,14 @@ try {
         const mansion = scene.getObjectByName('MansionCompound');
         assert(mansion.position.x === MANSION_CONFIG.x && Math.abs(mansion.rotation.y - Math.PI) < 1e-9, 'Mansion east, entrance inward');
         assert(mansion.getObjectByName('MansionTrail').geometry.attributes.position.count > 200, 'Continuous winding approach is built');
+        const house = mansion.getObjectByName('MansionHouse');
+        const normal = new THREE.Vector3(0, 0, 1).transformDirection(house.matrixWorld);
+        assert(normal.x < -.99, 'Mansion facade faces courtyard to west');
+        assert(house.getObjectByName('MansionRoof'), 'Roof closes the mansion');
+        const footprint = new THREE.Box3().setFromObject(house);
+        assert(footprint.min.x > MANSION_CONFIG.x - MANSION_CONFIG.width / 2 && footprint.max.x < MANSION_CONFIG.x + MANSION_CONFIG.width / 2, 'House inside tree clearing');
+        const garage = mansion.getObjectByName('MansionGarage').getWorldPosition(new THREE.Vector3());
+        assert(Math.abs(garage.x - MANSION_CONFIG.x) < MANSION_CONFIG.width / 2 && Math.abs(garage.z - MANSION_CONFIG.z) < MANSION_CONFIG.depth / 2, 'Garage inside grounds');
         const river = scene.getObjectByName('River').children.find(object => object.isMesh);
         assert(river.getWorldPosition(new THREE.Vector3()).x === RIVER_CONFIG.x && RIVER_CONFIG.x < 0, 'River west');
         const clearing = scene.getObjectByName('ForestClearings');
@@ -253,6 +261,29 @@ try {
             assert(game.getRuntimeState().sceneKey === 'PLAZA', 'exit failed');
         });
     }
+    await check('mansion front door enters a collision-aware maze and exits toward its courtyard', async () => {
+        const state = game.getRuntimeState();
+        const portal = state.streetElements.buildingPortals.find(p => p.style === 'mansion');
+        assert(portal && scenes.getBuildingPortalDestination('mansion').key === 'MANSION_INTERIOR', 'Mansion portal registered');
+        const returnPosition = portal.returnPosition.clone();
+        state.camera.position.copy(portal.position);
+        document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+        await frame();
+        let inside = game.getRuntimeState();
+        assert(inside.sceneKey === 'MANSION_INTERIOR', 'Actual front door did not enter mansion');
+        assert(inside.streetElements.interactiveItems.length === 9 && inside.streetElements.interiorCollisionRects.length > 15, 'Maze rooms and walls built');
+        inside.camera.position.set(0,2,0); controls.setYaw(0); controls.keyboard.d=true;
+        controls.updateCameraPositionDesktop(inside.camera,inside.config,inside.streetElements,1);
+        controls.resetControls();
+        assert(inside.camera.position.x < 8, 'Movement passed through mansion partition');
+        inside.camera.position.set(0,2,22.2);
+        document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+        await frame();
+        const outside=game.getRuntimeState();
+        assert(outside.sceneKey === 'PLAZA' && outside.camera.position.distanceTo(returnPosition)<1e-8, 'Exit does not return to courtyard');
+        assert(Math.abs(controls.yaw-Math.PI/2)<1e-8, 'Exit must face west toward trail');
+        assert(renderer.getRenderer().domElement === canvas, 'Mansion replaced renderer');
+    });
     await check('subway switches maps without recreating renderer', async () => {
         assert(game.performMapSwitch(), 'map switch unavailable'); await frame();
         assert(scenes.getCurrentMap() === 'city' && game.getRuntimeState().sceneKey === 'CITY_PLAZA', 'city arrival failed');

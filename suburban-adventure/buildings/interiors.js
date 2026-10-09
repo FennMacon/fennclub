@@ -1,3 +1,4 @@
+import { createMansionInterior } from './mansion-interior.js';
 import { INTERIOR_TARGET_SIZE } from './shared.js';
 import { createCumbysInterior } from './cumbys-interior.js';
 import { createShopInterior } from './shop-interior.js';
@@ -12,6 +13,7 @@ import { createGraveyardInterior } from './graveyard-interior.js';
 export { createCumbysInterior, createShopInterior, createChurchInterior, createTownHallInterior, createHouseInterior, createHospitalInterior, createModernInterior, createBrickInterior, createIndustrialInterior, createGraveyardInterior };
 // Interior registry: map scene key → { create(scene), dimensions }
 export const INTERIOR_REGISTRY = {
+    MANSION_INTERIOR: { create: createMansionInterior, dimensions: { width: 48, depth: 48 } },
     CUMBYS_INTERIOR: {
         create: (scene) => createCumbysInterior(scene),
         dimensions: { width: INTERIOR_TARGET_SIZE, depth: INTERIOR_TARGET_SIZE }

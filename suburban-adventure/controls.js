@@ -1,3 +1,4 @@
+import { resolveInteriorMovement } from './buildings/mansion-layout.js';
 import { getPhoneOpenState } from './phone-ui.js';
 import { hasActiveConversation } from './dialogue.js';
 // controls.js - Desktop input only (keyboard, mouse)
@@ -99,7 +100,11 @@ const setupMouseControls = (canvas) => {
 };
 
 // Apply collision and height clamp (shared)
-const applyCollisionAndBounds = (camera, PLAZA_CONFIG, streetElements) => {
+const applyCollisionAndBounds = (camera, PLAZA_CONFIG, streetElements, previousPosition) => {
+    if (PLAZA_CONFIG?.IS_INTERIOR && streetElements?.interiorCollisionRects) {
+        const resolved = resolveInteriorMovement(previousPosition, camera.position, streetElements.interiorCollisionRects);
+        camera.position.x = resolved.x; camera.position.z = resolved.z;
+    }
     camera.position.y = Math.max(2, camera.position.y);
     if (PLAZA_CONFIG && PLAZA_CONFIG.IS_INTERIOR && streetElements && streetElements.interiorBounds) {
         const bounds = streetElements.interiorBounds;
@@ -111,6 +116,7 @@ const applyCollisionAndBounds = (camera, PLAZA_CONFIG, streetElements) => {
 
 // Update camera - desktop path (keyboard only; mouse updates yaw/pitch in mousemove)
 export const updateCameraPositionDesktop = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
+    const previousPosition = { x: camera.position.x, z: camera.position.z };
     const speed = moveSpeed * 60 * deltaTime * (keyboard.shift ? sprintMultiplier : 1);
     const forward = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
     const right = new THREE.Vector3(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2)).normalize();
@@ -126,11 +132,12 @@ export const updateCameraPositionDesktop = (camera, PLAZA_CONFIG = null, streetE
     camera.rotation.order = 'YXZ';
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
-    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, deltaTime);
+    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, previousPosition);
 };
 
 // Update camera - mobile path (touch joysticks)
 export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
+    const previousPosition = { x: camera.position.x, z: camera.position.z };
     const speed = moveSpeed * 60 * deltaTime * (getMobileSprint() ? sprintMultiplier : 1);
     const forward = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
     const right = new THREE.Vector3(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2)).normalize();
@@ -152,7 +159,7 @@ export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetEl
     camera.rotation.order = 'YXZ';
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
-    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, deltaTime);
+    applyCollisionAndBounds(camera, PLAZA_CONFIG, streetElements, previousPosition);
 };
 
 // Unified entry - branches based on isMobile

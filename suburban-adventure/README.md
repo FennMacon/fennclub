@@ -63,3 +63,5 @@ Carnival: eight animated rides, including Chance-inspired Pharaoh’s Fury, Free
 Suburb layout (north at top): river / Forest Suburban Plaza / mansion; river / Massachusetts Plaza / carnival; river and subway / pond / forest clearings. The outer columns are now west river and east landmarks. /tests/suburban-map-preview.html shows the layout from the live configuration.
 
 The northeast mansion sits deep in the woods, reached by a narrow winding dirt trail from the road. Its sheltered courtyard, gate, and garage sit together near the house.
+
+The woodland mansion faces its courtyard and has an enterable regal interior: nine chambers joined by offset doorways, including a library, portrait gallery, throne room, and secluded treasury. Interior walls block movement on desktop and mobile; the front doors return to the courtyard facing the woodland trail. Preview it at `/tests/mansion-interior-preview.html`.

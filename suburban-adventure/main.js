@@ -195,7 +195,9 @@ if (savedInteriorPosition) {
 }
 
 if (isMobile) camera.position.y = 2;
-setYaw(shouldRotate180 ? Math.PI : 0);
+const returnYaw = storage.getItem('buildingReturnYaw');
+setYaw(!PLAZA_CONFIG.IS_INTERIOR && returnYaw !== null && Number.isFinite(Number(returnYaw)) ? Number(returnYaw) : (shouldRotate180 ? Math.PI : 0));
+if (!PLAZA_CONFIG.IS_INTERIOR) storage.removeItem('buildingReturnYaw');
 setPitch(0);
 };
 restoreCamera();
@@ -267,8 +269,10 @@ const handleActionInput = () => {
             const targetScene = getBuildingPortalDestination(nearestPortal.style);
             console.log(`Entering ${nearestPortal.name}, switching to ${targetScene.key} (${targetScene.name})`);
             storage.setItem('previousExteriorScene', nearestPortal.zoneKey || CURRENT_SCENE);
-            const portalPosition = { x: nearestPortal.position.x, y: camera.position.y, z: nearestPortal.position.z };
+            const portalPosition = { x: (nearestPortal.returnPosition || nearestPortal.position).x, y: 2, z: (nearestPortal.returnPosition || nearestPortal.position).z };
             storage.setItem('buildingPortalPosition', JSON.stringify(portalPosition));
+            if (Number.isFinite(nearestPortal.returnYaw)) storage.setItem('buildingReturnYaw', String(nearestPortal.returnYaw));
+            else storage.removeItem('buildingReturnYaw');
             const isFarBuilding = nearestPortal.isFarBuilding === true;
             storage.setItem('isFarBuilding', isFarBuilding ? 'true' : 'false');
             switchScene(targetScene.key);

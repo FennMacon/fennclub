@@ -63,6 +63,7 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
         // Store reference for exit portal and interior bounds
         streetElements.interiorGroup = interiorGroup;
         streetElements.interiorBounds = interiorGroup.userData.bounds;
+        streetElements.interiorCollisionRects = interiorGroup.userData.collisionRects;
         streetElements.exitPortal = null; // Will be set by finding the exit door
     
         // Find exit door in the interior
@@ -141,7 +142,7 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
             riverUpdate: riverResult?.updateFlow,
             carnivalUpdate: carnivalResult?.updateCarnival,
             unifiedMapTrees,
-            buildingPortals: [...(plazaZone.buildingPortals || []), ...(forestZone.buildingPortals || []), ...(pondZone.buildingPortals || [])],
+            buildingPortals: [...(plazaZone.buildingPortals || []), ...(forestZone.buildingPortals || []), ...(pondZone.buildingPortals || []), ...(mansionResult.buildingPortals || [])],
             npcs: [...(plazaZone.npcs || []), ...(forestZone.npcs || []), ...(pondZone.npcs || [])],
             zoneRootGroups: [plazaZone.zoneRootGroup, forestZone.zoneRootGroup, pondZone.zoneRootGroup],
             pondElements: pondZone.pondElements,

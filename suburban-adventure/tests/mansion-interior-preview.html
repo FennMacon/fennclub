@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Regal mansion interior</title><style>body{margin:0;background:#121419;color:#f8e9c8;font:16px Georgia}header{position:absolute;top:20px;left:24px;background:#181519dd;padding:14px;border:1px solid #ab8e57}select{display:block;margin-top:8px;background:#342c2b;color:#fff;padding:8px;border:1px solid #ab8e57}canvas{display:block}</style></head><body><header>Woodland mansion · nine winding chambers<select aria-label="Mansion view"><option value="overview">Interior overview</option><option value="entrance">Entrance hall</option><option value="throne">Throne room</option></select></header><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><script type="module">
+import * as THREE from 'three';
+import { createMansionInterior } from '../buildings/mansion-interior.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x121419);scene.add(new THREE.AmbientLight(0xffffff,1.5));const light=new THREE.DirectionalLight(0xffe6bc,2);light.position.set(15,40,20);scene.add(light);
+createMansionInterior(scene);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,200);
+const render=()=>{const view=document.querySelector('select').value;if(view==='entrance'){camera.position.set(0,2.5,21);camera.lookAt(-8,2.5,17);}else if(view==='throne'){camera.position.set(4,2.5,-10);camera.lookAt(-4,2,-20);}else{camera.position.set(37,60,48);camera.lookAt(0,0,0);}renderer.render(scene,camera);};
+document.querySelector('select').addEventListener('change',render);render();
+</script></body></html>

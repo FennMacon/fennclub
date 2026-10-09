@@ -259,8 +259,19 @@ export const createMansionCompound = (scene) => {
     // Main mansion (~22 wide, 14 tall, 16 deep) - faces west toward the courtyard
     const mansion = createBuildingFacade(22, 14, 16, 'mansion', '', 0xFFFFFF);
     mansion.position.set(zoneX - 20, 0, zoneZ);
-    mansion.rotation.y = -Math.PI / 2;
+    mansion.rotation.y = Math.PI / 2;
+    mansion.name = "MansionHouse";
     group.add(mansion);
+    const walk = new THREE.Mesh(new THREE.PlaneGeometry(16, 5), mat(0x9a8d73));
+    walk.rotation.x = -Math.PI / 2;
+    walk.position.set(-12, GROUND_LAYERS.base + .03, 0);
+    group.add(walk);
+    for (let i = 0; i < 3; i++) {
+        const step = new THREE.Mesh(new THREE.BoxGeometry(1.2, .15 * (i + 1), 5), mat(0xc4b8a8));
+        step.position.set(-16.5 - i * 1.2, .075 * (i + 1), 0);
+        group.add(step);
+    }
+
 
     // Small sheltered courtyard and a modest gate, well away from the road.
     const courtyard = new THREE.Mesh(new THREE.CircleGeometry(14, 32), mat(0x716653));
@@ -278,7 +289,10 @@ export const createMansionCompound = (scene) => {
     }
     const garage = new THREE.Mesh(new THREE.BoxGeometry(12, 5, 8), mat(0xA09888));
     garage.position.set(-13, 2.5, -20);
+    garage.name = "MansionGarage";
     group.add(garage);
+    const garageDoor = new THREE.Mesh(new THREE.BoxGeometry(.18,3.5,5), mat(0x594737));
+    garageDoor.position.set(-6.9,1.75,-20);group.add(garageDoor);
     const garageRoof = new THREE.Mesh(new THREE.BoxGeometry(13, 1, 9), mat(0x2a2a2a));
     garageRoof.position.set(-13, 5.5, -20);
     group.add(garageRoof);
@@ -317,7 +331,12 @@ export const createMansionCompound = (scene) => {
     makeTrail(0);
 
     scene.add(group);
-    return { group, interactiveItems };
+    group.updateMatrixWorld(true);
+    const position = group.localToWorld(new THREE.Vector3(-19.7, 2, 0));
+    const returnPosition = group.localToWorld(new THREE.Vector3(-14, 2, 0));
+    const buildingPortals = [{ style: 'mansion', name: 'Woodland Mansion', zoneKey: 'PLAZA',
+        position, returnPosition, returnYaw: Math.PI / 2 }];
+    return { group, interactiveItems, buildingPortals };
 };
 
 /** River running through the west column (ZONE_NW, ZONE_W, ZONE_SW). Flow lines move right-to-left (+z toward -z). */

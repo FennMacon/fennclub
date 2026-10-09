@@ -367,11 +367,25 @@ export const createBuildingFacade = (width, height, depth, style, signText, sign
         chimneyMesh.position.set(width/4, height + (height * 0.6)/2, -depth/2);
         frontWallGroup.add(chimneyMesh);
     } else if (style === 'mansion') {
+        const roofGeometry = new THREE.BufferGeometry();
+        const halfW = width / 2 + .8, halfD = depth / 2 + .8;
+        roofGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
+            -halfW, 0, -halfD, halfW, 0, -halfD, 0, 4, -halfD,
+            -halfW, 0, halfD, halfW, 0, halfD, 0, 4, halfD
+        ], 3));
+        roofGeometry.setIndex([0,2,1,3,4,5,0,3,5,0,5,2,1,2,5,1,5,4,0,1,4,0,4,3]);
+        roofGeometry.computeVertexNormals();
+        const roof = new THREE.Mesh(roofGeometry, createWireframeMaterial(roofColor));
+        roof.name = 'MansionRoof'; roof.position.set(0,height,-depth/2); buildingGroup.add(roof);
+        for (const side of [-1, 1]) {
+            const chimney = new THREE.Mesh(new THREE.BoxGeometry(1.4,3,1.4), createWireframeMaterial(baseColor));
+            chimney.position.set(side * width * .32,height+2,-depth*.6);buildingGroup.add(chimney);
+        }
         // Grand columns and portico
         const columnGeometry = new THREE.CylinderGeometry(0.4, 0.5, height * 0.9, 8);
         const columnMaterial = createWireframeMaterial(0xE8E0D5);
         const columnSpacing = width * 0.22;
-        for (let i = -1; i <= 1; i++) {
+        for (const i of [-1, 1]) {
             const col = new THREE.Mesh(columnGeometry, columnMaterial);
             col.position.set(i * columnSpacing, height * 0.45, wallThickness / 2 + 0.35);
             frontWallGroup.add(col);
@@ -380,7 +394,7 @@ export const createBuildingFacade = (width, height, depth, style, signText, sign
         const porticoGeometry = new THREE.BoxGeometry(width * 0.65, height * 0.15, depth * 0.4);
         const porticoMaterial = createWireframeMaterial(roofColor);
         const portico = new THREE.Mesh(porticoGeometry, porticoMaterial);
-        portico.position.set(0, height * 0.9, -depth * 0.1);
+        portico.position.set(0, height * 0.9, depth * 0.12);
         frontWallGroup.add(portico);
     }
     
