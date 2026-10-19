@@ -1,0 +1,142 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+}
+
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-width: 400px;
+    z-index: 100;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#info h1 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+#info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#controls-info {
+    margin-top: 15px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Hide interface after 5 seconds if no interaction */
+.fade-out {
+    opacity: 0;
+} 
+
+#controls-toggle,
+#ambient-toggle {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    z-index: 1001;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0.45;
+    transition: opacity 0.2s, background-color 0.2s;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+#controls-toggle:focus-visible,
+#ambient-toggle:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+#debug-container {
+    box-sizing: border-box;
+    padding-top: calc(72px + env(safe-area-inset-top)) !important;
+}
+
+#debug-container > div {
+    box-sizing: border-box;
+    max-height: 100% !important;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 600px) {
+    #debug-container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    }
+
+    #debug-container > div {
+        padding: 12px !important;
+    }
+
+    #debug-container button,
+    #debug-container label {
+        min-height: 44px;
+        box-sizing: border-box;
+    }
+}
+
+
+#ambient-toggle {
+    right: calc(max(12px, env(safe-area-inset-right)) + 52px);
+}
+
+/* Hide the overlay without changing any individual visibility preferences. */
+body.ambient-mode #controls-toggle,
+body.ambient-mode #ambient-toggle,
+body.ambient-mode #debug-container,
+body.ambient-mode .fps-overlay,
+body.ambient-mode #info {
+    display: none !important;
+}
+
+body.ambient-mode {
+    cursor: none;
+}
+
+
+#controls-toggle:hover,
+#ambient-toggle:hover,
+#controls-toggle:focus-visible,
+#ambient-toggle:focus-visible {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.controls-close-icon,
+#controls-toggle[aria-expanded="true"] .controls-open-icon {
+    display: none;
+}
+
+#controls-toggle[aria-expanded="true"] .controls-close-icon {
+    display: block;
+}
