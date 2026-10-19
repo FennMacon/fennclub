@@ -88,7 +88,7 @@ const galleryData = {
         {
             title: "Endless Road",
             description: "An endless journey through procedurally generated landscapes.",
-            url: "https://fennmacon.github.io/endless-road"
+            url: "https://fenn.club/endless-road/"
         },
         {
             title: "Bass Master",
