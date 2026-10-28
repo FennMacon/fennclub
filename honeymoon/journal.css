@@ -1,0 +1,31 @@
+:root{color-scheme:light;--paper:#faf7ef;--ink:#29392e;--quiet:#5f685c;--line:#d6d7ca}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.85 Georgia,'Times New Roman',serif}
+.masthead{max-width:1040px;margin:auto;padding:76px 40px 36px}
+h1{font-size:clamp(38px,6.5vw,72px);font-weight:400;line-height:1.08;letter-spacing:-2px;max-width:650px;margin:0 0 24px}
+.masthead>p{color:var(--quiet);font-style:italic;margin-bottom:36px}
+nav{display:flex;gap:3px;flex-wrap:wrap}
+nav a{flex:1;min-width:35px;border-top:7px solid var(--day-color);padding:12px 4px;color:var(--ink);text-align:center;text-decoration:none;font:12px/1.5 system-ui}
+nav a:hover,nav a:focus-visible{background:#e8e9dd;text-decoration:underline}
+main{max-width:1040px;padding:0 40px 72px;margin:auto}
+.entry{display:grid;grid-template-columns:130px minmax(0,1fr);gap:42px;padding:48px 0 56px;border-top:1px solid var(--line);scroll-margin-top:24px}
+.entry-meta{font:12px/1.8 system-ui;color:var(--quiet)}
+.day-number{font:52px/1 Georgia;color:var(--ink);display:block;margin-bottom:14px}
+.entry-meta p{margin:10px 0}
+.palette{height:8px;max-width:90px;background:var(--day-gradient);margin:22px 0}
+h2{font-size:clamp(30px,4vw,44px);line-height:1.2;font-weight:400;letter-spacing:-.7px;margin:0 0 18px}
+.activity{font-style:italic;color:var(--quiet);margin:0 0 28px}
+.journal-copy{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.entry-content{min-width:0;max-width:680px}
+.album{border-top:1px solid var(--line);margin-top:30px;padding-top:16px;font:13px/1.8 system-ui}
+details{border-top:1px solid var(--line);margin-top:22px;padding-top:12px;font-size:15px}
+summary{cursor:pointer;font:13px/1.7 system-ui;padding:8px 0;text-decoration:underline;text-underline-offset:4px}
+details h3{font-weight:400;font-size:21px;margin:24px 0 8px}
+details p{margin:10px 0}
+details ul{padding-left:24px}
+.source-info{color:var(--quiet)}
+.error{font:16px/1.7 system-ui}
+button{font:inherit;cursor:pointer}
+@media(max-width:600px){.masthead{padding:42px 24px 28px}main{padding:0 24px 48px}.entry{grid-template-columns:1fr;gap:20px;padding:30px 0 40px}.entry-meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.day-number{margin:0;font-size:38px}.palette{width:70px;margin:0}.entry-meta p{margin:0}body{font-size:16px}nav a{flex:0 0 calc(10% - 3px);min-width:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
