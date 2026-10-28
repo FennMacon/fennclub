@@ -173,6 +173,48 @@ function element(tag, text, className) {
     return node;
 }
 
+function appendJournalText(parent, text) {
+    // Render only the conventions used by the journal, without interpreting HTML.
+    text.split(/(_[^_\n]+_)/g).forEach(part => {
+        if (part.startsWith('_') && part.endsWith('_') && part.length > 2) {
+            parent.append(element('em', part.slice(1, -1)));
+        } else {
+            parent.append(document.createTextNode(part));
+        }
+    });
+}
+
+function formatJournal(text) {
+    const container = element('div', undefined, 'journal-copy');
+    let lists = [];
+    text.split('\n').forEach(line => {
+        const bullet = line.match(/^(-+)\s+(.*)$/);
+        if (!bullet) {
+            lists = [];
+            if (line.trim()) {
+                const paragraph = element('p');
+                appendJournalText(paragraph, line);
+                container.append(paragraph);
+            }
+            return;
+        }
+        const depth = bullet[1].length;
+        while (lists.length && lists[lists.length - 1].depth > depth) lists.pop();
+        if (!lists.length || lists[lists.length - 1].depth < depth) {
+            const list = element('ul');
+            const parent = lists.length ? lists[lists.length - 1].lastItem : container;
+            parent.append(list);
+            lists.push({ depth, list, lastItem: null });
+        }
+        const current = lists[lists.length - 1];
+        const item = element('li');
+        appendJournalText(item, bullet[2]);
+        current.list.append(item);
+        current.lastItem = item;
+    });
+    return container;
+}
+
 async function renderJournal() {
     const journal = document.getElementById('journal');
     try {
@@ -205,7 +247,7 @@ async function renderJournal() {
             const heading = element('h2', day.location);
             heading.id = entry.id + '-heading';
             entry.setAttribute('aria-labelledby', heading.id);
-            body.append(heading, element('div', saved.journal.content, 'journal-copy'));
+            body.append(heading, formatJournal(saved.journal.content));
             body.append(element('p', '💿 ' + saved.album.title, 'album'));
 
             entry.append(meta, body);

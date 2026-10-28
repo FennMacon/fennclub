@@ -20,7 +20,13 @@ main{max-width:1040px;padding:0 40px 72px;margin:auto}
 .entry-meta p{margin:10px 0}
 .palette{height:8px;max-width:90px;background:var(--day-gradient);margin:22px 0}
 h2{font-size:clamp(30px,4vw,44px);line-height:1.2;font-weight:400;letter-spacing:-.7px;margin:0 0 18px}
-.journal-copy{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.journal-copy{overflow-wrap:anywhere;margin:0}
+.journal-copy p{margin:0 0 18px}
+.journal-copy ul{padding-left:1.3em;margin:0}
+.journal-copy li{padding-left:.2em;margin:0 0 14px}
+.journal-copy li::marker{color:var(--quiet)}
+.journal-copy li>ul{margin-top:10px}
+.journal-copy li>ul>li{margin-bottom:10px}
 .entry-content{min-width:0;max-width:680px}
 .album{border-top:1px solid var(--line);margin-top:30px;padding-top:20px;font:600 16px/1.7 system-ui}
 .error{font:16px/1.7 system-ui}
