@@ -166,33 +166,6 @@
         };
 
 
-        function getDescriptionForDay(index) {
-            const descriptions = [
-                "Flight arrival in Chicago, marking the start of our cross-country honeymoon adventure.",
-                "Car rental pickup and 6.5-hour drive north to Michigan's Upper Peninsula.",
-                "Day trip to Mackinac Island featuring Victorian architecture and horse-drawn carriage tours.",
-                "Kayaking excursion along Pictured Rocks National Lakeshore's multicolored sandstone cliffs.",
-                "Long-distance travel day: 13-14 hour drive from Michigan to South Dakota with overnight stop in Kadoka.",
-                "Badlands National Park exploration with camping setup and initial trail hiking.",
-                "Additional Badlands exploration followed by drive to Devils Tower National Monument.",
-                "Devils Tower visit and extensive 12-hour drive to Glacier National Park in Montana.",
-                "First full day in Glacier National Park with backcountry camping and trail exploration.",
-                "Continued Glacier National Park activities including hiking and scenic photography.",
-                "Travel day to Yellowstone National Park with check-in at Old Faithful Inn.",
-                "Yellowstone exploration featuring geysers, hot springs, and wildlife viewing while staying at the historic inn.",
-                "Morning Yellowstone activities followed by drive south to Grand Teton National Park.",
-                "River rafting on the Snake River and wildflower photography session in Teton meadows.",
-                "Drive from Wyoming to Utah via Dinosaur National Monument with stop in Moab.",
-                "First day exploring Arches National Park with camping setup for multi-day stay.",
-                "July 4th celebration while continuing Arches National Park exploration and camping.",
-                "Bonneville Salt Flats exploration and drive to Salt Lake City for accommodation.",
-                "Salt Lake City sightseeing and trip preparation before departure.",
-                "Return flight home, concluding the 20-day cross-country journey."
-            ];
-            return descriptions[index] || "A day filled with adventure and discovery.";
-        }
-
-
 function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
@@ -230,27 +203,9 @@ async function renderJournal() {
             const heading = element('h2', day.location);
             heading.id = entry.id + '-heading';
             entry.setAttribute('aria-labelledby', heading.id);
-            body.append(heading, element('p', day.activity, 'activity'), element('div', saved.journal.content, 'journal-copy'));
+            body.append(heading, element('div', saved.journal.content, 'journal-copy'));
             body.append(element('p', '💿 ' + saved.album.title, 'album'));
 
-            // Keep every existing description and supporting detail available verbatim.
-            const details = element('details');
-            details.append(element('summary', '🗺️ · 📸'));
-            details.append(element('h3', saved.journal.title));
-            details.append(element('p', getDescriptionForDay(index), 'source-info'));
-            if (saved.location !== day.location) details.append(element('p', saved.location));
-            if (saved.date !== day.date) details.append(element('p', saved.date));
-            if (saved.activity !== day.activity) details.append(element('p', saved.activity));
-            details.append(element('h3', saved.map.title), element('p', saved.map.description));
-            details.append(element('p', 'Coordinates: ' + saved.map.coordinates));
-            details.append(element('p', 'Route Highlights:'));
-            const routes = element('ul');
-            saved.map.highlights.forEach(text => routes.append(element('li', text)));
-            details.append(routes, element('h3', saved.photos.title), element('p', saved.photos.description));
-            const photos = element('ul');
-            saved.photos.highlights.forEach(text => photos.append(element('li', text)));
-            details.append(photos);
-            body.append(details);
             entry.append(meta, body);
             entries.append(entry);
         });
