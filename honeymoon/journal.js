@@ -188,6 +188,7 @@ async function renderJournal() {
             const link = element('a', String(index + 1).padStart(2, '0'));
             link.href = '#day-' + (index + 1);
             link.setAttribute('aria-label', `${day.date} · ${day.location}`);
+            link.title = `${day.date} · ${day.location}`;
             link.style.setProperty('--day-color', palette.actionColors[0]);
             navigation.append(link);
 
