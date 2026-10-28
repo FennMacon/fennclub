@@ -186,6 +186,7 @@ async function renderJournal() {
             if (!saved) throw new Error('Missing journal day');
             const palette = paletteStyles[day.palette];
             const link = element('a', String(index + 1).padStart(2, '0'));
+            link.append(element('span', day.date, 'nav-date'), element('span', day.location, 'nav-location'));
             link.href = '#day-' + (index + 1);
             link.setAttribute('aria-label', `${day.date} · ${day.location}`);
             link.title = `${day.date} · ${day.location}`;
@@ -212,6 +213,7 @@ async function renderJournal() {
         });
         journal.replaceChildren(entries);
         document.getElementById('journeyPath').replaceChildren(navigation);
+        initializeScrollPalette();
         if (/^#day-\d+$/.test(location.hash)) document.getElementById(location.hash.slice(1))?.scrollIntoView();
     } catch (error) {
         const message = element('p', error.message, 'error');
@@ -224,4 +226,61 @@ async function renderJournal() {
         journal.setAttribute('aria-busy', 'false');
     }
 }
+
+function initializeScrollPalette() {
+    const entries = [...document.querySelectorAll('.entry')];
+    const links = [...document.querySelectorAll('#journeyPath a')];
+    const tokens = getComputedStyle(document.documentElement);
+    const colors = journeyData.map(day => {
+        const gradient = paletteStyles[day.palette].headerGradient.replace(
+            /var\((--[\w-]+)\)/g, (_, token) => tokens.getPropertyValue(token).trim());
+        return gradient.match(/#[\da-f]{6}/gi)
+            .map(hex => [1, 3, 5].map(start => parseInt(hex.slice(start, start + 2), 16)));
+    });
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let positions = [], pending = false, active = -1;
+    function update() {
+        pending = false;
+        const readingPosition = scrollY + innerHeight * .3;
+        let index = 0;
+        while (index < positions.length - 1 && positions[index + 1] <= readingPosition) index++;
+        const next = Math.min(index + 1, positions.length - 1);
+        const fraction = reducedMotion.matches ? 0 : Math.max(0, Math.min(1,
+            (readingPosition - positions[index]) / (positions[next] - positions[index] || 1)));
+        for (let endpoint = 0; endpoint < 2; endpoint++) {
+            const tint = colors[index][endpoint].map((channel, component) => {
+                const blended = channel + (colors[next][endpoint][component] - channel) * fraction;
+                // A pale paper blend bounds contrast regardless of the source palette.
+                return Math.round(250 * .88 + blended * .12);
+            });
+            document.documentElement.style.setProperty('--trip-color-' + endpoint, `rgb(${tint.join(',')})`);
+        }
+        if (active !== index) {
+            links.forEach((link, i) => {
+                if (i === index) link.setAttribute('aria-current', 'location');
+                else link.removeAttribute('aria-current');
+            });
+            active = index;
+        }
+    }
+    function measure() {
+        positions = entries.map(entry => entry.getBoundingClientRect().top + scrollY);
+        update();
+    }
+    addEventListener('scroll', () => {
+        if (!pending) { pending = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    addEventListener('resize', measure);
+    new ResizeObserver(measure).observe(document.querySelector('.masthead'));
+    reducedMotion.addEventListener('change', update);
+    document.fonts.ready.then(measure);
+    measure();
+}
+const journeyToggle = document.getElementById('journeyToggle');
+journeyToggle.addEventListener('click', () => {
+    const expanded = journeyToggle.getAttribute('aria-expanded') !== 'true';
+    journeyToggle.setAttribute('aria-expanded', String(expanded));
+    journeyToggle.textContent = expanded ? 'Collapse journey −' : 'Expand journey +';
+    document.getElementById('journeyPath').classList.toggle('compact', !expanded);
+});
 renderJournal();
