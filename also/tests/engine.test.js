@@ -142,3 +142,123 @@ test('randomized valid plans remain saveable across setup and death transitions'
   assert.deepEqual(engine.settleDay(planned),done);
  }
 });
+
+const activity=(id,period,duration,extras={})=>({id,title:id,period,duration,shared:false,kind:'activity',weight:1,risk:0,hospitalPenalty:false,...extras});
+test('automatic scheduling compacts after removal and pushes later activities forward',()=>{
+ const e=createEngine([activity('first','morning',90),activity('second','morning',60),activity('third','morning',90)]);
+ const state=e.newGame();
+ const planned=e.arrange(state,[{eventId:'first',period:'morning'},{eventId:'second',period:'morning'},{eventId:'third',period:'morning'}]);
+ assert.deepEqual(planned.plan.map(i=>[i.period,i.minute]),[['morning',0],['morning',90],['morning',150]]);
+ const compact=e.arrange(planned,planned.plan.filter(i=>i.eventId!=='first'));
+ assert.deepEqual(compact.plan.map(i=>i.minute),[0,60]);
+ assert.deepEqual(state.plan,[]);
+});
+test('adding care repacks existing activities and anchors care to day boundaries',()=>{
+ let state=game(700);
+ const ordinary=pick(state,e=>e.kind==='activity'&&e.period==='morning');
+ state=engine.arrange(state,[{eventId:ordinary.id,period:'morning'}]);
+ state=engine.arrange(state,[...state.plan,{eventId:'care-1-morning',period:'morning'},{eventId:'care-1-night',period:'night'}]);
+ assert.equal(state.plan.find(i=>i.eventId==='care-1-morning').minute,0);
+ assert.equal(state.plan.find(i=>i.eventId===ordinary.id).minute,30);
+ assert.equal(state.plan.find(i=>i.eventId==='care-1-night').minute,210);
+});
+test('automatic overflow crosses periods and excess choices fail atomically',()=>{
+ const e=createEngine([activity('a','morning',240),activity('b','morning',180),activity('c','night',240)]);
+ let state=e.arrange(e.newGame(),[{eventId:'a',period:'morning'},{eventId:'b',period:'morning'}]);
+ assert.deepEqual(state.plan[1],{eventId:'b',preferredPeriod:'morning',period:'lunch',minute:60});
+ assert.deepEqual(importSave(e,exportSave(e,state)),state);
+ const full=e.arrange(state,[...state.plan,{eventId:'c',period:'night'}]);
+ assert.throws(()=>e.arrange(state,[...state.plan,{eventId:'a',period:'morning'}]),/once/);
+ const tooMuch=createEngine([activity('x','night',240),activity('y','night',60)]);
+ const before=tooMuch.arrange(tooMuch.newGame(),[{eventId:'x',period:'night'}]);
+ assert.throws(()=>tooMuch.arrange(before,[...before.plan,{eventId:'y',period:'night'}]),/not enough time/);
+ assert.equal(before.plan.length,1);
+});
+test('emergencies never appear as choices, occur by chance, and are fixed across reload',()=>{
+ for(let seed=0;seed<30;seed++) {
+  const state=engine.newGame(seed);
+  assert.ok(Object.values(engine.getOptions(state)).flat().every(id=>!engine.getEvent(id).unexpected));
+  assert.throws(()=>engine.arrange(state,[{eventId:'activity-38',period:'afternoon'}]),/available/);
+ }
+ let incident,quiet;
+ for(let seed=0;seed<200;seed++){
+  const state=engine.newGame(seed),done=engine.settleDay(state);
+  if(done.summary.incidents.length){incident??=done;assert.deepEqual(engine.settleDay(importSave(engine,exportSave(engine,state))),done);}
+  else quiet??=done;
+ }
+ assert.ok(incident);assert.ok(quiet);
+ assert.deepEqual(engine.settleDay(importSave(engine,exportSave(engine,incident))),incident);
+});
+test('emergencies supersede plans, move activities later, and exclude displaced setup effects',()=>{
+ const fixture=createEngine([
+  activity('morning','morning',180),activity('lunch','lunch',180),activity('afternoon','afternoon',180),
+  activity('evening','evening',180),activity('late','night',240,{kind:'setup',stage:1}),
+  activity('emergency','afternoon',180,{unexpected:true,incidentChance:1,shared:true,hospitalPenalty:true})
+ ]);
+ let done;
+ for(let seed=0;seed<100;seed++) {
+  const state={...fixture.newGame(seed),fatherHealth:700,dayStartFatherHealth:700};
+  const plan=['morning','lunch','afternoon','evening','late'].map(id=>({eventId:id,period:id==='late'?'night':id}));
+  const settled=fixture.settleDay(fixture.arrange(state,plan));
+  if(settled.summary.incidents.length){done=settled;break;}
+ }
+ assert.ok(done);
+ assert.equal(done.plan.find(i=>i.eventId==='emergency').period,'afternoon');
+ assert.equal(done.plan.find(i=>i.eventId==='afternoon').period,'evening');
+ assert.equal(done.plan.find(i=>i.eventId==='evening').period,'night');
+ assert.equal(done.summary.displaced[0].eventId,'late');
+ assert.ok(!done.completedSetups.includes('late'));
+ assert.deepEqual(importSave(fixture,exportSave(fixture,done)),done);
+});
+test('emergencies stop after Dad dies',()=>{
+ for(let seed=0;seed<100;seed++){
+  const state={...engine.newGame(seed),fatherHealth:0,dayStartFatherHealth:0,deathDay:1};
+  assert.deepEqual(engine.settleDay(state).summary.incidents,[]);
+ }
+});
+test('version 1 saves migrate without losing ordinary choices or reapplying a settled day',async()=>{
+ const {createEngine:createOld}=await import('../assets/engine-v1.js');
+ const old=createOld(catalogue);
+ for(let seed=0;seed<30;seed++){
+  let state=old.newGame(seed);
+  const options=old.getOptions(state);
+  const id=options.morning.find(id=>!old.getEvent(id).unexpected);
+  state=old.setPlan(state,[{eventId:id,period:'morning',minute:0}]);
+  const migrated=importSave(engine,JSON.stringify(state));
+  assert.equal(migrated.version,2);assert.equal(migrated.plan[0].eventId,id);
+  assert.equal(engine.advanceDay(engine.settleDay(migrated)).legacyPlanningDay,false);
+  const summary=old.settleDay(state),converted=importSave(engine,JSON.stringify(summary));
+  assert.deepEqual(engine.settleDay(converted),converted);
+  assert.equal(converted.fatherHealth,summary.fatherHealth);
+ }
+});
+test('emergency care takes precedence over routine care without a missed-care penalty',()=>{
+ const fixture=createEngine([
+  activity('care','morning',30,{kind:'care',stage:1,shared:true}),
+  activity('hospital','morning',120,{unexpected:true,incidentChance:1,shared:true})
+ ]);
+ let done;
+ for(let seed=0;seed<100;seed++){
+  const state={...fixture.newGame(seed),fatherHealth:700,dayStartFatherHealth:700};
+  const summary=fixture.settleDay(fixture.arrange(state,[{eventId:'care',period:'morning'}]));
+  if(summary.summary.incidents.length){done=summary;break;}
+ }
+ assert.ok(done);assert.equal(done.summary.displaced[0].eventId,'care');
+ assert.deepEqual(done.summary.missedCare,[]);
+ assert.deepEqual(importSave(fixture,exportSave(fixture,done)),done);
+});
+test('legacy manually scheduled emergencies are removed from planning but preserved in historical summaries',async()=>{
+ const {createEngine:createOld}=await import('../assets/engine-v1.js');const old=createOld(catalogue);
+ let scheduled;
+ for(let seed=0;seed<50;seed++){
+  const state=old.newGame(seed);
+  const pair=Object.entries(old.getOptions(state)).flatMap(([period,ids])=>ids.map(id=>({id,period}))).find(({id})=>old.getEvent(id).unexpected);
+  if(pair){scheduled=old.setPlan(state,[{eventId:pair.id,period:pair.period,minute:0}]);break;}
+ }
+ assert.ok(scheduled);
+ const planning=importSave(engine,JSON.stringify(scheduled));
+ assert.deepEqual(planning.plan,[]);assert.equal(planning.fatherHealth,scheduled.fatherHealth);
+ const done=old.settleDay(scheduled),converted=importSave(engine,JSON.stringify(done));
+ assert.deepEqual(converted.plan,done.plan);assert.equal(converted.fatherHealth,done.fatherHealth);
+ assert.deepEqual(engine.settleDay(converted),converted);
+});

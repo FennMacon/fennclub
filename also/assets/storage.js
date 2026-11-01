@@ -5,7 +5,7 @@ export function importSave(engine,text) {
   if (typeof text !== 'string' || text.length > MAX_SAVE_LENGTH) throw new Error('Invalid save file.');
   let state;
   try { state=JSON.parse(text); } catch { throw new Error('Save file is not valid JSON.'); }
-  return engine.assertState(state);
+  return engine.migrateSave(state);
 }
 export function exportSave(engine,state) {
   return JSON.stringify(engine.assertState(state),null,2);

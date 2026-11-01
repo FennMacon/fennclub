@@ -21,7 +21,9 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.1,
-    "hospitalPenalty": true
+    "hospitalPenalty": true,
+    "unexpected": true,
+    "incidentChance": 0.02
   },
   {
     "id": "activity-3",
@@ -57,7 +59,9 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.5,
-    "hospitalPenalty": false
+    "hospitalPenalty": false,
+    "unexpected": true,
+    "incidentChance": 0.015
   },
   {
     "id": "activity-6",
@@ -441,7 +445,9 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.2,
-    "hospitalPenalty": true
+    "hospitalPenalty": true,
+    "unexpected": true,
+    "incidentChance": 0
   },
   {
     "id": "activity-38",
@@ -453,7 +459,9 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.2,
-    "hospitalPenalty": true
+    "hospitalPenalty": true,
+    "unexpected": true,
+    "incidentChance": 0.065
   },
   {
     "id": "activity-39",
@@ -465,7 +473,9 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.2,
-    "hospitalPenalty": true
+    "hospitalPenalty": true,
+    "unexpected": true,
+    "incidentChance": 0
   },
   {
     "id": "rest",
