@@ -205,7 +205,8 @@
     "kind": "activity",
     "weight": 1.0,
     "risk": 0.05,
-    "hospitalPenalty": false
+    "hospitalPenalty": false,
+    "requiresDadAlive": true
   },
   {
     "id": "activity-18",

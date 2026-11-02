@@ -83,3 +83,25 @@ test('pre-timeline saved summaries keep their original results and upgrade on th
   if(next.fatherHealth===800)assert.ok(next.plan.some(item=>item.eventId==='care-1-morning'));
  }
 });
+test('Pharmacy Run is never offered or schedulable after Dad dies',()=>{
+ const engine=createEngine(catalogue);
+ let offeredAlive=false;
+ for(let seed=0;seed<50;seed++){
+  const alive=engine.newGame(seed);
+  offeredAlive ||= engine.getOptions(alive).morning.includes('activity-17');
+  const gone={...alive,fatherHealth:0,dayStartFatherHealth:0,deathDay:1,day:2};
+  assert.ok(!Object.values(engine.getOptions(gone)).flat().includes('activity-17'));
+  assert.throws(()=>engine.arrange(gone,[{eventId:'activity-17',period:'morning'}]),/available/);
+ }
+ assert.ok(offeredAlive);
+});
+test('saved after-loss pharmacy plans are cleaned up without invalidating completed history',()=>{
+ const previous=createEngine(catalogue.map(e=>{const copy={...e};delete copy.requiresDadAlive;return copy;})),current=createEngine(catalogue);
+ let planned;
+ for(let seed=0;seed<100;seed++){
+  const state={...previous.newGame(seed),fatherHealth:0,dayStartFatherHealth:0,deathDay:1,day:2};
+  if(previous.getOptions(state).morning.includes('activity-17')){planned=previous.arrange(state,[{eventId:'activity-17',period:'morning'}]);break;}
+ }
+ assert.ok(planned);assert.ok(!current.prepareDay(planned).plan.some(item=>item.eventId==='activity-17'));
+ const done=previous.settleDay(planned);assert.deepEqual(current.assertState(done),done);
+});

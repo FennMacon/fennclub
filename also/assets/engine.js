@@ -102,7 +102,7 @@ export function createEngine(definitions) {
     const available=options(state), used=new Set(), placed=[], displaced=[];
     const ordered=choices.map(item=>{
       const preferredPeriod=item.preferredPeriod ?? item.period, e=byId.get(item.eventId);
-      if (!e || !available[preferredPeriod]?.includes(e.id)) fail('Event is not available in that period.');
+      if (!e || (e.requiresDadAlive&&state.deathDay!==null) || !available[preferredPeriod]?.includes(e.id)) fail('Event is not available in that period.');
       if (used.has(e.id)) fail('An event can only be scheduled once per day.');
       used.add(e.id);
       return {eventId:e.id,preferredPeriod};
@@ -149,7 +149,7 @@ export function createEngine(definitions) {
     assertState(state);
     if(state.phase!=='planning') return copy(state);
     const required=Object.entries(options(state)).flatMap(([period,ids])=>ids.filter(id=>['care','setup','grief'].includes(byId.get(id).kind)).map(eventId=>({eventId,period})));
-    const result=pack(state,[...required,...state.plan.filter(item=>!['care','setup','grief'].includes(byId.get(item.eventId).kind))]);
+    const result=pack(state,[...required,...state.plan.filter(item=>!['care','setup','grief'].includes(byId.get(item.eventId).kind)&&!(byId.get(item.eventId).requiresDadAlive&&state.deathDay!==null))]);
     return {...copy(state),completedGrief:griefCompleted(state).slice(),plan:result.plan};
   }
   function validatePlan(state,plan) {
@@ -224,7 +224,7 @@ export function createEngine(definitions) {
     const next=copy(state),random=rng((state.seed ^ Math.imul(state.day,2246822519))>>>0);
     next.completedGrief=griefCompleted(state).slice();
     const medical=incidents(state),feelings=emotions(state,medical);
-    const arranged=pack(state,withSetups(state,state.plan),[...medical,...feelings]);
+    const arranged=pack(state,withSetups(state,state.plan.filter(item=>!(byId.get(item.eventId).requiresDadAlive&&state.deathDay!==null))),[...medical,...feelings]);
     const variation=base=>Math.max(0,round(base*(0.8+random()*0.4)));
     const playerDaily=variation(0.5+state.day**1.2/2000),fatherDaily=variation(0.5+state.day**1.6/200);
     let player=state.playerHealth,father=state.fatherHealth,time=480,shared=0,pAccum=0,dAccum=0,pApplied=0,dApplied=0,cutoff=null;
@@ -297,6 +297,6 @@ export function createEngine(definitions) {
     return assertState(upgraded);
   }
   return Object.freeze({newGame,setPlan,arrange,prepareDay,settleDay,advanceDay,assertState,migrateSave,
-    getOptions(state) { assertState(state); if (state.phase !== 'planning') fail('This day has already ended.'); return copy(options(state)); },
+    getOptions(state) { assertState(state); if (state.phase !== 'planning') fail('This day has already ended.'); return Object.fromEntries(Object.entries(options(state)).map(([period,ids])=>[period,ids.filter(id=>!(byId.get(id).requiresDadAlive&&state.deathDay!==null))])); },
     getEvent(id) { return byId.has(id) ? copy(byId.get(id)) : null; }});
 }

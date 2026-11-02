@@ -1,5 +1,5 @@
 import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=12';
-import {createEngine,PERIODS,careStage} from './engine.js?v=13';
+import {createEngine,PERIODS,careStage} from './engine.js?v=14';
 import {createSaveStore,exportSave} from './storage.js?v=12';
 const $=id=>document.getElementById(id);
 const node=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
@@ -111,7 +111,7 @@ $('export').onclick=()=>attempt(()=>{const blob=new Blob([exportSave(engine,stat
 $('import').onchange=async event=>{const file=event.target.files[0];try{if(!engine)throw Error('Wait for the game to load.');if(!file)return;if(file.size>100000)throw Error('That save file is too large.');const {importSave}=await import('./storage.js?v=12');const next=importSave(engine,await file.text());if(!confirm('Replace the current game with this imported save?'))return;protectSave=false;period='morning';update(engine.prepareDay(next),'Save imported.');}catch(error){notify(error.message);}finally{event.target.value='';}};
 window.addEventListener('storage',event=>{if(event.key==='fenn.also.save.v1'){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent='Another tab changed this save. Reload to use its progress, or export this tab before starting a new game. Autosaving is paused.';}});
 try{
- const response=await fetch('./data/events.json?v=12',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
+ const response=await fetch('./data/events.json?v=14',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
  let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw Error('Storage unavailable');},setItem(){throw Error('Storage unavailable');}};}
  store=createSaveStore(engine,storage);const loaded=store.load();state=engine.prepareDay(loaded.state??engine.newGame(seed()));period=state.phase==='planning'?(nextPlanningPeriod(engine,state,'morning')??'night'):'morning';
  if(loaded.error){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent=`${loaded.error} Your old save has been preserved. You can export this temporary game, import a valid save, or choose New game to replace it.`;}
