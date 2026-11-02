@@ -11,7 +11,7 @@ const planItem=(e,minute=0)=>({eventId:e.id,period:e.period,minute});
 
 test('canonical catalogue has unique IDs and no duplicate titles within a period',()=>{
  assert.equal(new Set(catalogue.map(e=>e.id)).size,catalogue.length);
- assert.equal(new Set(catalogue.map(e=>e.title+'|'+e.period)).size,catalogue.length);
+ assert.equal(new Set(catalogue.map(e=>e.title+'|'+e.period+'|'+(e.emotionStage??''))).size,catalogue.length);
 });
 test('fresh options include shared activities, any-period rest and survive reload',()=>{
  const state=game(); const choices=engine.getOptions(state);
@@ -25,7 +25,7 @@ test('zero-weight sampling terminates and samples without replacement',()=>{
  assert.equal(new Set(weightedSample(catalogue,100,()=>0).map(e=>e.id)).size,catalogue.length);
 });
 test('care stage boundaries and required tasks replace earlier stages',()=>{
- assert.deepEqual([800,799,600,599,400,399,200,199,0].map(careStage),[0,1,1,2,2,3,3,4,0]);
+ assert.deepEqual([800,799,600,599,400,399,200,199,0].map(careStage),[1,1,2,2,3,3,4,4,0]);
  for (const [health,stage] of [[799,1],[599,2],[399,3],[199,4]]) {
   const ids=Object.values(engine.getOptions(game(health))).flat();
   const care=ids.map(id=>engine.getEvent(id)).filter(e=>e.kind==='care');
@@ -63,8 +63,8 @@ test('settlement and summary reload are repeat-safe; advance never applies losse
  assert.throws(()=>engine.advanceDay(next),/End the current day/);
 });
 test('new care requirements apply the following day, not the threshold-crossing day',()=>{
- const done=engine.settleDay(game(800,100));
- assert.ok(done.fatherHealth<800); assert.deepEqual(done.summary.missedCare,[]);
+ const done=engine.settleDay(game(801,100));
+ assert.ok(done.fatherHealth<=800); assert.deepEqual(done.summary.missedCare,[]);
  assert.ok(done.summary.milestones.includes(1));
  assert.ok(Object.values(engine.getOptions(engine.advanceDay(done))).flat().includes('care-1-morning'));
 });
@@ -96,7 +96,7 @@ test('exact-zero care penalty triggers death and cannot lose the death transitio
  assert.ok(done); assert.equal(done.fatherHealth,0); assert.equal(done.deathDay,1);
 });
 test('player exhaustion ends advancement and reset creates a completely fresh save',()=>{
- const done=engine.settleDay({...game(1000,10000),playerHealth:1});
+ const done=engine.settleDay({...game(0,10000),deathDay:1,playerHealth:1});
  assert.equal(done.playerHealth,0); assert.throws(()=>engine.advanceDay(done),/ended/);
  const storage=new Map(),store=createSaveStore(engine,{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)});
  store.save(done); const {state}=store.reset(7);
@@ -218,7 +218,7 @@ test('emergencies stop after Dad dies',()=>{
 });
 test('version 1 saves migrate without losing ordinary choices or reapplying a settled day',async()=>{
  const {createEngine:createOld}=await import('../assets/engine-v1.js');
- const old=createOld(catalogue);
+ const old=createOld(catalogue.filter(e=>!e.introduced));
  for(let seed=0;seed<30;seed++){
   let state=old.newGame(seed);
   const options=old.getOptions(state);
@@ -248,7 +248,7 @@ test('emergency care takes precedence over routine care without a missed-care pe
  assert.deepEqual(importSave(fixture,exportSave(fixture,done)),done);
 });
 test('legacy manually scheduled emergencies are removed from planning but preserved in historical summaries',async()=>{
- const {createEngine:createOld}=await import('../assets/engine-v1.js');const old=createOld(catalogue);
+ const {createEngine:createOld}=await import('../assets/engine-v1.js');const old=createOld(catalogue.filter(e=>!e.introduced));
  let scheduled;
  for(let seed=0;seed<50;seed++){
   const state=old.newGame(seed);

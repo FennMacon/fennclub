@@ -1,4 +1,4 @@
-import {createEngine} from './engine.js?v=8';
+import {createEngine} from './engine.js?v=12';
 export function validate(events){
  if(!Array.isArray(events)||events.length>500)throw Error('Use a catalogue with 1–500 events.');
  createEngine(events);

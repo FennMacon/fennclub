@@ -1,0 +1,57 @@
+[
+  {
+    "version": 2,
+    "seed": 0,
+    "day": 1,
+    "phase": "summary",
+    "playerHealth": 1000,
+    "fatherHealth": 800,
+    "dayStartFatherHealth": 800,
+    "deathDay": null,
+    "completedSetups": [],
+    "plan": [
+      {
+        "eventId": "activity-16",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 0
+      }
+    ],
+    "summary": {
+      "day": 1,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 800,
+      "playerLoss": 0,
+      "fatherLoss": 0,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [],
+      "milestones": [],
+      "fatherDied": false
+    }
+  },
+  {
+    "version": 2,
+    "seed": 42,
+    "day": 2,
+    "phase": "summary",
+    "playerHealth": 1000,
+    "fatherHealth": 0,
+    "dayStartFatherHealth": 0,
+    "deathDay": 1,
+    "completedSetups": [],
+    "plan": [],
+    "summary": {
+      "day": 2,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 0,
+      "playerLoss": 0,
+      "fatherLoss": 0,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [],
+      "milestones": [],
+      "fatherDied": false
+    }
+  }
+]

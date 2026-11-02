@@ -1,4 +1,4 @@
-import {PERIODS} from './engine.js?v=8';
+import {PERIODS} from './engine.js?v=12';
 export const PERIOD_ORDER=Object.keys(PERIODS);
 export function periodUsage(engine,state,period){
  const {start,duration}=PERIODS[period];
