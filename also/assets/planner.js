@@ -1,4 +1,4 @@
-import {PERIODS} from './engine.js?v=3';
+import {PERIODS} from './engine.js?v=4';
 export const PERIOD_ORDER=Object.keys(PERIODS);
 export function periodUsage(engine,state,period){
  const {start,duration}=PERIODS[period];
@@ -9,7 +9,7 @@ export function periodUsage(engine,state,period){
 }
 export function nextPlanningPeriod(engine,state,current){
  const index=PERIOD_ORDER.indexOf(current);
- return PERIOD_ORDER.slice(Math.max(0,index)).find(part=>periodUsage(engine,state,part)<PERIODS[part].duration)??null;
+ return PERIOD_ORDER.slice(Math.max(0,index)).find(part=>periodChoices(engine,state,part).length>0)??null;
 }
 export function periodChoices(engine,state,period){
  const left=PERIODS[period].duration-periodUsage(engine,state,period);

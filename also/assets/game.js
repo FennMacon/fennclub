@@ -1,6 +1,6 @@
-import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=3';
-import {createEngine,PERIODS,careStage} from './engine.js?v=3';
-import {createSaveStore,exportSave} from './storage.js?v=3';
+import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=4';
+import {createEngine,PERIODS,careStage} from './engine.js?v=4';
+import {createSaveStore,exportSave} from './storage.js?v=4';
 const $=id=>document.getElementById(id);
 const node=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
 const title=s=>s[0].toUpperCase()+s.slice(1);
@@ -46,6 +46,8 @@ function render(){
   $('advance').hidden=state.playerHealth===0;
   return;
  }
+ const availablePeriod=nextPlanningPeriod(engine,state,period);
+ if(availablePeriod)period=availablePeriod;else{period='night';state.planningComplete=true;}
  const options=engine.getOptions(state);
  $('periods').replaceChildren();
  for(const part of Object.keys(PERIODS)){const b=node('button',title(part));b.type='button';b.setAttribute('aria-pressed',String(part===period));b.onclick=()=>{period=part;render();$('periods').children[Object.keys(PERIODS).indexOf(part)].focus();};$('periods').append(b);}
@@ -73,7 +75,7 @@ function render(){
   });
   controls.append(node('span','Time arranged automatically','muted'),add);card.append(controls);cards.append(card);
  }
- if(!periodChoices(engine,state,period).length)cards.append(node('p','No more activities fit here. Leave the remaining time open and continue.'));
+ if(!periodChoices(engine,state,period).length)cards.append(node('p','Your plan is ready. Play the planned day to see how it unfolds.'));
  const list=$('schedule');list.replaceChildren();let total=0;
  for(const item of state.plan){const e=engine.getEvent(item.eventId),start=PERIODS[item.period].start+item.minute,li=node('li'),time=node('time',`${clock(start)} — ${clock(start+e.duration)}`),row=node('div',undefined,'row'),remove=node('button','Remove');
   remove.setAttribute('aria-label',`Remove ${e.title}`);remove.onclick=()=>attempt(()=>{period=item.preferredPeriod??item.period;update({...engine.arrange(state,state.plan.filter(i=>i.eventId!==e.id)),planningComplete:false},`${e.title} removed.`);});row.append(node('span',e.title));if(e.kind==='care')row.append(node('span','Required','tag'));else row.append(remove);li.append(time,row);list.append(li);total+=e.duration;
@@ -85,17 +87,17 @@ function render(){
 $('clear').onclick=()=>attempt(()=>{period='morning';update(engine.prepareDay({...engine.arrange(state,[]),planningComplete:false}),'Optional activities cleared. Required care stays reserved.');});
 $('next-period').onclick=()=>{
  const index=PERIOD_ORDER.indexOf(period);
- if(index<PERIOD_ORDER.length-1){period=nextPlanningPeriod(engine,state,PERIOD_ORDER[index+1])??'night';render();}
+ if(index<PERIOD_ORDER.length-1){const following=nextPlanningPeriod(engine,state,PERIOD_ORDER[index+1]);period=following??'night';if(!following){state={...state,planningComplete:true};save();}render();}
  else{state={...state,planningComplete:true};save();render();$('settle').focus();notify('Your plan is ready. Play the day to see how it unfolds.');}
 };
 $('settle').onclick=()=>attempt(()=>{if(state.phase!=='planning')return;const required=Object.values(engine.getOptions(state)).flat().filter(id=>engine.getEvent(id).kind==='care'&&!state.plan.some(i=>i.eventId===id));if(required.length&&!confirm('Required care is missing. End the day and apply missed-care penalties?'))return;update(engine.settleDay(state),'Day complete.');$('day').focus();});
 $('advance').onclick=()=>attempt(()=>{if(state.phase!=='summary')return;period='morning';update(engine.prepareDay({...engine.advanceDay(state),planningComplete:false}),'Plan the next day. Required care is already reserved.');$('day').focus();});
 $('reset').onclick=()=>attempt(()=>{if(!confirm('Start a new game? Your current progress will be replaced. Export it first if you want to keep it.'))return;protectSave=false;period='morning';update(engine.prepareDay(engine.newGame(seed())),'A new beginning.');});
 $('export').onclick=()=>attempt(()=>{const blob=new Blob([exportSave(engine,state)],{type:'application/json'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download=`also-day-${state.day}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Save exported.');});
-$('import').onchange=async event=>{const file=event.target.files[0];try{if(!engine)throw Error('Wait for the game to load.');if(!file)return;if(file.size>100000)throw Error('That save file is too large.');const {importSave}=await import('./storage.js?v=3');const next=importSave(engine,await file.text());if(!confirm('Replace the current game with this imported save?'))return;protectSave=false;period='morning';update(engine.prepareDay(next),'Save imported.');}catch(error){notify(error.message);}finally{event.target.value='';}};
+$('import').onchange=async event=>{const file=event.target.files[0];try{if(!engine)throw Error('Wait for the game to load.');if(!file)return;if(file.size>100000)throw Error('That save file is too large.');const {importSave}=await import('./storage.js?v=4');const next=importSave(engine,await file.text());if(!confirm('Replace the current game with this imported save?'))return;protectSave=false;period='morning';update(engine.prepareDay(next),'Save imported.');}catch(error){notify(error.message);}finally{event.target.value='';}};
 window.addEventListener('storage',event=>{if(event.key==='fenn.also.save.v1'){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent='Another tab changed this save. Reload to use its progress, or export this tab before starting a new game. Autosaving is paused.';}});
 try{
- const response=await fetch('./data/events.json?v=3',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
+ const response=await fetch('./data/events.json?v=4',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
  let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw Error('Storage unavailable');},setItem(){throw Error('Storage unavailable');}};}
  store=createSaveStore(engine,storage);const loaded=store.load();state=engine.prepareDay(loaded.state??engine.newGame(seed()));period=state.phase==='planning'?(nextPlanningPeriod(engine,state,'morning')??'night'):'morning';
  if(loaded.error){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent=`${loaded.error} Your old save has been preserved. You can export this temporary game, import a valid save, or choose New game to replace it.`;}

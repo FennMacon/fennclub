@@ -41,12 +41,16 @@ export function createEngine(definitions) {
         (e.kind === 'grief' && !integer(e.dayOffset,1,365))) fail('Invalid event catalogue.');
     byId.set(e.id,e);
   }
+  function supplements(state,period) {
+    return events.filter(e=>e.introduced===4 && e.kind==='activity' && !e.unexpected &&
+      (e.period===period || e.period==='any') && (state.deathDay===null || !e.shared) && e.weight>0).map(e=>e.id);
+  }
   function options(state) {
     if (state.legacyPlanningDay) {
       const legacyState={...state,version:1,phase:'planning',fatherHealth:state.dayStartFatherHealth,
         playerHealth:state.summary?.oldPlayerHealth ?? state.playerHealth,plan:[],summary:null};
-      return Object.fromEntries(Object.entries(createLegacyEngine(definitions).getOptions(legacyState))
-        .map(([period,ids])=>[period,ids.filter(id=>!byId.get(id).unexpected)]));
+      return Object.fromEntries(Object.entries(createLegacyEngine(definitions.filter(e=>!e.introduced)).getOptions(legacyState))
+        .map(([period,ids])=>[period,[...ids.filter(id=>!byId.get(id).unexpected),...supplements(state,period)]]));
     }
     const random = rng((state.seed ^ Math.imul(state.day,2654435761)) >>> 0);
     const alive = state.deathDay === null, stage = careStage(state.dayStartFatherHealth);
@@ -54,9 +58,9 @@ export function createEngine(definitions) {
       e.kind === 'setup' ? alive && e.stage <= stage && !state.completedSetups.includes(e.id) :
       e.kind === 'grief' ? !alive && state.day - state.deathDay === e.dayOffset : alive || !e.shared);
     return Object.fromEntries(Object.keys(PERIODS).map(period => {
-      const pool = available.filter(e => e.period === period || e.period === 'any');
+      const pool = available.filter(e => !e.introduced && (e.period === period || e.period === 'any'));
       const required = pool.filter(e => e.kind !== 'activity');
-      return [period,[...required,...weightedSample(pool.filter(e => e.kind === 'activity'),Math.max(0,6-required.length),random)].map(e => e.id)];
+      return [period,[...required,...weightedSample(pool.filter(e => e.kind === 'activity'),Math.max(0,6-required.length),random)].map(e => e.id).concat(supplements(state,period))];
     }));
   }
   function incidents(state) {
@@ -213,7 +217,7 @@ export function createEngine(definitions) {
   }
   function migrateSave(saved) {
     if (saved?.version!==1) return assertState(saved);
-    const legacy=createLegacyEngine(definitions).assertState(saved);
+    const legacy=createLegacyEngine(definitions.filter(e=>!e.introduced)).assertState(saved);
     const upgraded={...legacy,version:SAVE_VERSION,legacyPlanningDay:true};
     if (legacy.phase==='summary') {
       upgraded.summary={...legacy.summary,incidents:[],displaced:[],legacy:true};

@@ -40,3 +40,27 @@ test('published catalogue validates; invalid edits and incomplete care stages ar
  assert.throws(()=>validate(definitions.filter(e=>e.id!=='care-2-night')),/exactly one/);
  assert.throws(()=>validate(definitions.map(e=>e.id==='rest'?{...e,risk:2}:e)));
 });
+test('a period with spare minutes but no fitting choices advances automatically',()=>{
+ const engine=createEngine([event('morning-long','morning',150),event('morning-too-long','morning',60),event('lunch','lunch',60),event('night','night',60)]);
+ const state=engine.arrange(engine.newGame(),[{eventId:'morning-long',period:'morning'}]);
+ assert.equal(periodUsage(engine,state,'morning'),150);
+ assert.deepEqual(periodChoices(engine,state,'morning'),[]);
+ assert.equal(nextPlanningPeriod(engine,state,'morning'),'lunch');
+ assert.equal(nextPlanningPeriod(engine,state,'afternoon'),'night');
+});
+test('lunch and evening retain choices when rest was used earlier',()=>{
+ const engine=createEngine(definitions);
+ const state=engine.arrange(engine.newGame(42),[{eventId:'rest',period:'lunch'}]);
+ assert.ok(periodChoices(engine,state,'lunch').length>=4);
+ assert.ok(periodChoices(engine,state,'evening').length>=5);
+});
+test('new period activities preserve every previously offered option and existing saves',()=>{
+ const before=createEngine(definitions.filter(e=>!e.introduced)),after=createEngine(definitions);
+ for(let seed=0;seed<30;seed++){
+  const state=before.newGame(seed),previous=before.getOptions(state),current=after.getOptions(state);
+  for(const period of PERIOD_ORDER)assert.deepEqual(current[period].filter(id=>!after.getEvent(id).introduced),previous[period]);
+  const id=previous.afternoon[0];const planned=before.arrange(state,[{eventId:id,period:'afternoon'}]);
+  assert.deepEqual(after.assertState(planned),planned);
+  const done=before.settleDay(planned);assert.deepEqual(after.assertState(done),done);
+ }
+});
