@@ -59,8 +59,7 @@ function render(){
  $('care-status').textContent=careMinutes?`Dad’s care is reserved: ${careMinutes} minutes today (stage ${careStage(state.fatherHealth)}). This time grows as his needs increase.${setupMinutes?` New care needs add ${setupMinutes} required minutes today.`:''}`:'No daily care tasks are required yet. More time will be reserved as Dad’s needs increase.';
  $('next-period').textContent=period==='night'?'Finish planning →':'Leave remaining time open →';
  $('next-period').disabled=false;
- const complete=state.planningComplete===true||PERIOD_ORDER.every(part=>periodUsage(engine,state,part)===PERIODS[part].duration);
- $('settle').hidden=!complete;
+ $('settle').hidden=state.plan.length===0;
 
  const cards=$('activities');cards.replaceChildren();
  for(const id of periodChoices(engine,state,period)){
