@@ -8,7 +8,7 @@ const clock=n=>`${(Math.floor(n/60)%12)||12}:${String(n%60).padStart(2,'0')} ${n
 const seed=()=>crypto.getRandomValues(new Uint32Array(1))[0];
 let engine,store,state,period='morning',protectSave=false,noticeTimer,fadeTimer;
 function dismissNotice(){clearTimeout(noticeTimer);$('notice').classList.add('fading');fadeTimer=setTimeout(()=>{$('notice').hidden=true;$('notice-text').textContent='';},250);}
-function notify(message){clearTimeout(noticeTimer);clearTimeout(fadeTimer);$('notice').hidden=false;$('notice').classList.remove('fading');$('notice-text').textContent=message;noticeTimer=setTimeout(dismissNotice,5000);}
+function notify(message){clearTimeout(noticeTimer);clearTimeout(fadeTimer);$('notice').hidden=false;$('notice').classList.remove('fading');$('notice-text').textContent=message;noticeTimer=setTimeout(dismissNotice,3000);}
 $('notice-close').onclick=dismissNotice;
 $('notice').onmouseenter=()=>clearTimeout(noticeTimer);
 $('notice').onmouseleave=()=>{noticeTimer=setTimeout(dismissNotice,3000);};
