@@ -2,3 +2,4 @@
 #notice:not(:empty){position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:680px;z-index:10;box-shadow:0 3px 20px #233b3520;border:1px solid #b9c7a3}.button:has(+input:focus-visible){outline:3px solid #647d27;outline-offset:3px}
 
 .incident{background:#f5dfba;border-left:3px solid #ac783b;padding:12px 20px;margin:20px 0}.incident h4{margin:0;font-size:20px;font-weight:400}
+#notice{display:flex;align-items:center;gap:20px;transition:opacity .25s}#notice.fading{opacity:0}#notice-close{margin-left:auto;border:0;font-size:22px;padding:2px 8px;flex-shrink:0}#notice[hidden]{display:none!important}#period-progress{margin:0 0 12px}#next-period{margin:0 0 20px}.care-status{font:12px/1.6 system-ui,sans-serif;background:#e5ebd9;padding:12px;border-radius:4px}#catalogue-import{max-width:220px}#settle[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){#notice{transition:none}}

@@ -109,6 +109,13 @@ export function createEngine(definitions) {
     if (result.displaced.length) fail('There is not enough time left. Remove an activity to make room.');
     return {...copy(state),plan:result.plan};
   }
+  function prepareDay(state) {
+    assertState(state);
+    if(state.phase!=='planning') return copy(state);
+    const required=Object.entries(options(state)).flatMap(([period,ids])=>ids.filter(id=>byId.get(id).kind==='care').map(eventId=>({eventId,period})));
+    const result=pack(state,[...required,...state.plan.filter(item=>byId.get(item.eventId).kind!=='care')]);
+    return {...copy(state),plan:result.plan};
+  }
   function validatePlan(state,plan) {
     if (!Array.isArray(plan) || plan.length > events.length) fail('Invalid schedule.');
     const available = options(state), used = new Set();
@@ -218,7 +225,7 @@ export function createEngine(definitions) {
     }
     return assertState(upgraded);
   }
-  return Object.freeze({newGame,setPlan,arrange,settleDay,advanceDay,assertState,migrateSave,
+  return Object.freeze({newGame,setPlan,arrange,prepareDay,settleDay,advanceDay,assertState,migrateSave,
     getOptions(state) { assertState(state); if (state.phase !== 'planning') fail('This day has already ended.'); return copy(options(state)); },
     getEvent(id) { return byId.has(id) ? copy(byId.get(id)) : null; }});
 }
