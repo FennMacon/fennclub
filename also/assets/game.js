@@ -65,7 +65,11 @@ function render(){
  const griefMinutes=state.plan.filter(item=>engine.getEvent(item.eventId).kind==='grief').reduce((sum,item)=>sum+engine.getEvent(item.eventId).duration,0);
  const setupMinutes=state.plan.filter(item=>engine.getEvent(item.eventId).kind==='setup').reduce((sum,item)=>sum+engine.getEvent(item.eventId).duration,0);
  const careMinutes=state.plan.filter(item=>engine.getEvent(item.eventId).kind==='care').reduce((sum,item)=>sum+engine.getEvent(item.eventId).duration,0);
- $('care-status').textContent=careMinutes?`Dad’s care is reserved: ${careMinutes} minutes today (stage ${careStage(state.fatherHealth)}). This time grows as his needs increase.${setupMinutes?` New care needs add ${setupMinutes} required minutes today.`:''}`:(state.deathDay!==null?`After-loss obligations reserve ${griefMinutes} minutes today. Waves of grief may take additional time when the day plays out.`:'No daily care tasks are required yet. More time will be reserved as Dad’s needs increase.');
+ if(state.deathDay!==null){
+  $('care-status').textContent=griefMinutes?`After-loss obligations reserve ${griefMinutes} minutes today. Waves of grief may take additional time when the day plays out.`:'There are no required after-loss tasks today. Waves of grief may still take time as the day unfolds.';
+ }else{
+  $('care-status').textContent=careMinutes?`Dad’s care is reserved: ${careMinutes} minutes today (stage ${careStage(state.fatherHealth)}). This time grows as his needs increase.${setupMinutes?` New care needs add ${setupMinutes} required minutes today.`:''}`:'No daily care tasks are required yet. More time will be reserved as Dad’s needs increase.';
+ }
  $('next-period').textContent=period==='night'?'Finish planning →':'Leave remaining time open →';
  $('next-period').disabled=false;
  $('settle').hidden=state.plan.length===0;
