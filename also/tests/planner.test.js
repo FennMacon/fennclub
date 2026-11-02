@@ -28,7 +28,7 @@ test('required care automatically reserves more of each day and survives clearin
  const engine=createEngine(definitions);
  for(const [health,minutes] of [[1000,0],[799,60],[599,90],[399,120],[199,180]]){
   const state=engine.prepareDay({...engine.newGame(),fatherHealth:health,dayStartFatherHealth:health});
-  assert.equal(state.plan.reduce((n,i)=>n+engine.getEvent(i.eventId).duration,0),minutes);
+  assert.equal(state.plan.filter(i=>engine.getEvent(i.eventId).kind==='care').reduce((n,i)=>n+engine.getEvent(i.eventId).duration,0),minutes);
   assert.deepEqual(engine.prepareDay(state),state);
   const cleared=engine.prepareDay(engine.arrange(state,[]));assert.deepEqual(cleared,state);
  }
@@ -63,4 +63,30 @@ test('new period activities preserve every previously offered option and existin
   assert.deepEqual(after.assertState(planned),planned);
   const done=before.settleDay(planned);assert.deepEqual(after.assertState(done),done);
  }
+});
+test('new care setup is mandatory, reserved ahead of optional activities, and survives clearing',()=>{
+ const engine=createEngine(definitions),base={...engine.newGame(9),fatherHealth:700,dayStartFatherHealth:700};
+ const prepared=engine.prepareDay(base);
+ assert.ok(prepared.plan.some(item=>item.eventId==='setup-1'));
+ assert.equal(prepared.plan.find(item=>item.eventId==='setup-1').minute,30);
+ assert.ok(engine.arrange(prepared,[]).plan.some(item=>item.eventId==='setup-1'));
+ assert.ok(engine.arrange(base,[]).plan.some(item=>item.eventId==='setup-1'));
+ const done=engine.settleDay(prepared);
+ if(done.completedSetups.includes('setup-1')){
+  const next=engine.prepareDay(engine.advanceDay(done));assert.ok(!next.plan.some(item=>item.eventId==='setup-1'));
+ }
+});
+test('emergency-displaced setup remains mandatory tomorrow and is not counted as completed',()=>{
+ const fixture=createEngine([
+  {...event('setup','night',240),kind:'setup',stage:1,shared:true},
+  {...event('emergency','night',180),unexpected:true,incidentChance:1,shared:true}
+ ]);
+ let done;
+ for(let seed=0;seed<100;seed++){
+  const state=fixture.prepareDay({...fixture.newGame(seed),fatherHealth:700,dayStartFatherHealth:700});
+  const result=fixture.settleDay(state);if(result.summary.incidents.length){done=result;break;}
+ }
+ assert.ok(done);assert.ok(done.summary.displaced.some(item=>item.eventId==='setup'));
+ assert.deepEqual(done.completedSetups,[]);
+ const next=fixture.prepareDay(fixture.advanceDay(done));assert.ok(next.plan.some(item=>item.eventId==='setup'));
 });

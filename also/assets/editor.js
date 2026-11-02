@@ -1,4 +1,4 @@
-import {validate} from './catalogue.js?v=4';
+import {validate} from './catalogue.js?v=8';
 const $=id=>document.getElementById(id),form=$('event-form'),key='fenn.also.catalogue-draft.v1';
 let catalogue=[],selected=null,published=[];
 const message=text=>$('editor-status').textContent=text;

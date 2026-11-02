@@ -93,8 +93,9 @@ export function createEngine(definitions) {
       const fixed=interval({...item,period,minute:period==='night'?240-e.duration:0});
       if (placed.some(other=>overlaps(fixed,other))) displaced.push(item); else placed.push(fixed);
     }
+    for(const group of [ordered.filter(item=>byId.get(item.eventId).kind==='setup'),ordered.filter(item=>!['care','setup'].includes(byId.get(item.eventId).kind))]){
     let cursor=480;
-    for (const item of ordered.filter(item=>byId.get(item.eventId).kind!=='care')) {
+    for (const item of group) {
       const duration=byId.get(item.eventId).duration;
       let start=Math.max(cursor,PERIODS[item.preferredPeriod].start);
       for (const fixed of placed.slice().sort((a,b)=>a.start-b.start)) {
@@ -104,20 +105,26 @@ export function createEngine(definitions) {
       const period=Object.keys(PERIODS).find(part=>start>=PERIODS[part].start && start<PERIODS[part].start+PERIODS[part].duration);
       placed.push({...item,period,minute:start-PERIODS[period].start,start,end:start+duration});cursor=start+duration;
     }
+    }
     return {plan:placed.sort((a,b)=>a.start-b.start).map(({start,end,...item})=>item),displaced};
+  }
+  function withSetups(state,choices) {
+    if(!Array.isArray(choices))fail('Invalid activities.');
+    const setups=Object.entries(options(state)).flatMap(([period,ids])=>ids.filter(id=>byId.get(id).kind==='setup').map(eventId=>({eventId,period})));
+    return [...setups,...choices.filter(item=>byId.get(item.eventId)?.kind!=='setup')];
   }
   function arrange(state,choices) {
     assertState(state);
     if (state.phase!=='planning') fail('This day has already ended.');
-    const result=pack(state,choices);
+    const result=pack(state,withSetups(state,choices));
     if (result.displaced.length) fail('There is not enough time left. Remove an activity to make room.');
     return {...copy(state),plan:result.plan};
   }
   function prepareDay(state) {
     assertState(state);
     if(state.phase!=='planning') return copy(state);
-    const required=Object.entries(options(state)).flatMap(([period,ids])=>ids.filter(id=>byId.get(id).kind==='care').map(eventId=>({eventId,period})));
-    const result=pack(state,[...required,...state.plan.filter(item=>byId.get(item.eventId).kind!=='care')]);
+    const required=Object.entries(options(state)).flatMap(([period,ids])=>ids.filter(id=>['care','setup'].includes(byId.get(id).kind)).map(eventId=>({eventId,period})));
+    const result=pack(state,[...required,...state.plan.filter(item=>!['care','setup'].includes(byId.get(item.eventId).kind))]);
     return {...copy(state),plan:result.plan};
   }
   function validatePlan(state,plan) {
@@ -182,7 +189,7 @@ export function createEngine(definitions) {
     if (state.phase === 'summary') return copy(state); // Idempotent: no rerolls or duplicate effects.
     const next=copy(state), random=rng((state.seed ^ Math.imul(state.day,2246822519)) >>> 0);
     const interruptions=incidents(state);
-    const arranged=pack(state,state.plan,interruptions);
+    const arranged=pack(state,withSetups(state,state.plan),interruptions);
     next.plan=arranged.plan;
     const scheduled=next.plan.map(item => byId.get(item.eventId));
     const shared=scheduled.filter(e => e.shared).length;

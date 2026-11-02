@@ -1,6 +1,6 @@
-import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=4';
-import {createEngine,PERIODS,careStage} from './engine.js?v=4';
-import {createSaveStore,exportSave} from './storage.js?v=4';
+import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=8';
+import {createEngine,PERIODS,careStage} from './engine.js?v=8';
+import {createSaveStore,exportSave} from './storage.js?v=8';
 const $=id=>document.getElementById(id);
 const node=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
 const title=s=>s[0].toUpperCase()+s.slice(1);
@@ -40,7 +40,7 @@ function render(){
   const list=node('ul');for(const item of state.plan){const e=engine.getEvent(item.eventId);list.append(node('li',`${clock(PERIODS[item.period].start+item.minute)} · ${e.title}`));}box.append(list);
   if(!state.plan.length)box.append(node('p','A quiet day, with no activities planned.'));
   if(r.missedCare.length)box.append(node('p',`Care was missed: ${r.missedCare.map(id=>engine.getEvent(id).title).join(', ')}. Family stepped in; additional health loss was applied.`));
-  if(r.milestones.length)box.append(node('p',`Care needs have changed. Stage ${Math.max(...r.milestones)} care will be available tomorrow.`));
+  if(r.milestones.length)box.append(node('p',`Care needs have changed. Stage ${Math.max(...r.milestones)} care will be reserved tomorrow.`));
   if(r.fatherDied)box.append(node('p','Dad has passed away. Take a moment. You can continue into the days that follow, with space for grief and the practical things that come with loss.'));
   if(state.playerHealth===0)box.append(node('p','You have reached the end of this playthrough. Start a new game whenever you are ready.'));
   $('advance').hidden=state.playerHealth===0;
@@ -54,8 +54,9 @@ function render(){
  const used=periodUsage(engine,state,period),left=PERIODS[period].duration-used;
  $('period-time').textContent=`${title(period)} · ${clock(PERIODS[period].start)} — ${clock(PERIODS[period].start+PERIODS[period].duration)} · ${left} min left`;
  $('period-progress').max=PERIODS[period].duration;$('period-progress').value=used;
+ const setupMinutes=state.plan.filter(item=>engine.getEvent(item.eventId).kind==='setup').reduce((sum,item)=>sum+engine.getEvent(item.eventId).duration,0);
  const careMinutes=state.plan.filter(item=>engine.getEvent(item.eventId).kind==='care').reduce((sum,item)=>sum+engine.getEvent(item.eventId).duration,0);
- $('care-status').textContent=careMinutes?`Dad’s care is reserved: ${careMinutes} minutes today (stage ${careStage(state.fatherHealth)}). This time grows as his needs increase.`:'No daily care tasks are required yet. More time will be reserved as Dad’s needs increase.';
+ $('care-status').textContent=careMinutes?`Dad’s care is reserved: ${careMinutes} minutes today (stage ${careStage(state.fatherHealth)}). This time grows as his needs increase.${setupMinutes?` New care needs add ${setupMinutes} required minutes today.`:''}`:'No daily care tasks are required yet. More time will be reserved as Dad’s needs increase.';
  $('next-period').textContent=period==='night'?'Finish planning →':'Leave remaining time open →';
  $('next-period').disabled=false;
  const complete=state.planningComplete===true||PERIOD_ORDER.every(part=>periodUsage(engine,state,part)===PERIODS[part].duration);
@@ -64,7 +65,7 @@ function render(){
  const cards=$('activities');cards.replaceChildren();
  for(const id of periodChoices(engine,state,period)){
   const e=engine.getEvent(id),card=node('article',undefined,'card');
-  card.append(node('div',e.kind==='care'?'REQUIRED CARE':e.kind==='grief'?'AFTER LOSS':e.kind==='setup'?'NEW CARE NEED':e.shared?'TOGETHER':'FOR YOU','tag'),node('h4',e.title),node('p',e.description),node('p',`${e.duration} min${e.risk?' · Chance of a difficult outcome':''}`,'muted'));
+  card.append(node('div',e.kind==='care'?'REQUIRED CARE':e.kind==='grief'?'AFTER LOSS':e.kind==='setup'?'REQUIRED NEW CARE NEED':e.shared?'TOGETHER':'FOR YOU','tag'),node('h4',e.title),node('p',e.description),node('p',`${e.duration} min${e.risk?' · Chance of a difficult outcome':''}`,'muted'));
   const controls=node('div',undefined,'card-controls');
   const planned=state.plan.some(i=>i.eventId===id),add=node('button',planned?'Planned':'Add to day');add.disabled=planned;
   add.onclick=()=>attempt(()=>{
@@ -83,13 +84,13 @@ function render(){
  }
  const list=$('schedule');list.replaceChildren();let total=0;
  for(const item of state.plan){const e=engine.getEvent(item.eventId),start=PERIODS[item.period].start+item.minute,li=node('li'),time=node('time',`${clock(start)} — ${clock(start+e.duration)}`),row=node('div',undefined,'row'),remove=node('button','Remove');
-  remove.setAttribute('aria-label',`Remove ${e.title}`);remove.onclick=()=>attempt(()=>{period=item.preferredPeriod??item.period;update({...engine.arrange(state,state.plan.filter(i=>i.eventId!==e.id)),planningComplete:false},`${e.title} removed.`);});row.append(node('span',e.title));if(e.kind==='care')row.append(node('span','Required','tag'));else row.append(remove);li.append(time,row);list.append(li);total+=e.duration;
+  remove.setAttribute('aria-label',`Remove ${e.title}`);remove.onclick=()=>attempt(()=>{period=item.preferredPeriod??item.period;update({...engine.arrange(state,state.plan.filter(i=>i.eventId!==e.id)),planningComplete:false},`${e.title} removed.`);});row.append(node('span',e.title));if(['care','setup'].includes(e.kind))row.append(node('span','Required','tag'));else row.append(remove);li.append(time,row);list.append(li);total+=e.duration;
  }
  if(!state.plan.length)list.append(node('li','Your day is open. Add a moment from the left.'));
  $('planned-time').textContent=`${Math.floor(total/60)}h ${total%60}m planned`;
 
 }
-$('clear').onclick=()=>attempt(()=>{period='morning';update(engine.prepareDay({...engine.arrange(state,[]),planningComplete:false}),'Optional activities cleared. Required care stays reserved.');});
+$('clear').onclick=()=>attempt(()=>{period='morning';update(engine.prepareDay({...engine.arrange(state,[]),planningComplete:false}),'Optional activities cleared. Required care and new care needs stay reserved.');});
 $('next-period').onclick=()=>{
  const index=PERIOD_ORDER.indexOf(period);
  if(index<PERIOD_ORDER.length-1){const following=nextPlanningPeriod(engine,state,PERIOD_ORDER[index+1]);period=following??'night';if(!following){state={...state,planningComplete:true};save();}render();}
@@ -99,10 +100,10 @@ $('settle').onclick=()=>attempt(()=>{if(state.phase!=='planning')return;const re
 $('advance').onclick=()=>attempt(()=>{if(state.phase!=='summary')return;period='morning';update(engine.prepareDay({...engine.advanceDay(state),planningComplete:false}),'Plan the next day. Required care is already reserved.');$('day').focus();});
 $('reset').onclick=()=>attempt(()=>{if(!confirm('Start a new game? Your current progress will be replaced. Export it first if you want to keep it.'))return;protectSave=false;period='morning';update(engine.prepareDay(engine.newGame(seed())),'A new beginning.');});
 $('export').onclick=()=>attempt(()=>{const blob=new Blob([exportSave(engine,state)],{type:'application/json'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download=`also-day-${state.day}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Save exported.');});
-$('import').onchange=async event=>{const file=event.target.files[0];try{if(!engine)throw Error('Wait for the game to load.');if(!file)return;if(file.size>100000)throw Error('That save file is too large.');const {importSave}=await import('./storage.js?v=4');const next=importSave(engine,await file.text());if(!confirm('Replace the current game with this imported save?'))return;protectSave=false;period='morning';update(engine.prepareDay(next),'Save imported.');}catch(error){notify(error.message);}finally{event.target.value='';}};
+$('import').onchange=async event=>{const file=event.target.files[0];try{if(!engine)throw Error('Wait for the game to load.');if(!file)return;if(file.size>100000)throw Error('That save file is too large.');const {importSave}=await import('./storage.js?v=8');const next=importSave(engine,await file.text());if(!confirm('Replace the current game with this imported save?'))return;protectSave=false;period='morning';update(engine.prepareDay(next),'Save imported.');}catch(error){notify(error.message);}finally{event.target.value='';}};
 window.addEventListener('storage',event=>{if(event.key==='fenn.also.save.v1'){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent='Another tab changed this save. Reload to use its progress, or export this tab before starting a new game. Autosaving is paused.';}});
 try{
- const response=await fetch('./data/events.json?v=4',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
+ const response=await fetch('./data/events.json?v=8',{cache:'no-store'});if(!response.ok)throw Error('The activity catalogue could not be loaded.');engine=createEngine(await response.json());
  let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw Error('Storage unavailable');},setItem(){throw Error('Storage unavailable');}};}
  store=createSaveStore(engine,storage);const loaded=store.load();state=engine.prepareDay(loaded.state??engine.newGame(seed()));period=state.phase==='planning'?(nextPlanningPeriod(engine,state,'morning')??'night'):'morning';
  if(loaded.error){protectSave=true;$('storage-warning').hidden=false;$('storage-warning').textContent=`${loaded.error} Your old save has been preserved. You can export this temporary game, import a valid save, or choose New game to replace it.`;}

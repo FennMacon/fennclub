@@ -159,7 +159,7 @@ test('adding care repacks existing activities and anchors care to day boundaries
  state=engine.arrange(state,[{eventId:ordinary.id,period:'morning'}]);
  state=engine.arrange(state,[...state.plan,{eventId:'care-1-morning',period:'morning'},{eventId:'care-1-night',period:'night'}]);
  assert.equal(state.plan.find(i=>i.eventId==='care-1-morning').minute,0);
- assert.equal(state.plan.find(i=>i.eventId===ordinary.id).minute,30);
+ assert.equal(state.plan.find(i=>i.eventId===ordinary.id).minute,90);
  assert.equal(state.plan.find(i=>i.eventId==='care-1-night').minute,210);
 });
 test('automatic overflow crosses periods and excess choices fail atomically',()=>{
@@ -189,7 +189,7 @@ test('emergencies never appear as choices, occur by chance, and are fixed across
  assert.ok(incident);assert.ok(quiet);
  assert.deepEqual(engine.settleDay(importSave(engine,exportSave(engine,incident))),incident);
 });
-test('emergencies supersede plans, move activities later, and exclude displaced setup effects',()=>{
+test('emergencies supersede optional plans while mandatory setup keeps priority',()=>{
  const fixture=createEngine([
   activity('morning','morning',180),activity('lunch','lunch',180),activity('afternoon','afternoon',180),
   activity('evening','evening',180),activity('late','night',240,{kind:'setup',stage:1}),
@@ -205,9 +205,9 @@ test('emergencies supersede plans, move activities later, and exclude displaced 
  assert.ok(done);
  assert.equal(done.plan.find(i=>i.eventId==='emergency').period,'afternoon');
  assert.equal(done.plan.find(i=>i.eventId==='afternoon').period,'evening');
- assert.equal(done.plan.find(i=>i.eventId==='evening').period,'night');
- assert.equal(done.summary.displaced[0].eventId,'late');
- assert.ok(!done.completedSetups.includes('late'));
+ assert.ok(!done.plan.some(i=>i.eventId==='evening'));
+ assert.equal(done.summary.displaced[0].eventId,'evening');
+ assert.ok(done.completedSetups.includes('late'));
  assert.deepEqual(importSave(fixture,exportSave(fixture,done)),done);
 });
 test('emergencies stop after Dad dies',()=>{
