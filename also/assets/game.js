@@ -8,12 +8,12 @@ const clock=n=>`${(Math.floor(n/60)%12)||12}:${String(n%60).padStart(2,'0')} ${n
 const seed=()=>crypto.getRandomValues(new Uint32Array(1))[0];
 let engine,store,state,period='morning',protectSave=false,noticeTimer,fadeTimer;
 function dismissNotice(){clearTimeout(noticeTimer);$('notice').classList.add('fading');fadeTimer=setTimeout(()=>{$('notice').hidden=true;$('notice-text').textContent='';},250);}
-function notify(message){clearTimeout(noticeTimer);clearTimeout(fadeTimer);$('notice').hidden=false;$('notice').classList.remove('fading');$('notice-text').textContent=message;noticeTimer=setTimeout(dismissNotice,2000);}
+function notify(message){clearTimeout(noticeTimer);clearTimeout(fadeTimer);$('notice').hidden=false;$('notice').classList.remove('fading');$('notice-text').textContent=message;noticeTimer=setTimeout(dismissNotice,1000);}
 $('notice-close').onclick=dismissNotice;
 $('notice').onmouseenter=()=>clearTimeout(noticeTimer);
-$('notice').onmouseleave=()=>{noticeTimer=setTimeout(dismissNotice,2000);};
+$('notice').onmouseleave=()=>{noticeTimer=setTimeout(dismissNotice,1000);};
 $('notice').onfocusin=()=>clearTimeout(noticeTimer);
-$('notice').onfocusout=()=>{noticeTimer=setTimeout(dismissNotice,2000);};
+$('notice').onfocusout=()=>{noticeTimer=setTimeout(dismissNotice,1000);};
 function save(){if(protectSave)return;const result=store.save(state);$('storage-warning').hidden=!result.error;$('storage-warning').textContent=result.error??'';}
 function update(next,message){state=next;save();render();if(message)notify(message);}
 function attempt(action){try{action();}catch(error){notify(error.message);}}
