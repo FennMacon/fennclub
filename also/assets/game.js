@@ -1,5 +1,5 @@
 import {PERIOD_ORDER,periodUsage,nextPlanningPeriod,periodChoices} from './planner.js?v=12';
-import {createEngine,PERIODS,careStage} from './engine.js?v=12';
+import {createEngine,PERIODS,careStage} from './engine.js?v=13';
 import {createSaveStore,exportSave} from './storage.js?v=12';
 const $=id=>document.getElementById(id);
 const node=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};

@@ -53,5 +53,164 @@
       "milestones": [],
       "fatherDied": false
     }
+  },
+  {
+    "version": 2,
+    "seed": 8,
+    "day": 1,
+    "phase": "summary",
+    "playerHealth": 1000,
+    "fatherHealth": 800,
+    "dayStartFatherHealth": 800,
+    "deathDay": null,
+    "completedSetups": [],
+    "plan": [],
+    "summary": {
+      "day": 1,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 800,
+      "playerLoss": 0,
+      "fatherLoss": 0,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [],
+      "milestones": [],
+      "fatherDied": false
+    }
+  },
+  {
+    "version": 2,
+    "seed": 4,
+    "day": 1,
+    "phase": "summary",
+    "playerHealth": 999,
+    "fatherHealth": 580,
+    "dayStartFatherHealth": 600,
+    "deathDay": null,
+    "completedSetups": [
+      "setup-1"
+    ],
+    "plan": [
+      {
+        "eventId": "setup-1",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 0
+      }
+    ],
+    "summary": {
+      "day": 1,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 600,
+      "playerLoss": 1,
+      "fatherLoss": 20,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [
+        "care-1-morning",
+        "care-1-night"
+      ],
+      "milestones": [
+        2
+      ],
+      "fatherDied": false
+    }
+  },
+  {
+    "version": 2,
+    "seed": 10,
+    "day": 1,
+    "phase": "summary",
+    "playerHealth": 999,
+    "fatherHealth": 360,
+    "dayStartFatherHealth": 400,
+    "deathDay": null,
+    "completedSetups": [
+      "setup-1",
+      "setup-2"
+    ],
+    "plan": [
+      {
+        "eventId": "setup-1",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 0
+      },
+      {
+        "eventId": "setup-2",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 60
+      }
+    ],
+    "summary": {
+      "day": 1,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 400,
+      "playerLoss": 1,
+      "fatherLoss": 40,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [
+        "care-2-morning",
+        "care-2-night"
+      ],
+      "milestones": [
+        3
+      ],
+      "fatherDied": false
+    }
+  },
+  {
+    "version": 2,
+    "seed": 16,
+    "day": 1,
+    "phase": "summary",
+    "playerHealth": 1000,
+    "fatherHealth": 140,
+    "dayStartFatherHealth": 200,
+    "deathDay": null,
+    "completedSetups": [
+      "setup-1",
+      "setup-2",
+      "setup-3"
+    ],
+    "plan": [
+      {
+        "eventId": "setup-1",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 0
+      },
+      {
+        "eventId": "setup-2",
+        "preferredPeriod": "morning",
+        "period": "morning",
+        "minute": 60
+      },
+      {
+        "eventId": "setup-3",
+        "preferredPeriod": "afternoon",
+        "period": "afternoon",
+        "minute": 0
+      }
+    ],
+    "summary": {
+      "day": 1,
+      "oldPlayerHealth": 1000,
+      "oldFatherHealth": 200,
+      "playerLoss": 0,
+      "fatherLoss": 60,
+      "incidents": [],
+      "displaced": [],
+      "missedCare": [
+        "care-3-morning",
+        "care-3-night"
+      ],
+      "milestones": [
+        4
+      ],
+      "fatherDied": false
+    }
   }
 ]

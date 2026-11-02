@@ -75,7 +75,7 @@ export function createEngine(definitions) {
     if (state.dayStartFatherHealth === 0) return [];
     const random=rng((state.seed ^ Math.imul(state.day,3266489917)) >>> 0);
     const pool=events.filter(e => e.kind==='activity' && e.unexpected && e.incidentChance > 0);
-    const chance=Math.min(0.25,pool.reduce((sum,e)=>sum+e.incidentChance,0)*(1+careStage(state.dayStartFatherHealth)*0.25));
+    const chance=Math.min(0.25,pool.reduce((sum,e)=>sum+e.incidentChance,0)*(1+stateStage(state)*0.25));
     if (!pool.length || random() >= chance) return [];
     const [event]=weightedSample(pool.map(e=>({...e,weight:e.incidentChance})),1,random);
     return [{eventId:event.id,period:event.period,minute:0}];

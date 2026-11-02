@@ -75,7 +75,7 @@ test('emotion events take more time as health declines and especially after loss
 test('pre-timeline saved summaries keep their original results and upgrade on the next day',()=>{
  const engine=createEngine(catalogue);
  const fixtures=JSON.parse(readFileSync(new URL('./fixtures/pre-timeline-summaries.json',import.meta.url)));
- assert.equal(fixtures.length,2);
+ assert.ok(fixtures.length>=2);
  for(const saved of fixtures){
   const restored=importSave(engine,JSON.stringify(saved));
   assert.deepEqual(restored,saved);assert.deepEqual(engine.settleDay(restored),saved);
