@@ -75,7 +75,12 @@ function render(){
   });
   controls.append(node('span','Time arranged automatically','muted'),add);card.append(controls);cards.append(card);
  }
- if(!periodChoices(engine,state,period).length)cards.append(node('p','Your plan is ready. Play the planned day to see how it unfolds.'));
+ if(!periodChoices(engine,state,period).length){
+  const ready=node('p'),play=node('a','Play the planned day');
+  play.href='#summary';
+  play.onclick=event=>{event.preventDefault();$('settle').click();};
+  ready.append('Your plan is ready. ',play,' to see how it unfolds.');cards.append(ready);
+ }
  const list=$('schedule');list.replaceChildren();let total=0;
  for(const item of state.plan){const e=engine.getEvent(item.eventId),start=PERIODS[item.period].start+item.minute,li=node('li'),time=node('time',`${clock(start)} — ${clock(start+e.duration)}`),row=node('div',undefined,'row'),remove=node('button','Remove');
   remove.setAttribute('aria-label',`Remove ${e.title}`);remove.onclick=()=>attempt(()=>{period=item.preferredPeriod??item.period;update({...engine.arrange(state,state.plan.filter(i=>i.eventId!==e.id)),planningComplete:false},`${e.title} removed.`);});row.append(node('span',e.title));if(e.kind==='care')row.append(node('span','Required','tag'));else row.append(remove);li.append(time,row);list.append(li);total+=e.duration;
