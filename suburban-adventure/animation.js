@@ -762,7 +762,8 @@ export const createAnimationLoop = (
         if (streetElements.unifiedMapTrees) {
             streetElements.unifiedMapTrees.update(camera);
         }
-        // Distance-based triple decker spawn/despawn (city map only)
+        if (streetElements.cityDistricts) streetElements.cityDistricts.update(camera);
+        // Legacy distance-based triple deckers (retained for older city scenes)
         if (streetElements.cityTripleDeckers) {
             streetElements.cityTripleDeckers.update(camera);
         }

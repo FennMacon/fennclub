@@ -1,3 +1,4 @@
+import { CITY_ATMOSPHERE } from './world/city-layout.js';
 // skybox.js - Deep blue-purple gradient skybox for the 3D scene
 
 import * as THREE from 'three';
@@ -350,6 +351,12 @@ const getGradientColors = (sceneType) => {
 
 // Create a deep blue-purple gradient skybox
 const createSkybox = (scene, sceneType = 'PLAZA', interiorDimensions = null) => {
+    if(sceneType==='CITY_MAP') {
+        scene.background=new THREE.Color(CITY_ATMOSPHERE.color);
+        scene.userData.sceneType=sceneType;
+        return null;
+    }
+
     // Create a simple gradient using a canvas texture
     const canvas = document.createElement('canvas');
     canvas.width = 256;
@@ -449,6 +456,7 @@ const redrawGradientTexture = (canvas, colorStops) => {
 // Function to update skybox if needed in animation loop
 const updateSkybox = (scene, time, dayProgress = 0) => {
     const st = scene.userData?.sceneType;
+    if(st==='CITY_MAP')return;
     if (st !== 'UNIFIED_MAP' && st !== 'CITY_MAP') return;
     const texture = scene.userData.skybox;
     const canvas = scene.userData.skyboxCanvas;

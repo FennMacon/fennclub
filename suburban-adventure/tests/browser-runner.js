@@ -334,6 +334,30 @@ try {
     await check('subway switches maps without recreating renderer', async () => {
         assert(game.performMapSwitch(), 'map switch unavailable'); await frame();
         assert(scenes.getCurrentMap() === 'city' && game.getRuntimeState().sceneKey === 'CITY_PLAZA', 'city arrival failed');
+        const city=game.getRuntimeState().streetElements.cityDistricts;
+        assert(city.plan.lots.length>=300&&city.interactiveItems.length===9,'All nine city districts populated');
+        const fogModule=await import('../fog.js');
+        for(let number=1;number<=9;number++) {
+            game.teleportToArea(number);await frame();
+            const state=game.getRuntimeState();city.update(state.camera);fogModule.updateZoneFog(state.scene,state.camera,state.streetElements,false);
+            assert(state.scene.fog.far===118&&state.scene.background.equals(state.scene.fog.color),'Fog and sky match in area '+number);
+            const position=state.camera.position;
+            for(const chunk of city.group.userData.chunks) {
+                const distance=Math.hypot(Math.max(chunk.minX-position.x,0,position.x-chunk.maxX),Math.max(chunk.minZ-position.z,0,position.z-chunk.maxZ));
+                if(distance<118)assert(chunk.group.visible,'Visible block missing after teleport '+number);
+            }
+        }
+        assert(!game.getRuntimeState().scene.getObjectByName('CitySkyline'),'City should stay low-rise');
+        const door=city.buildingPortals.find(p=>p.style==='pho');
+        assert(door,'Outer district has an enterable business');
+        game.getRuntimeState().camera.position.copy(door.position);
+        document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',bubbles:true}));await frame();
+        assert(game.getRuntimeState().config.IS_INTERIOR,'Outer business door enters an interior');
+        const exit=game.getRuntimeState().streetElements.exitPortal.getWorldPosition(new THREE.Vector3());
+        game.getRuntimeState().camera.position.set(exit.x,2,exit.z-1);
+        document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',bubbles:true}));await frame();
+        assert(game.getRuntimeState().sceneKey==='CITY_PLAZA'&&game.getRuntimeState().camera.position.distanceTo(door.returnPosition)<1e-8,'Outer business returns to correct street');
+
         assert(game.teleportToArea(3) && game.getRuntimeState().camera.position.distanceTo(new THREE.Vector3(333,2,333))<1e-8,'City area shortcut');
         assert(game.getRuntimeState().streetElements.zoneRootGroups.length === 3, 'city missing zones');
         assert(game.performMapSwitch(), 'return unavailable'); await frame();

@@ -1,3 +1,4 @@
+import { CITY_ATMOSPHERE } from './world/city-layout.js';
 // fog.js - PS2-style zone-based area fog
 import * as THREE from 'three';
 import { SCENE_CONFIGS, FOG_PRESETS, UNIFIED_MAP_ZONES, UNIFIED_MAP, getCurrentMap, CITY_MAP_ZONES } from './scenes.js';
@@ -16,6 +17,7 @@ const CITY_FOG_PRESETS = {
 
 /** Get fog config for a zone. Uses SCENE_CONFIGS.FOG for populated zones, FOG_PRESETS for others. */
 export const getFogConfigForZone = (zoneKey, configKey) => {
+    if (zoneKey?.startsWith('CITY_')) return CITY_ATMOSPHERE;
     const sceneConfig = SCENE_CONFIGS[zoneKey];
     if (sceneConfig?.FOG) return sceneConfig.FOG;
     const preset = FOG_PRESETS[configKey] ?? CITY_FOG_PRESETS?.[configKey];
@@ -46,6 +48,14 @@ export const updateZoneFog = (scene, camera, streetElements, isInterior) => {
     if (isInterior || !streetElements?.zoneRootGroups) return;
     const isCity = getCurrentMap() === 'city';
     if (!UNIFIED_MAP && !isCity) return;
+    if (isCity) {
+        if (!scene.fog) scene.fog=new THREE.Fog(CITY_ATMOSPHERE.color,CITY_ATMOSPHERE.near,CITY_ATMOSPHERE.far);
+        scene.fog.color.setHex(CITY_ATMOSPHERE.color);scene.fog.near=CITY_ATMOSPHERE.near;scene.fog.far=CITY_ATMOSPHERE.far;
+        if(!scene.background?.isColor)scene.background=new THREE.Color(CITY_ATMOSPHERE.color);
+        else scene.background.copy(scene.fog.color);
+        return;
+    }
+
     if (!scene.fog) scene.fog = new THREE.Fog(0x1a1a2e, 40, 280);
 
     const camX = camera.position.x;
