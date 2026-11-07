@@ -151,6 +151,36 @@ try {
             camera.position.copy(savedPosition);updateZoneFog(scene,camera,streetElements,false,savedPhase);updateSkybox(scene);updateNightSky(scene,1,savedPhase,camera);
         }
     });
+    await check('glowing doors render nearby and disappear completely past the fog distance', () => {
+        const { scene } = game.getRuntimeState();
+        let buildingShaders = 0;
+        scene.traverse(object => {
+            const material = object.material;
+            if (!material?.isShaderMaterial || !material.uniforms.baseColor) return;
+            buildingShaders++;
+            assert(material.fog && material.uniforms.fogColor && material.fragmentShader.includes('<fog_fragment>'), 'Door/wall shader bypasses fog');
+        });
+        assert(buildingShaders > 20, 'Actual suburban doors and custom walls checked');
+        const gpu = renderer.getRenderer(), target = new THREE.WebGLRenderTarget(64,64);
+        const previousTarget = gpu.getRenderTarget(), clearColor = gpu.getClearColor(new THREE.Color()), clearAlpha = gpu.getClearAlpha();
+        const fixture = new THREE.Scene(); fixture.fog = new THREE.Fog(0x000000,10,20);
+        const material = buildings.createGlowingWireframeMaterial(0xff3300,1,.4);
+        const door = new THREE.Mesh(new THREE.BoxGeometry(2,3,.2,2,3,1),material);door.position.y=1.5;fixture.add(door);
+        const camera = new THREE.PerspectiveCamera(50,1,.1,200), pixels = new Uint8Array(64*64*4);
+        const coloredPixels = distance => {
+            camera.position.set(0,1.5,distance);camera.lookAt(0,1.5,0);
+            gpu.render(fixture,camera);gpu.readRenderTargetPixels(target,0,0,64,64,pixels);
+            let count=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>8||pixels[i+1]>8||pixels[i+2]>8)count++;return count;
+        };
+        try {
+            gpu.setRenderTarget(target);gpu.setClearColor(0x000000,1);
+            assert(coloredPixels(5)>20,'Door must remain visible nearby');
+            assert(coloredPixels(40)===0,'Door must blend fully into the fog beyond its far distance');
+        } finally {
+            gpu.setRenderTarget(previousTarget);gpu.setClearColor(clearColor,clearAlpha);
+            target.dispose();door.geometry.dispose();material.dispose();
+        }
+    });
     await check('woodland settings and smooth pond trails are connected and discoverable', () => {
         const { scene,streetElements }=game.getRuntimeState();
         const clearings=scene.getObjectByName('ForestClearings');

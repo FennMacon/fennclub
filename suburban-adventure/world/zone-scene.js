@@ -1,5 +1,6 @@
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
+import { createFoggedBuildingMaterial } from './building-material.js';
 import { createWireframeMaterial, createCar, getRandomCarColor, createTree } from '../utils.js';
 import { createBuildingFacade, createParkElements, createPondElements } from '../buildings.js';
 import { createNPCs } from '../npcs.js';
@@ -1366,7 +1367,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
             wallMiddleLayer.material.transparent = true;
             
             // Apply a stronger cutout shader that makes a complete hole
-            const newMaterial = new THREE.ShaderMaterial({
+            const newMaterial = createFoggedBuildingMaterial({
                 uniforms: {
                     baseColor: { value: new THREE.Color(0x000000) },
                     holeCenter: { value: new THREE.Vector2(relX, relY) },
@@ -1479,7 +1480,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
                 // For wireframe layers, we need to actively remove any faces in the doorway area
                 if (layer.material && layer.material.wireframe) {
                     // Apply a custom shader material that discards fragments in the doorway area
-                    const customMaterial = new THREE.ShaderMaterial({
+                    const customMaterial = createFoggedBuildingMaterial({
                         uniforms: {
                             baseColor: { value: new THREE.Color(layer.material.color ? layer.material.color.getHex() : 0xffffff) },
                             doorwayCenter: { value: new THREE.Vector2(relX, relY) },

@@ -2,6 +2,7 @@ import { createWoodlandTrail } from './world/trails.js';
 import { POND_TRAILS } from './world/trail-layout.js';
 // buildings.js - Building creation and management
 import * as THREE from 'three';
+import { createFoggedBuildingMaterial } from './world/building-material.js';
 import { createWireframeMaterial } from './utils.js';
 
 import { INTERIOR_TARGET_SIZE } from './buildings/shared.js';
@@ -1115,7 +1116,7 @@ export const createParkElements = (frontGroup) => {
 
 // Create glowing wireframe material
 export const createGlowingWireframeMaterial = (color, opacity = 1.0, glowIntensity = 0.5) => {
-    return new THREE.ShaderMaterial({
+    return createFoggedBuildingMaterial({
         uniforms: {
             baseColor: { value: new THREE.Color(color) },
             opacity: { value: opacity },
