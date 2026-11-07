@@ -1,3 +1,10 @@
+import {getAreaInfo} from './world/navigation.js';
+import {selectInteractionTarget} from './interaction-targets.js';
+import {getStoryModalOpen} from './story-ui.js';
+import {getCityEncounters,onConversationComplete} from './adventure-story.js';
+import {handleStoryInteraction} from './story-activities.js';
+import {rememberDiscovery} from './adventure-state.js';
+import {getPhoneOpenState} from './phone-ui.js';
 import { storage } from './storage.js';
 // npcs.js - NPC creation and management
 import * as THREE from 'three';
@@ -6,7 +13,7 @@ import { isMobile } from './controls.js';
 import { INTERIOR_TARGET_SIZE, createGlowingWireframeMaterial } from './buildings.js';
 import { startConversation, getCurrentDialogue, advanceConversation, hasActiveConversation, endConversation, getConversationAtEnd, setConversationAtEnd, unlockCurrentSong, markItemEncountered } from './dialogue.js';
 import { triggerPhoneGlow } from './phone-ui.js';
-import { SCENE_CONFIGS, UNIFIED_MAP, getCurrentMap } from './scenes.js';
+import { SCENE_CONFIGS, UNIFIED_MAP, getCurrentMap, getBuildingPortalDestination } from './scenes.js';
 
 const DEFAULT_NPC_COLOR = 0xFF6B9D;
 const NPC_WORLD_POSITION = new THREE.Vector3();
@@ -120,6 +127,11 @@ export const createNPCs = (PLAZA_CONFIG, CURRENT_SCENE, scene) => {
     
     return npcs;
 };
+
+export const createCityNPCs = scene => getCityEncounters().map(encounter => {
+    const npc=attachNPC(scene,encounter.name,encounter.position.x,encounter.position.z,0xb9d99a,0,{zoneKey:encounter.sceneKey});
+    npc.userData.encounterId=encounter.id;return npc;
+});
 
 const INTERIOR_NPC_CONFIG = {
     CUMBYS_INTERIOR: [
@@ -271,6 +283,9 @@ export const initializeNPCInteraction = () => {
     nearbyItemUI.style.zIndex = isMobile ? '1100' : '1000';
     nearbyItemUI.className = 'game-prompt';
     document.body.appendChild(nearbyItemUI);
+    document.addEventListener('game-modal-change',()=>{
+        if(getPhoneOpenState()||getStoryModalOpen())for(const ui of [interactionUI,nearbyItemUI,sceneSwitchUI])ui.style.display='none';
+    });
 };
 
 // Check for nearby NPCs
@@ -287,7 +302,7 @@ export const checkNearbyNPCs = (camera, npcs) => {
     if (npcs) {
         npcs.forEach(npc => {
             npc.getWorldPosition(NPC_WORLD_POSITION);
-            const distance = cameraPosition.distanceTo(NPC_WORLD_POSITION);
+            const distance = Math.hypot(cameraPosition.x-NPC_WORLD_POSITION.x,cameraPosition.z-NPC_WORLD_POSITION.z);
             
             if (distance < 3 && distance < closestDistance) {
                 closestNPC = npc;
@@ -342,163 +357,53 @@ const getNextScene = (currentScene) => {
     }
 };
 
-// Check for bus stop proximity
-export const checkBusStopProximity = (camera, PLAZA_CONFIG, CURRENT_SCENE, streetElements) => {
-    // Don't overwrite unlocked song display
-    if (showingUnlockedSong) {
-        return;
+// A single resolved target is shared by every prompt and action.
+let selectedInteraction = null;
+const viewDirection = new THREE.Vector3();
+export const getSelectedInteraction = () => selectedInteraction;
+export const checkBusStopProximity = (camera, config, sceneKey, elements) => {
+    if (getPhoneOpenState() || getStoryModalOpen()) {
+        for(const ui of [sceneSwitchUI,nearbyItemUI,interactionUI])if(ui)ui.style.display='none';
+        selectedInteraction=null;return null;
     }
-    
-    const playerPosition = camera.position;
-    
-    // If we're in an interior scene, check for exit portal first
-    if (PLAZA_CONFIG.IS_INTERIOR && streetElements && streetElements.exitPortal) {
-        const exitPortalPos = new THREE.Vector3();
-        streetElements.exitPortal.getWorldPosition(exitPortalPos);
-        const distanceToExit = playerPosition.distanceTo(exitPortalPos);
-        
-        if (distanceToExit < 3) {
-            const previousScene = storage.getItem('previousExteriorScene') || 'PLAZA';
-            sceneSwitchUI.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🚪 Exit</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} exit to:</div>
-                <div style="color: #88FF88;">${SCENE_CONFIGS[previousScene]?.name || 'Street'}</div>
-            `;
-            sceneSwitchUI.style.display = 'block';
-            return; // Exit portal takes priority in interior scenes
-        }
-    }
-    
-    // Don't check for bus stops or building portals in interior scenes (only exit portal)
-    if (PLAZA_CONFIG.IS_INTERIOR) {
-        sceneSwitchUI.style.display = 'none';
-        return;
-    }
-    
-    // In unified map, check distance to nearest bus stop (one per zone)
-    let distanceToBusStop = Infinity;
-    if (UNIFIED_MAP && streetElements && streetElements.zoneRootGroups) {
-        // Find nearest bus stop across all zones
-        streetElements.zoneRootGroups.forEach(zoneRoot => {
-            const zoneConfig = SCENE_CONFIGS[zoneRoot.userData?.zoneKey] || PLAZA_CONFIG;
-            const offset = zoneRoot.userData?.zoneOffset || { x: 0, z: 0 };
-            const busStopX = zoneConfig.ROAD_POSITION_X ? zoneConfig.ROAD_POSITION_X + 3 : -15;
-            const busStopPos = new THREE.Vector3(offset.x + busStopX, 0, offset.z + zoneConfig.NEAR_SIDEWALK_Z);
-            const d = playerPosition.distanceTo(busStopPos);
-            if (d < distanceToBusStop) distanceToBusStop = d;
-        });
+    if(showingUnlockedSong)return null;
+    if(hasActiveConversation()) { sceneSwitchUI.style.display='none';nearbyItemUI.style.display='none';return null; }
+    const candidates=[];
+    for(const npc of elements.npcs||[])candidates.push({type:'npc',object:npc,position:npc.getWorldPosition(new THREE.Vector3()),radius:3});
+    for(const item of elements.interactiveItems||[])candidates.push({type:'item',object:item,position:item.getWorldPosition(new THREE.Vector3()),radius:item.userData.interactionRadius||2.8});
+    if(config.IS_INTERIOR) {
+        if(elements.exitPortal)candidates.push({type:'exit',object:elements.exitPortal,position:elements.exitPortal.getWorldPosition(new THREE.Vector3()),radius:3});
     } else {
-        const busStopX = PLAZA_CONFIG.ROAD_POSITION_X ? PLAZA_CONFIG.ROAD_POSITION_X + 3 : -15;
-        const busStopPosition = new THREE.Vector3(busStopX, 0, PLAZA_CONFIG.NEAR_SIDEWALK_Z);
-        distanceToBusStop = playerPosition.distanceTo(busStopPosition);
-    }
-    
-    // First check if we're near a building door (building portals take priority)
-    if (streetElements && streetElements.buildingPortals) {
-        let nearestPortal = null;
-        let nearestDistance = Infinity;
-        
-        streetElements.buildingPortals.forEach(portal => {
-            const distance = playerPosition.distanceTo(portal.position);
-            // Debug logging for front shops - check if player is near any shop portal
-            if (portal.style === 'convenience' || portal.style === 'pizza' || portal.style === 'clothing' || 
-                portal.style === 'drycleaner' || portal.style === 'coffee' || portal.style === 'flowers') {
-                if (distance < 8) { // Log if within 8 units for debugging
-                    console.log(`🏪 Portal ${portal.name} at (${portal.position.x.toFixed(1)}, ${portal.position.z.toFixed(1)}), player at (${playerPosition.x.toFixed(1)}, ${playerPosition.z.toFixed(1)}), distance: ${distance.toFixed(2)}`);
-                }
-            }
-            // Use slightly larger detection radius for front shops (they're closer to player start)
-            const detectionRadius = (portal.style === 'convenience' || portal.style === 'pizza' || portal.style === 'clothing' || 
-                portal.style === 'drycleaner' || portal.style === 'coffee' || portal.style === 'flowers') ? 6 : 5;
-            if (distance < detectionRadius && distance < nearestDistance) {
-                nearestPortal = portal;
-                nearestDistance = distance;
-            }
-        });
-        
-        if (nearestPortal) {
-            // Show building door portal UI
-            const targetScene = getBuildingPortalDestination(nearestPortal.style, CURRENT_SCENE);
-            sceneSwitchUI.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🚪 ${nearestPortal.name}</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} enter:</div>
-                <div style="color: #88FF88;">${targetScene.name}</div>
-            `;
-            sceneSwitchUI.style.display = 'block';
-            return; // Building portal takes priority
+        for(const portal of elements.buildingPortals||[])candidates.push({type:'portal',object:portal,position:portal.position,radius:6});
+        if(elements.subwayStopPosition)candidates.push({type:'subway',position:elements.subwayStopPosition,radius:6});
+        for(const root of elements.zoneRootGroups||[]) {
+            const key=root.userData.zoneKey,zone=SCENE_CONFIGS[key],offset=root.userData.zoneOffset||{x:0,z:0};
+            if(zone)candidates.push({type:'bus',zoneKey:key,position:{x:offset.x+(zone.ROAD_POSITION_X?zone.ROAD_POSITION_X+3:-15),z:offset.z+zone.NEAR_SIDEWALK_Z},radius:5});
         }
     }
-
-    // Check subway stop if present (before bus stop)
-    if (streetElements?.subwayStopPosition) {
-        const subPos = streetElements.subwayStopPosition;
-        const distToSubway = playerPosition.distanceTo(new THREE.Vector3(subPos.x, 0, subPos.z));
-        if (distToSubway < 6) {
-            const currentMap = getCurrentMap();
-            const dest = currentMap === 'suburban' ? 'Allston' : 'the suburbs';
-            sceneSwitchUI.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🚇 Subway</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} travel to ${dest}</div>
-            `;
-            sceneSwitchUI.style.display = 'block';
-            return;
+    camera.getWorldDirection(viewDirection);
+    selectedInteraction=selectInteractionTarget(camera.position,viewDirection,candidates);
+    checkNearbyNPCs(camera,selectedInteraction?.type==='npc'?[selectedInteraction.object]:[]);
+    // Retain the complete cast for group speaker colors and dialogue lookup.
+    allNPCs=elements.npcs||[];
+    checkNearbyItems(camera,selectedInteraction?.type==='item'?[selectedInteraction.object]:[]);
+    sceneSwitchUI.style.display='none';
+    if(!selectedInteraction)return null;
+    const target=selectedInteraction,action=isMobile?'Tap the action button':'Press Space';
+    if(target.type==='npc'||target.type==='item') {
+        if(!showingItemFlavor) {
+            nearbyItemUI.innerHTML=`<strong>${target.object.userData.name}</strong><div>${action} · ${target.type==='npc'?'Talk':'Inspect'}</div>`;
+            nearbyItemUI.style.display='block';
         }
+        return target;
     }
-    
-    // Check bus stop if not near a building door or subway
-    if (distanceToBusStop < 5) {
-        const nextScene = UNIFIED_MAP
-            ? (() => {
-                let nearestZone = null;
-                let minD = Infinity;
-                streetElements?.zoneRootGroups?.forEach(zoneRoot => {
-                    const zoneConfig = SCENE_CONFIGS[zoneRoot.userData?.zoneKey] || PLAZA_CONFIG;
-                    const offset = zoneRoot.userData?.zoneOffset || { x: 0, z: 0 };
-                    const busStopPos = new THREE.Vector3(offset.x + (zoneConfig.ROAD_POSITION_X ? zoneConfig.ROAD_POSITION_X + 3 : -15), 0, offset.z + zoneConfig.NEAR_SIDEWALK_Z);
-                    const d = playerPosition.distanceTo(busStopPos);
-                    if (d < minD) { minD = d; nearestZone = zoneRoot.userData?.zoneKey; }
-                });
-                return nearestZone ? getNextScene(nearestZone) : getNextScene('PLAZA');
-            })()
-            : getNextScene(CURRENT_SCENE);
-        if (nextScene) {
-            sceneSwitchUI.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🚌 Bus Stop</div>
-                <div style="font-size: 12px; margin-bottom: 5px;">${isMobile ? 'Tap the action button to' : 'Press Space to'} travel to:</div>
-                <div style="color: #88FF88;">${nextScene.name}</div>
-            `;
-            sceneSwitchUI.style.display = 'block';
-        }
-    } else {
-        sceneSwitchUI.style.display = 'none';
-    }
-};
-
-// Get destination scene for building portal based on building style
-const getBuildingPortalDestination = (buildingStyle, currentScene) => {
-    // Map building styles to destination scenes
-    // For now, we'll create a simple mapping
-    // You can expand this to create specific interior scenes
-    const portalMap = {
-        'groton_church': { key: 'CHURCH_INTERIOR', name: 'Church Interior' },
-        'groton_townhall': { key: 'TOWNHALL_INTERIOR', name: 'Town Hall Interior' },
-        'groton_colonial': { key: 'HOUSE_INTERIOR', name: 'Colonial House Interior' },
-        'graveyard': { key: 'GRAVEYARD_INTERIOR', name: 'Graveyard' },
-        'hospital': { key: 'HOSPITAL_INTERIOR', name: 'Hospital Interior' },
-        'modern': { key: 'MODERN_INTERIOR', name: 'Modern Building Interior' },
-        'brick': { key: 'BRICK_INTERIOR', name: 'Brick Building Interior' },
-        'shop': { key: 'SHOP_INTERIOR', name: 'Shop Interior' },
-        'industrial': { key: 'INDUSTRIAL_INTERIOR', name: 'Industrial Building Interior' },
-        // Shop styles for front shops
-        'convenience': { key: 'CUMBYS_INTERIOR', name: 'Grumby\'s' },
-        'pizza': { key: 'GROHOS_INTERIOR', name: 'Grohos Pizza' },
-        'clothing': { key: 'CLOTHING_STORE_INTERIOR', name: 'Clothing Store' },
-        'drycleaner': { key: 'DRYCLEANER_INTERIOR', name: 'Dry Cleaners' },
-        'coffee': { key: 'DUNKIN_INTERIOR', name: 'Donut Galaxy' },
-        'flowers': { key: 'FLOWER_SHOP_INTERIOR', name: 'Flower Shop' }
-    };
-    
-    return portalMap[buildingStyle] || { key: 'PLAZA', name: 'Downtown' };
+    if(showingItemFlavor)return target;
+    nearbyItemUI.style.display='none';interactionUI.style.display='none';
+    const title=target.type==='portal'?target.object.name:target.type==='exit'?'Exit':target.type==='bus'?'Neighborhood bus':'Subway';
+    const destination=target.type==='portal'?getBuildingPortalDestination(target.object.style).name:target.type==='exit'?'Return to the street':target.type==='bus'?'Choose a discovered destination':getCurrentMap()==='city'?'Travel to the suburbs':'Travel to Allston';
+    sceneSwitchUI.innerHTML=`<strong>${title}</strong><div>${action} · ${destination}</div>`;
+    sceneSwitchUI.style.display='block';
+    return target;
 };
 
 // Export getNextScene for use in main.js
@@ -585,6 +490,7 @@ export const handleInteractionInput = (CURRENT_SCENE) => {
             }
             
             // Pass NPC name to track who unlocked it
+            if(conversationNPC)onConversationComplete(conversationNPC.userData.name,conversationNPC.userData.zoneKey??CURRENT_SCENE);
             const unlockResult = unlockCurrentSong(artistName);
             if (unlockResult && unlockResult.newlyUnlocked) {
                 // Only show unlock UI if song was newly unlocked
@@ -660,8 +566,9 @@ export const handleInteractionInput = (CURRENT_SCENE) => {
         }
     } else {
         // Check item interactions before NPC interactions (priority: conversation > item > NPC)
+        const hadItem=Boolean(nearbyItem);
         handleItemInteractionKey();
-        if (showingItemFlavor) return true; // Item interaction consumed the action
+        if (hadItem || showingItemFlavor) return true; // Item interaction consumed the action
         
         // Only check NPC if item interaction didn't handle it
         if (nearbyNPC) {
@@ -802,6 +709,7 @@ const removeItemGlow = (item) => {
     item.traverse((object) => {
         if (object.isMesh && itemOriginalMaterials.has(object)) {
             const originalMaterial = itemOriginalMaterials.get(object);
+            if(object.material!==originalMaterial)object.material.dispose();
             object.material = originalMaterial;
             itemOriginalMaterials.delete(object);
         }
@@ -831,10 +739,10 @@ export const checkNearbyItems = (camera, interactiveItems) => {
     if (interactiveItems && interactiveItems.length > 0) {
         interactiveItems.forEach(item => {
             item.getWorldPosition(ITEM_WORLD_POSITION);
-            const distance = cameraPosition.distanceTo(ITEM_WORLD_POSITION);
+            const distance = Math.hypot(cameraPosition.x-ITEM_WORLD_POSITION.x,cameraPosition.z-ITEM_WORLD_POSITION.z);
             
             // Smaller detection radius for items (1.5 units) so it doesn't block other objects
-            if (distance < 2.5 && distance < closestDistance) {
+            if (distance < (item.userData.interactionRadius||2.8) && distance < closestDistance) {
                 closestItem = item;
                 closestDistance = distance;
             }
@@ -995,6 +903,11 @@ export const handleItemInteractionKey = () => {
             }, 500);
         }
     } else if (nearbyItem && !showingItemFlavor) {
+        const item=nearbyItem;
+        const sceneKey=storage.getItem('suburbanAdventureScene')||'PLAZA';
+        const place=SCENE_CONFIGS[sceneKey]?.IS_INTERIOR?(storage.getItem('activeStoreName')||SCENE_CONFIGS[sceneKey].name):getAreaInfo(getCurrentMap(),item.getWorldPosition(ITEM_WORLD_POSITION)).name;
+        if(!['Timetable Without a Route','Sealed Invitation','Weathered Plinth'].includes(item.userData.name))rememberDiscovery({id:item.userData.contentId||[getCurrentMap(),sceneKey,place,item.userData.name].join(':').slice(0,120),name:item.userData.itemName||item.userData.name,text:Array.isArray(item.userData.flavorText)?item.userData.flavorText.join('\n\n'):item.userData.flavorText||'',map:getCurrentMap(),area:place});
+        if(handleStoryInteraction(item))return;
         // Show first flavor text - start at index 0
         showingItemFlavor = true;
         currentFlavorTextIndex = 0;
@@ -1070,6 +983,7 @@ export function resetNPCInteraction() {
     clearTimeout(conversationFadeTimeout);
     clearTimeout(flavorTextFadeTimeout);
     endConversation();
+    selectedInteraction=null;
     nearbyNPC = conversationNPC = nearbyItem = null;
     allNPCs = [];
     showingUnlockedSong = showingItemFlavor = false;
@@ -1083,14 +997,14 @@ export function resetNPCInteraction() {
     }
 }
 export function getMobileInteraction() {
-    if (hasActiveConversation() || showingUnlockedSong) return { type: 'continue', text: 'CONTINUE' };
-    if (nearbyNPC) return { type: 'talk', text: 'TALK' };
-    if (nearbyItem) return { type: 'inspect', text: 'INSPECT' };
-    if (sceneSwitchUI?.style.display === 'block') {
-        const text = sceneSwitchUI.textContent;
-        if (text.includes('Exit')) return { type: 'exit', text: 'EXIT' };
-        if (text.includes('enter')) return { type: 'enter', text: 'ENTER' };
-        return { type: 'travel', text: 'TRAVEL' };
-    }
-    return { type: 'run', text: 'EXPLORE' };
+    if(hasActiveConversation()||showingUnlockedSong||showingItemFlavor)return {type:'continue',text:'CONTINUE'};
+    const type=selectedInteraction?.type;
+    if(type==='npc')return {type:'talk',text:'TALK'};
+    if(type==='item')return {type:'inspect',text:'INSPECT'};
+    if(type==='portal')return {type:'enter',text:'ENTER'};
+    if(type==='exit')return {type:'exit',text:'EXIT'};
+    if(type==='bus'||type==='subway')return {type:'travel',text:'TRAVEL'};
+    if(nearbyNPC)return {type:'talk',text:'TALK'};
+    if(nearbyItem)return {type:'inspect',text:'INSPECT'};
+    return {type:'run',text:'EXPLORE'};
 }

@@ -40,3 +40,5 @@ The shipped implementation uses reward titles as the existing stable save keys, 
 ## Validation
 
 Cover unlock → tap → correct source/playback; locked tracks excluded; duplicate unlocks; old saves; unavailable recordings; reset during playback; and audio continuing through travel. Test the tap gesture on iOS Safari and Android Chrome, since audio playback must begin from a user gesture.
+
+The neighborhood story adds nine Allston contributions and the optional mansion recording, bringing the catalog to 38 reward titles. These ten titles provisionally share the existing recordings; the original 28 title mappings are preserved. The farewell performance awards `Plaza Finale` only when its selected set is completed. Recording mappings can later change without changing discovery or story save keys.

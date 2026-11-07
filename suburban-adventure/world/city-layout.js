@@ -1,3 +1,6 @@
+import {createStoreNamer} from './store-names.js';
+import {CITY_ZONE_SHOPS,PLAZA_SHOPS} from './config.js';
+
 // Allston-inspired rather than a street-for-street reproduction. World north is +z.
 export const CITY_ATMOSPHERE = { color:0x77817d, near:16, far:118, loadDistance:172, keepDistance:205 };
 export const CITY_DISTRICTS = [
@@ -35,7 +38,7 @@ export const cityReserved = lot => {
     return CITY_SPECIAL_SITES.some(site=>overlaps(lot,site,5));
 };
 export const createCityPlan = () => {
-    const lots=[];
+    const lots=[],nameStore=createStoreNamer([...CITY_SPECIAL_SITES,...PLAZA_SHOPS,...Object.values(CITY_ZONE_SHOPS).flatMap(zone=>zone.shops)].map(shop=>shop.name));
     for(const road of CITY_HORIZONTAL_ROADS)for(const facing of [-1,1])for(let x=-478;x<=478;x+=28) {
         const z=road-facing*([-443,-223,-110,110,223,443].includes(road)?25:29);
         const district=cityDistrictAt(x,z);
@@ -43,7 +46,7 @@ export const createCityPlan = () => {
         const lot={id:'lot-'+id,x,z,width:19,depth:17,height:10+(id%4)*2.5,facing,
             district:district.key,style:district.kind,retail:!['porches','park'].includes(district.kind)||id%5===0};
         if(Math.abs(z)+lot.depth/2>497||!cityRoadClear(lot)||cityReserved(lot)||lots.some(other=>overlaps(lot,other,3)))continue;
-        lot.name=lot.retail?district.shops[id%district.shops.length]:'Triple Decker '+(id+1);
+        lot.name=lot.retail?nameStore(district.shops[id%district.shops.length]):'Triple Decker '+(id+1);
         lot.enterable=lot.retail?id%3===0:id%11===0;
         lots.push(lot);
     }
@@ -59,7 +62,7 @@ export const cityVisibilityDistances = (aspect=16/9, fov=75) => {
 
 export const storeSignStyle=name=>{
     const key=name.toLowerCase();
-    if(/record|tapes|sound|music|feedback|practice|karaoke|loading dock/.test(key))return 'orbit';
+    if(/record|tapes|sound|music|feedback|practice|rehearsal|karaoke|loading dock/.test(key))return 'orbit';
     if(/pho|kitchen|dumpling|noodle|banh|pizza|diner|sushi|steam/.test(key))return 'steam';
     if(/cafe|coffee|tea|bakery/.test(key))return 'cup';
     if(/book|laundry|laundromat/.test(key))return 'fan';

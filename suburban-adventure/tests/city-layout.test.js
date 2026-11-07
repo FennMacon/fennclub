@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createCityPlan,CITY_DISTRICTS,CITY_SPECIAL_SITES,cityRoadClear,cityReserved,CITY_ATMOSPHERE,cityVisibilityDistances,CITY_LOCAL_ROADS,CITY_HORIZONTAL_ROADS,CITY_VERTICAL_ROADS} from '../world/city-layout.js';
+import {CITY_ZONE_SHOPS,PLAZA_SHOPS} from '../world/config.js';
+
+test('every storefront has a distinct name, including the established plaza shops',()=>{
+    const shops=[...createCityPlan().lots.filter(l=>l.retail),...Object.values(CITY_ZONE_SHOPS).flatMap(zone=>zone.shops),...PLAZA_SHOPS];
+    const names=shops.map(shop=>shop.name.toLowerCase());
+    assert.equal(new Set(names).size,names.length,'Repeated store identity');
+    assert.ok(shops.every(shop=>shop.name.length<=40),'Names fit storefront lettering');
+});
 
 test('all nine city districts have deterministic streets, housing and shops',()=>{
     const plan=createCityPlan();assert.deepEqual(plan,createCityPlan());

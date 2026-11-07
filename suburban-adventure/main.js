@@ -1,7 +1,14 @@
+import {beginLandmarkAudio,updateLandmarkAudio} from './landmark-audio.js';
+import {getAdventureState,subscribeAdventure,markAreaVisited,visitBusiness,saveCheckpoint,addContribution,startCompilation} from './adventure-state.js';
+import {getAreaInfo,getTravelPosition,findSafeArrival} from './world/navigation.js';
+import {safeExteriorPosition,findSafeInteriorArrival} from './world/traversal.js';
+import {getStoryModalOpen,closeStoryModal} from './story-ui.js';
+import {getSelectedInteraction} from './npcs.js';
+import {openTransitChooser} from './phone-ui.js';
 import { loadMusicCatalog } from './music-library.js';
 import { buildWorld, disposeWorld } from './world-runtime.js';
 import { resetNPCInteraction, getMobileInteraction } from './npcs.js';
-import { setYaw, setPitch, resetControls } from './controls.js';
+import { setYaw, setPitch, resetControls, yaw, pitch } from './controls.js';
 import { getPhoneOpenState } from './phone-ui.js';
 import { resetMobileControls } from './mobile-controls.js';
 import { storage, readPosition } from './storage.js';
@@ -16,7 +23,7 @@ import { loadAllContent } from './content-loader.js';
 import { INTERIOR_TARGET_SIZE } from './buildings.js';
 import { initializeNPCInteraction, checkNearbyNPCs, checkNearbyItems, checkBusStopProximity, initializeConversationHandlers, getNextSceneInfo, handleInteractionInput } from './npcs.js';
 import { getCurrentScene, getPlazaConfig, SCENE_CONFIGS, UNIFIED_MAP, getBuildingPortalDestination, getBusStopArrivalPosition, getCurrentMap, setCurrentMap, getSubwayArrivalPosition, getAreaTestPosition } from './scenes.js';
-import { hasActiveConversation } from './dialogue.js';
+import { hasActiveConversation,getUnlockedSongs } from './dialogue.js';
 import { initializeControls, updateCameraPosition, isMobile } from './controls.js';
 import { initializeMobileControls, updateMobileActionButton } from './mobile-controls.js';
 import { initializeRenderer, initializePostProcessing, handleResize } from './renderer.js';
@@ -35,7 +42,13 @@ const INTERIOR_CAMERA_Z = Math.max(0, INTERIOR_HALF_SIZE - INTERIOR_CAMERA_OFFSE
 // =====================================================
 // RUNTIME STATISTICS
 // =====================================================
+let adventureSnapshot=getAdventureState();
+subscribeAdventure(state=>{adventureSnapshot=state;});
 let lastDebugUpdate = 0;
+let lastCheckpointAt = 0;
+let runtimePersistenceEnabled = true;
+export const setRuntimePersistenceEnabled = enabled => { runtimePersistenceEnabled=Boolean(enabled); };
+let currentArea = null;
 let debugInfo = {
     cameraPosition: { x: 0, y: 0, z: 0 },
     cameraSpeed: 0,
@@ -74,8 +87,21 @@ const updateDebugInfo = (camera, controls) => {
     );
     debugInfo.cameraSpeed = deltaTime > 0 ? (distance / deltaTime).toFixed(2) : 0;
 
+    streetElements.navigationUpdate?.(camera);
+    updateLandmarkAudio(camera,getCurrentMap(),adventureSnapshot.settings.ambience&&!PLAZA_CONFIG.IS_INTERIOR&&!hasActiveConversation()&&!document.getElementById('startup'));
+    if(!PLAZA_CONFIG.IS_INTERIOR) {
+        currentArea=getAreaInfo(getCurrentMap(),camera.position);
+        if(runtimePersistenceEnabled&&!adventureSnapshot.visited[getCurrentMap()].some(area=>area.key===currentArea.key))
+            markAreaVisited(getCurrentMap(),currentArea.key,currentArea.name);
+    } else {
+        currentArea=getAreaInfo(getCurrentMap(),readPosition('buildingPortalPosition')||getBusStopArrivalPosition(getCurrentMap()==='city'?'CITY_PLAZA':'PLAZA'));
+    }
+    if(now-lastCheckpointAt>5000&&!document.getElementById('startup')&&!getPhoneOpenState()&&!getStoryModalOpen()&&!hasActiveConversation()) {
+        checkpointCurrentPosition();lastCheckpointAt=now;
+    }
     // Update phone UI with debug info
     updatePhoneDebugInfo({
+        map:getCurrentMap(),district:currentArea?.key,districtName:currentArea?.name,
         scene: PLAZA_CONFIG.IS_INTERIOR ? PLAZA_CONFIG.name : (getCurrentMap() === 'city' ? 'Allston' : 'Suburbs'),
         time: new Date().toLocaleTimeString(),
         fps: debugInfo.fps,
@@ -96,7 +122,13 @@ const updateDebugInfo = (camera, controls) => {
 
 // Current active scene configuration
 let CURRENT_SCENE = getCurrentScene();
-let PLAZA_CONFIG = getPlazaConfig(CURRENT_SCENE);
+const getActiveConfig = sceneKey => {
+    const config = getPlazaConfig(sceneKey);
+    const name = storage.getItem('activeStoreName');
+    return config.IS_INTERIOR && storage.getItem('activeStoreScene') === sceneKey && name
+        ? { ...config, name } : config;
+};
+let PLAZA_CONFIG = getActiveConfig(CURRENT_SCENE);
 
 console.log('🎬 Loading scene:', CURRENT_SCENE, 'Config:', PLAZA_CONFIG.name, UNIFIED_MAP ? '(Unified Map)' : '');
 console.log('Scene flags:', {
@@ -106,8 +138,8 @@ console.log('Scene flags:', {
 });
 
 // Scene switching function
-export const switchScene = (sceneName) => {
-    if (SCENE_CONFIGS[sceneName]) {
+export const switchScene = (sceneName, storeName = null) => {
+    if (Object.hasOwn(SCENE_CONFIGS,sceneName)) {
         const destinationConfig = SCENE_CONFIGS[sceneName];
 
         const cameraPos = camera.position;
@@ -148,6 +180,13 @@ export const switchScene = (sceneName) => {
             }
         }
 
+        if (destinationConfig.IS_INTERIOR && storeName) {
+            storage.setItem('activeStoreName', storeName);
+            storage.setItem('activeStoreScene', sceneName);
+        } else {
+            storage.removeItem('activeStoreName');
+            storage.removeItem('activeStoreScene');
+        }
         storage.setItem('suburbanAdventureScene', sceneName);
         console.log(`Switching to ${destinationConfig.name}`);
         rebuildWorld();
@@ -190,7 +229,8 @@ if (savedInteriorPosition) {
         // Position camera just inside the door looking inward
         camera.position.set(0, 2, INTERIOR_CAMERA_Z); // Just inside the door for interior scenes
     } else {
-        camera.position.set(0, 2, PLAZA_CONFIG.CAMERA_START_Z);
+        if(CURRENT_SCENE==='PLAZA')camera.position.set(-20,2,4.5);
+        else camera.position.set(0,2,PLAZA_CONFIG.CAMERA_START_Z);
     }
 }
 
@@ -201,6 +241,13 @@ if (!PLAZA_CONFIG.IS_INTERIOR) storage.removeItem('buildingReturnYaw');
 setPitch(0);
 };
 restoreCamera();
+const resumeCheckpoint=adventureSnapshot.checkpoint;
+if(resumeCheckpoint&&resumeCheckpoint.map===getCurrentMap()&&resumeCheckpoint.sceneKey===CURRENT_SCENE) {
+    camera.position.set(resumeCheckpoint.position.x,resumeCheckpoint.position.y,resumeCheckpoint.position.z);
+    restoreCheckpointExit(resumeCheckpoint);
+    PLAZA_CONFIG=getActiveConfig(CURRENT_SCENE);
+    setYaw(resumeCheckpoint.yaw);setPitch(resumeCheckpoint.pitch);shouldRotate180=false;
+}
 
 // =====================================================
 // RENDERER SETUP (Using new module)
@@ -216,7 +263,11 @@ initializeControls(camera, renderer.domElement, shouldRotate180);
 // =====================================================
 // LOAD CONTENT (dialogue + flavor text from content/*.txt)
 // =====================================================
-await Promise.all([loadAllContent(), loadMusicCatalog().catch(error => console.warn('Music catalog unavailable:', error.message))]);
+void loadMusicCatalog().catch(error => console.warn('Music catalog unavailable:',error.message));
+await loadAllContent();
+for(const song of getUnlockedSongs())if(song.name!=='Plaza Finale') {
+    addContribution(song.name,song.name,song.unlockedBy||'A neighbor');startCompilation();
+}
 console.log('Content loaded.');
 
 // =====================================================
@@ -225,6 +276,7 @@ console.log('Content loaded.');
 let streetElements = {};
 
 Object.assign(streetElements, buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG));
+if(resumeCheckpoint)sanitizeCameraArrival();
 
 const rebuildWorld = () => {
     resetControls();
@@ -232,111 +284,90 @@ const rebuildWorld = () => {
     resetNPCInteraction();
     disposeWorld(scene);
     CURRENT_SCENE = getCurrentScene();
-    PLAZA_CONFIG = getPlazaConfig(CURRENT_SCENE);
+    PLAZA_CONFIG = getActiveConfig(CURRENT_SCENE);
     restoreCamera();
     Object.keys(streetElements).forEach(key => delete streetElements[key]);
     Object.assign(streetElements, buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG));
 };
 document.addEventListener('game-scene-change', rebuildWorld);
 
+function sanitizeCameraArrival() {
+    const safe=PLAZA_CONFIG.IS_INTERIOR?findSafeInteriorArrival(camera.position,streetElements.interiorBounds,streetElements.interiorCollisionRects):findSafeArrival(camera.position,streetElements.exteriorCollisionRects);
+    if(safe)camera.position.set(safe.x,2,safe.z);
+}
+function checkpointCurrentPosition() {
+    if(!runtimePersistenceEnabled)return false;
+    if(adventureSnapshot.settings.developerMode)return false;
+    if(!PLAZA_CONFIG.IS_INTERIOR&&!safeExteriorPosition(camera.position,streetElements.exteriorCollisionRects))return false;
+    const bounds=streetElements.interiorBounds;
+    if(bounds&&(camera.position.x<bounds.minX||camera.position.x>bounds.maxX||camera.position.z<bounds.minZ||camera.position.z>bounds.maxZ))return false;
+    if((streetElements.interiorCollisionRects||[]).some(r=>Math.abs(camera.position.x-r.x)<r.width/2+.5&&Math.abs(camera.position.z-r.z)<r.depth/2+.5))return false;
+    const returnPosition=readPosition('buildingPortalPosition');
+    const returnState=PLAZA_CONFIG.IS_INTERIOR&&returnPosition?{sceneKey:storage.getItem('previousExteriorScene'),position:returnPosition,yaw:Number(storage.getItem('buildingReturnYaw')||0),isFarBuilding:storage.getItem('isFarBuilding')==='true'}:undefined;
+    return saveCheckpoint({map:getCurrentMap(),sceneKey:CURRENT_SCENE,position:{x:camera.position.x,y:camera.position.y,z:camera.position.z},yaw,pitch,storeName:PLAZA_CONFIG.IS_INTERIOR?PLAZA_CONFIG.name:undefined,returnState});
+}
+function restoreCheckpointExit(checkpoint) {
+    for(const key of ['interiorCameraPosition','busStopCameraPosition','buildingPortalPosition','buildingReturnYaw','previousExteriorScene','isFarBuilding','isFarBuildingExit','activeStoreName','activeStoreScene'])storage.removeItem(key);
+    if(checkpoint.sceneKey.endsWith('_INTERIOR')) {
+        const returnState=checkpoint.returnState;
+        storage.setItem('previousExteriorScene',returnState?.sceneKey||(checkpoint.map==='city'?'CITY_PLAZA':'PLAZA'));
+        if(returnState) {
+            storage.setItem('buildingPortalPosition',JSON.stringify(returnState.position));
+            storage.setItem('buildingReturnYaw',String(returnState.yaw||0));
+            storage.setItem('isFarBuilding',returnState.isFarBuilding?'true':'false');
+        }
+        if(checkpoint.storeName) { storage.setItem('activeStoreName',checkpoint.storeName);storage.setItem('activeStoreScene',checkpoint.sceneKey); }
+    }
+}
+function restoreCheckpoint() {
+    const defaultScene=getCurrentMap()==='city'?'CITY_PLAZA':'PLAZA';
+    const checkpoint=adventureSnapshot.checkpoint||{map:getCurrentMap(),sceneKey:defaultScene,position:getBusStopArrivalPosition(defaultScene),yaw:0,pitch:0};
+    if(!Object.hasOwn(SCENE_CONFIGS,checkpoint.sceneKey))return;
+    closeStoryModal();resetNPCInteraction();resetControls();resetMobileControls();
+    setCurrentMap(checkpoint.map);storage.setItem('suburbanAdventureScene',checkpoint.sceneKey);
+    restoreCheckpointExit(checkpoint);
+    rebuildWorld();camera.position.set(checkpoint.position.x,checkpoint.position.y,checkpoint.position.z);
+    sanitizeCameraArrival();
+    setYaw(checkpoint.yaw);setPitch(checkpoint.pitch);
+}
+document.addEventListener('game-return-safe',restoreCheckpoint);
+document.addEventListener('game-travel',event=>{
+    const {map,key}=event.detail||{};
+    if(map!==getCurrentMap()||!adventureSnapshot.visited[map]?.some(area=>area.key===key)||PLAZA_CONFIG.IS_INTERIOR)return;
+    const destination=getTravelPosition(map,key);
+    const safe=destination&&findSafeArrival(destination,streetElements.exteriorCollisionRects);
+    if(!safe)return;
+    resetNPCInteraction();resetControls();resetMobileControls();camera.position.set(safe.x,2,safe.z);setYaw(0);setPitch(0);checkpointCurrentPosition();
+});
+window.addEventListener('pagehide',()=>{if(!getStoryModalOpen()&&!hasActiveConversation())checkpointCurrentPosition();});
+
+
 // Initialize NPC interaction system
 initializeNPCInteraction();
 initializeConversationHandlers();
 
 // handleActionInput: unified handler for Space/mobile button - conversations, items, portals, bus
-const handleActionInput = () => {
-    if (document.getElementById('startup') || getPhoneOpenState()) return;
-    // Skip portals/bus if in conversation (Space is for conversation only in that case)
-    if (hasActiveConversation()) {
-        handleInteractionInput(CURRENT_SCENE);
-        return;
+export const handleActionInput = () => {
+    if(document.getElementById('startup')||getPhoneOpenState()||getStoryModalOpen())return;
+    if(hasActiveConversation()) { handleInteractionInput(CURRENT_SCENE);return; }
+    checkBusStopProximity(camera,PLAZA_CONFIG,CURRENT_SCENE,streetElements);
+    if(handleInteractionInput(CURRENT_SCENE))return;
+    const target=getSelectedInteraction();
+    if(!target)return;
+    if(target.type==='portal') {
+        const portal=target.object,destination=getBuildingPortalDestination(portal.style);
+        checkpointCurrentPosition();
+        visitBusiness(portal.name,portal.name,{map:getCurrentMap(),area:getAreaInfo(getCurrentMap(),camera.position).name});
+        storage.setItem('previousExteriorScene',portal.zoneKey||CURRENT_SCENE);
+        const pos=portal.returnPosition||{x:portal.position.x,z:portal.position.z+(portal.isFarBuilding?-3:3)};
+        storage.setItem('buildingPortalPosition',JSON.stringify({x:pos.x,y:2,z:pos.z}));
+        if(Number.isFinite(portal.returnYaw))storage.setItem('buildingReturnYaw',String(portal.returnYaw));else storage.removeItem('buildingReturnYaw');
+        storage.setItem('isFarBuilding',portal.isFarBuilding?'true':'false');
+        switchScene(destination.key,portal.name);return;
     }
-    // Conversations, items, NPC talk - returns true if consumed
-    if (handleInteractionInput(CURRENT_SCENE)) return;
-
-    // Building door portals
-    if (streetElements && streetElements.buildingPortals) {
-        let nearestPortal = null;
-        let nearestDistance = Infinity;
-        streetElements.buildingPortals.forEach(portal => {
-            const distance = camera.position.distanceTo(portal.position);
-            if (distance < 5 && distance < nearestDistance) {
-                nearestPortal = portal;
-                nearestDistance = distance;
-            }
-        });
-        if (nearestPortal) {
-            const targetScene = getBuildingPortalDestination(nearestPortal.style);
-            console.log(`Entering ${nearestPortal.name}, switching to ${targetScene.key} (${targetScene.name})`);
-            storage.setItem('previousExteriorScene', nearestPortal.zoneKey || CURRENT_SCENE);
-            const portalPosition = { x: (nearestPortal.returnPosition || nearestPortal.position).x, y: 2, z: (nearestPortal.returnPosition || nearestPortal.position).z };
-            storage.setItem('buildingPortalPosition', JSON.stringify(portalPosition));
-            if (Number.isFinite(nearestPortal.returnYaw)) storage.setItem('buildingReturnYaw', String(nearestPortal.returnYaw));
-            else storage.removeItem('buildingReturnYaw');
-            const isFarBuilding = nearestPortal.isFarBuilding === true;
-            storage.setItem('isFarBuilding', isFarBuilding ? 'true' : 'false');
-            switchScene(targetScene.key);
-            return;
-        }
-    }
-
-    // Exit portal if in interior scene
-    if (PLAZA_CONFIG.IS_INTERIOR && streetElements && streetElements.exitPortal) {
-        const exitPortalPos = new THREE.Vector3();
-        streetElements.exitPortal.getWorldPosition(exitPortalPos);
-        if (camera.position.distanceTo(exitPortalPos) < 3) {
-            const previousScene = storage.getItem('previousExteriorScene') || 'PLAZA';
-            console.log(`Exiting interior, returning to ${previousScene}`);
-            switchScene(previousScene);
-            return;
-        }
-    }
-
-    // Subway travel - switch between suburban and city maps (same as "t" key)
-    if (streetElements?.subwayStopPosition) {
-        const subwayPos = streetElements.subwayStopPosition;
-        const dist = camera.position.distanceTo(new THREE.Vector3(subwayPos.x, 0, subwayPos.z));
-        if (dist < 6 && performMapSwitch()) return;
-    }
-
-    // Bus stop travel - UNIFIED_MAP
-    if (!PLAZA_CONFIG.IS_INTERIOR && UNIFIED_MAP && streetElements?.zoneRootGroups) {
-        let nearestZone = null;
-        let distanceToBusStop = Infinity;
-        streetElements.zoneRootGroups.forEach(zoneRoot => {
-            const zoneKey = zoneRoot.userData?.zoneKey;
-            const zoneConfig = SCENE_CONFIGS[zoneKey] || PLAZA_CONFIG;
-            const offset = zoneRoot.userData?.zoneOffset || { x: 0, z: 0 };
-            const busStopPos = new THREE.Vector3(
-                offset.x + (zoneConfig.ROAD_POSITION_X ? zoneConfig.ROAD_POSITION_X + 3 : -15),
-                0,
-                offset.z + zoneConfig.NEAR_SIDEWALK_Z
-            );
-            const d = camera.position.distanceTo(busStopPos);
-            if (d < distanceToBusStop) {
-                distanceToBusStop = d;
-                nearestZone = zoneKey;
-            }
-        });
-        if (distanceToBusStop < 5 && nearestZone) {
-            const next = getNextSceneInfo(nearestZone);
-            const pos = getBusStopArrivalPosition(next.key);
-            camera.position.set(pos.x, pos.y, pos.z);
-            console.log(`🚌 Travelled to ${next.name}`);
-            return;
-        }
-    }
-
-    // Fall back to bus stop (non-unified exterior scenes)
-    if (!PLAZA_CONFIG.IS_INTERIOR && !UNIFIED_MAP) {
-        const busStopX = PLAZA_CONFIG.ROAD_POSITION_X ? PLAZA_CONFIG.ROAD_POSITION_X + 3 : -15;
-        const busStopPosition = new THREE.Vector3(busStopX, 0, PLAZA_CONFIG.NEAR_SIDEWALK_Z);
-        if (camera.position.distanceTo(busStopPosition) < 5) {
-            const nextScene = getNextSceneInfo(CURRENT_SCENE);
-            console.log(`Switching to ${nextScene.key} (${nextScene.name})`);
-            switchScene(nextScene.key);
-        }
-    }
+    if(target.type==='exit') { switchScene(storage.getItem('previousExteriorScene')||'PLAZA');return; }
+    if(target.type==='subway') { performMapSwitch();return; }
+    if(target.type==='bus')openTransitChooser(getCurrentMap());
 };
 
 // Initialize mobile controls (joysticks, action button) when on mobile
@@ -375,7 +406,7 @@ export const performMapSwitch = () => {
 
 // Quick area inspection, including returning directly from an interior.
 export const teleportToArea = number => {
-    if (getPhoneOpenState() || hasActiveConversation()) return false;
+    if (getPhoneOpenState() || getStoryModalOpen() || hasActiveConversation()) return false;
     const destination = getAreaTestPosition(number);
     if (!destination) return false;
     resetNPCInteraction(); resetControls(); resetMobileControls();
@@ -392,8 +423,13 @@ export const teleportToArea = number => {
 // =====================================================
 // KEYBOARD EVENT HANDLERS
 // =====================================================
+document.addEventListener('pointerdown',()=>{
+    if(!document.getElementById('startup')&&!getPhoneOpenState()&&!getStoryModalOpen()&&adventureSnapshot.settings.ambience)void beginLandmarkAudio();
+},{passive:true});
 document.addEventListener('keydown', (event) => {
     if (document.getElementById('startup')) return;
+    if(!getPhoneOpenState()&&!getStoryModalOpen()&&adventureSnapshot.settings.ambience&&!event.ctrlKey&&!event.metaKey)void beginLandmarkAudio();
+    if(getStoryModalOpen()) { if(event.code==='Escape')closeStoryModal();return; }
     if (event.code === 'Escape' && hasActiveConversation()) {
         resetNPCInteraction();
         resetControls();
@@ -401,10 +437,10 @@ document.addEventListener('keydown', (event) => {
         return;
     }
     const inInput = document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA';
-    if (!getPhoneOpenState() && !hasActiveConversation() && !event.repeat && event.code === 'KeyT' && !event.ctrlKey && !event.metaKey && !event.altKey && !inInput) {
+    if (!getPhoneOpenState() && !hasActiveConversation() && !event.repeat && event.code === 'KeyT' && adventureSnapshot.settings.developerMode && !event.ctrlKey && !event.metaKey && !event.altKey && !inInput) {
         if (performMapSwitch()) return;
     }
-    if (inInput || event.target.closest?.('button, [contenteditable]') || getPhoneOpenState() || event.repeat) return;
+    if (inInput || event.target.closest?.('button, [contenteditable]') || getPhoneOpenState() || getStoryModalOpen() || event.repeat) return;
     if (!hasActiveConversation() && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey
         && !document.activeElement?.isContentEditable && document.activeElement?.tagName !== 'SELECT') {
         const digit = /^(?:Digit|Numpad)([1-9])$/.exec(event.code);
@@ -438,8 +474,8 @@ const animate = createAnimationLoop(
     postCamera,
     streetElements,
     (deltaTime) => updateCameraPosition(camera, PLAZA_CONFIG, streetElements, deltaTime),
-    () => checkNearbyNPCs(camera, streetElements.npcs),
-    () => checkNearbyItems(camera, streetElements.interactiveItems),
+    () => {},
+    () => {},
     () => checkBusStopProximity(camera, PLAZA_CONFIG, CURRENT_SCENE, streetElements),
     () => {
         // Update mobile action button based on context
@@ -463,7 +499,7 @@ message.textContent = isMobile
     : 'WASD to move, drag to look, Shift to run, Space to interact, F for your phone. Start by finding Maya near the plaza.';
 const begin = document.createElement('button');
 begin.textContent = 'Explore the neighborhood';
-begin.onclick = () => { startup.remove(); storage.setItem('suburbanAdventureIntroduced', 'true'); };
+begin.onclick = () => { startup.remove(); storage.setItem('suburbanAdventureIntroduced', 'true');checkpointCurrentPosition();if(adventureSnapshot.settings.ambience)void beginLandmarkAudio(); };
 startup.append(begin);
 if (storage.getItem('suburbanAdventureIntroduced')) startup.remove();
 

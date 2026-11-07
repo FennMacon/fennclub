@@ -1,3 +1,4 @@
+import {getStoryModalOpen} from './story-ui.js';
 // Movement and look own separate pointers; running is an independent toggle.
 import { getPhoneOpenState } from './phone-ui.js';
 import { hasActiveConversation } from './dialogue.js';
@@ -7,7 +8,7 @@ let sprintHeld = false;
 let mobileActionButton;
 let actionType = '';
 const resets = [];
-const blocked = () => document.getElementById('startup') || getPhoneOpenState() || hasActiveConversation();
+const blocked = () => document.getElementById('startup') || getPhoneOpenState() || getStoryModalOpen() || hasActiveConversation();
 export const getMobileMovement = () => movement;
 export const getMobileLook = () => look;
 export const getMobileSprint = () => sprintHeld;
@@ -95,6 +96,6 @@ export const initializeMobileControls = ({ onAction } = {}) => {
     document.addEventListener('visibilitychange', resetMobileControls);
     document.addEventListener('game-modal-change', () => {
         resetMobileControls();
-        root.hidden = getPhoneOpenState();
+        root.hidden = getPhoneOpenState() || getStoryModalOpen();
     });
 };

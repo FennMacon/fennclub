@@ -1,10 +1,12 @@
+import {createNavigationCues} from './world/navigation-cues.js';
+import {createStoryWorldItems} from './story-activities.js';
 import {createCityRoadNetwork} from './world/city-roads.js';
 import { createCityDistricts } from './world/city-districts.js';
 import * as THREE from 'three';
 import { createCar, getRandomCarColor } from './utils.js';
 import { createUnifiedMapGround, createCityMapGround, createConnectorRoads, createCityConnectorRoads, createConnectorVehicles, createCityConnectorVehicles, createUnifiedMapTrees, createGroundFog, createForestClearings, createCarnival, createMansionCompound, createRiver, createZoneScene, createSubwayStop } from './world/zone-scene.js';
 import { createInteriorScene, createShopInterior, INTERIOR_REGISTRY, INTERIOR_TARGET_SIZE } from './buildings.js';
-import { createNPCs, createInteriorNPCs } from './npcs.js';
+import { createNPCs, createInteriorNPCs, createCityNPCs } from './npcs.js';
 import { SCENE_CONFIGS, UNIFIED_MAP, UNIFIED_MAP_ZONE_OFFSETS, getCurrentMap, SUBWAY_POSITIONS, CITY_MAP_ZONE_OFFSETS } from './scenes.js';
 import { createNightSky } from './nightsky.js';
 import { createSkybox } from './skybox.js';
@@ -194,6 +196,43 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG, mapOverri
         streetElements.npcs = streetElements.npcs || createNPCs(PLAZA_CONFIG, CURRENT_SCENE, scene);
     }
 
+
+    if(PLAZA_CONFIG.IS_INTERIOR) {
+        scene.updateMatrixWorld(true);
+        const props=[];
+        for(const item of streetElements.interactiveItems||[]) {
+            const bounds=new THREE.Box3().setFromObject(item),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+            if(size.x>1&&size.z>1&&size.x<=8&&size.z<=8&&size.y>.4&&bounds.min.y<2)
+                props.push({x:center.x,z:center.z,width:size.x,depth:size.z});
+        }
+        streetElements.interiorCollisionRects=[...(streetElements.interiorCollisionRects||[]),...props];
+    }
+    streetElements.interactiveItems=[...(streetElements.interactiveItems||[]),...createStoryWorldItems(THREE,scene,{map:mapType,sceneKey:CURRENT_SCENE})];
+    if(!PLAZA_CONFIG.IS_INTERIOR) {
+        if(mapType==='city')streetElements.npcs.push(...createCityNPCs(scene));
+        scene.updateMatrixWorld(true);
+        const rects=[];
+        if(streetElements.cityDistricts)for(const lot of streetElements.cityDistricts.plan.lots)
+            rects.push({minX:lot.x-lot.width/2,maxX:lot.x+lot.width/2,minZ:lot.z-lot.depth/2,maxZ:lot.z+lot.depth/2});
+        for(const portal of streetElements.buildingPortals||[])if(portal.building) {
+            const bounds=new THREE.Box3().setFromObject(portal.building);
+            if(!bounds.isEmpty())rects.push({minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z});
+        }
+        // The karaoke room is continuous with the street; retain its open front doorway.
+        const karaokeZ=SCENE_CONFIGS[mapType==='city'?'CITY_PLAZA':'PLAZA'].FRONT_SHOPS_Z;
+        rects.push({minX:-10,maxX:-.9,minZ:karaokeZ-.12,maxZ:karaokeZ+.12},
+            {minX:.9,maxX:10,minZ:karaokeZ-.12,maxZ:karaokeZ+.12},
+            {minX:-10.12,maxX:-9.88,minZ:karaokeZ-15,maxZ:karaokeZ},
+            {minX:9.88,maxX:10.12,minZ:karaokeZ-15,maxZ:karaokeZ},
+            {minX:-10,maxX:10,minZ:karaokeZ-15.12,maxZ:karaokeZ-14.88});
+        const mansion=scene.getObjectByName('MansionHouse');
+        if(mansion) { const bounds=new THREE.Box3().setFromObject(mansion);rects.push({minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z}); }
+        streetElements.exteriorCollisionRects=rects;
+        if(mapType!=='city') {
+            const cues=createNavigationCues(scene,streetElements.buildingPortals||[],camera);
+            streetElements.navigationCues=cues.group;streetElements.navigationUpdate=cues.update;
+        }
+    }
 
     if (PLAZA_CONFIG.IS_INTERIOR || mapType !== 'city') createNightSky(scene);
     const type = PLAZA_CONFIG.IS_INTERIOR ? CURRENT_SCENE : (mapType === 'city' ? 'CITY_MAP' : (UNIFIED_MAP ? 'UNIFIED_MAP' : CURRENT_SCENE));

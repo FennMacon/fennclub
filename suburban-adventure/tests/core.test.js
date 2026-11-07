@@ -24,6 +24,10 @@ test('invalid camera and scene saves recover', () => {
     }
     storage.setItem('testPosition', '{"x":0,"y":2,"z":-3}');
     assert.deepEqual(readPosition('testPosition'), { x: 0, y: 2, z: -3 });
+    for(const scene of ['deleted-scene','constructor','__proto__','toString']) {
+        storage.setItem('suburbanAdventureScene',scene);
+        assert.equal(getCurrentScene(),'PLAZA');
+    }
     storage.setItem('suburbanAdventureScene', 'deleted-scene');
     storage.setItem('suburbanAdventureMap', 'deleted-map');
     assert.equal(getCurrentScene(), 'PLAZA');
@@ -48,6 +52,84 @@ test('blocked storage and failed writes preserve in-memory state', () => {
         else globalThis.localStorage = original;
     }
 });
+
+let rewardSaveFixture = 0;
+const withSavedRewards = async (songs, items, run) => {
+    const songKey = 'suburbanAdventureUnlockedSongs', itemKey = 'suburbanAdventureEncounteredItems';
+    const previousSongs = storage.getItem(songKey), previousItems = storage.getItem(itemKey);
+    const previousLog = console.log, previousWarn = console.warn;
+    try {
+        storage.setItem(songKey, songs); storage.setItem(itemKey, items);
+        console.log = console.warn = () => {};
+        // Each fixture executes the real persisted-state loader in a fresh module.
+        const module = await import(new URL('../dialogue.js?reward-save-' + rewardSaveFixture++, import.meta.url).href);
+        await run(module);
+    } finally {
+        console.log = previousLog; console.warn = previousWarn;
+        if (previousSongs === null) storage.removeItem(songKey); else storage.setItem(songKey, previousSongs);
+        if (previousItems === null) storage.removeItem(itemKey); else storage.setItem(itemKey, previousItems);
+    }
+};
+
+test('damaged reward metadata is discarded without losing healthy saved discoveries', async () => {
+    const songs = [
+        ['Consistency', { unlockedBy: 'Maya', ignored: ['old metadata'] }],
+        ['The Room Between', { unlockedBy: 'The mansion piano' }],
+        ['Null artist', null], ['Array artist', ['Maya']], ['Number artist', { unlockedBy: 42 }],
+        ['Missing artist', {}], [42, { unlockedBy: 'Maya' }], ['Wrong tuple size', { unlockedBy: 'Maya' }, true],
+        [' ', { unlockedBy: 'Maya' }], ['Bad\u0000title', { unlockedBy: 'Maya' }], null, 'mixed-in text'
+    ];
+    const items = ['Cassette', null, { name: 'Bad object' }, ['Bad array'], 42, '', '  ', 'Bad\u0000item', 'Tiny Midnight Bear', 'Cassette'];
+    await withSavedRewards(JSON.stringify(songs), JSON.stringify(items), async module => {
+        assert.deepEqual(module.getUnlockedSongs(), [
+            { name: 'Consistency', unlockedBy: 'Maya' }, { name: 'The Room Between', unlockedBy: 'The mansion piano' }
+        ]);
+        assert.deepEqual(module.getEncounteredItems(), ['Cassette', 'Tiny Midnight Bear']);
+        assert.equal(module.unlockSong('A Future Recording', 'A New Neighbor').newlyUnlocked, true);
+        assert.equal(module.unlockSong('Invalid Artist', {}), null);
+    });
+});
+
+test('non-array, malformed and oversized reward saves recover as empty collections', async () => {
+    for (const raw of ['broken JSON', 'null', '{}', '42', '"Consistency"', ' '.repeat(512001)]) {
+        await withSavedRewards(raw, raw, module => {
+            assert.deepEqual(module.getUnlockedSongs(), []);
+            assert.deepEqual(module.getEncounteredItems(), []);
+        });
+    }
+});
+
+test('legacy song-title sets migrate and valid story recordings survive save reloads', async () => {
+    await withSavedRewards(JSON.stringify(['Consistency', 'Plaza Finale', 'The Room Between']), JSON.stringify(['Tiny Midnight Bear']), async module => {
+        assert.deepEqual(module.getUnlockedSongs(), ['Consistency', 'Plaza Finale', 'The Room Between'].map(name => ({ name, unlockedBy: 'Unknown' })));
+        module.unlockSong('First Train Home', 'Inez'); module.markItemEncountered('The Plaza Show Tape');
+        const reloaded = await import(new URL('../dialogue.js?reward-save-' + rewardSaveFixture++, import.meta.url).href);
+        assert.deepEqual(reloaded.getUnlockedSongs(), [
+            ...['Consistency', 'Plaza Finale', 'The Room Between'].map(name => ({ name, unlockedBy: 'Unknown' })),
+            { name: 'First Train Home', unlockedBy: 'Inez' }
+        ]);
+        assert.deepEqual(reloaded.getEncounteredItems(), ['Tiny Midnight Bear', 'The Plaza Show Tape']);
+    });
+});
+
+test('reward saves bound collection sizes and text before the phone reads them', async () => {
+    const songs = [
+        ['x'.repeat(161), { unlockedBy: 'Maya' }], ['Oversized artist', { unlockedBy: 'x'.repeat(161) }],
+        ...Array.from({ length: 300 }, (_, i) => ['Recording ' + i, { unlockedBy: 'Neighbor ' + i }])
+    ];
+    const items = ['x'.repeat(161), ...Array.from({ length: 1200 }, (_, i) => 'Object ' + i)];
+    await withSavedRewards(JSON.stringify(songs), JSON.stringify(items), module => {
+        assert.equal(module.getUnlockedSongs().length, 256);
+        assert.equal(module.getUnlockedSongs()[0].name, 'Recording 0');
+        assert.equal(module.getEncounteredItems().length, 1000);
+        assert.equal(module.getEncounteredItems()[0], 'Object 0');
+        assert.equal(module.unlockSong('Overflow recording', 'Neighbor'), null);
+        assert.equal(module.markItemEncountered('Overflow item'), null);
+        assert.equal(module.unlockSong('Recording 0', 'Returning Neighbor').newlyUnlocked, false);
+        assert.equal(module.markItemEncountered('Object 0').newlyEncountered, false);
+    });
+});
+
 test('content loads concurrently, diagnoses missing files, and awards persistent rewards', async () => {
     let active = 0, peak = 0;
     const warnings = [];
@@ -88,16 +170,16 @@ test('every authored dialogue location exists and every block has lines', async 
     }
 });
 
-test('music catalog maps every dialogue title and uses every MP3 twice', async () => {
+test('music catalog maps every dialogue and story title while retaining the original recording pairs', async () => {
     const { validateMusicCatalog } = await import('../music-library.js');
     const data = JSON.parse(await readFile(new URL('../music/catalog.json', import.meta.url), 'utf8'));
     const catalog = validateMusicCatalog(data);
     assert.equal(data.recordings.length, 14);
-    assert.equal(catalog.size, 28);
+    assert.equal(catalog.size, 38);
     const audio = (await readdir(new URL('../music/', import.meta.url))).filter(name => name.endsWith('.mp3'));
     assert.deepEqual(data.recordings.map(track => track.file).sort(), audio.sort());
     for (const track of data.recordings) {
-        assert.equal(track.rewards.length, 2);
+        assert.ok(track.rewards.length >= 2);
         await access(new URL('../music/' + encodeURIComponent(track.file), import.meta.url));
     }
     for (const name of await readdir(new URL('../content/dialogue/', import.meta.url))) {

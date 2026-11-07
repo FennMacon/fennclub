@@ -433,11 +433,11 @@ export const BUILDING_PORTAL_MAP = {
 };
 
 export const getBuildingPortalDestination = (buildingStyle) =>
-    BUILDING_PORTAL_MAP[buildingStyle] || { key: 'PLAZA', name: 'Downtown' };
+    Object.hasOwn(BUILDING_PORTAL_MAP,buildingStyle)?BUILDING_PORTAL_MAP[buildingStyle]:{ key: 'PLAZA', name: 'Downtown' };
 
 // Function to switch scenes
 export const switchScene = (sceneName, camera, yaw) => {
-    if (SCENE_CONFIGS[sceneName]) {
+    if (Object.hasOwn(SCENE_CONFIGS,sceneName)) {
         const CURRENT_SCENE = sceneName;
         const PLAZA_CONFIG = SCENE_CONFIGS[sceneName];
         
@@ -461,12 +461,12 @@ export const switchScene = (sceneName, camera, yaw) => {
 // Function to get current scene from localStorage
 export const getCurrentScene = () => {
     const scene = storage.getItem('suburbanAdventureScene');
-    return SCENE_CONFIGS[scene] ? scene : (getCurrentMap() === 'city' ? 'CITY_PLAZA' : 'PLAZA');
+    return Object.hasOwn(SCENE_CONFIGS,scene) ? scene : (getCurrentMap() === 'city' ? 'CITY_PLAZA' : 'PLAZA');
 };
 
 // Function to get plaza config for current scene
 export const getPlazaConfig = (sceneName) => {
-    return SCENE_CONFIGS[sceneName] || SCENE_CONFIGS.PLAZA;
+    return Object.hasOwn(SCENE_CONFIGS,sceneName)?SCENE_CONFIGS[sceneName]:SCENE_CONFIGS.PLAZA;
 };
 
 // Function to check if camera should rotate 180° on scene load

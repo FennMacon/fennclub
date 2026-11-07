@@ -14,11 +14,15 @@ export function validateMusicCatalog(data) {
     }
     return rewards;
 }
-export async function loadMusicCatalog() {
-    if (!loading) loading = fetch(new URL('./music/catalog.json', import.meta.url)).then(async response => {
-        if (!response.ok) throw new Error(`Music catalog HTTP ${response.status}`);
-        catalog = validateMusicCatalog(await response.json());
-    }).catch(error => { loading = null; throw error; });
+export async function loadMusicCatalog({ timeoutMs = 10000 } = {}) {
+    if (!loading) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+        loading = fetch(new URL('./music/catalog.json', import.meta.url), { signal: controller.signal }).then(async response => {
+            if (!response.ok) throw new Error(`Music catalog HTTP ${response.status}`);
+            catalog = validateMusicCatalog(await response.json());
+        }).catch(error => { loading = null; throw error; }).finally(() => clearTimeout(timeout));
+    }
     return loading;
 }
 export const getRecording = reward => catalog.get(reward) || null;

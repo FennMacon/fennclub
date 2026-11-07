@@ -1,4 +1,6 @@
 html, body { width: 100%; height: 100%; overscroll-behavior: none; }
+:root { --game-brightness: 1; --game-text-scale: 1; }
+body > canvas { filter: brightness(var(--game-brightness)); }
 canvas { touch-action: none; }
 button { min-height: 44px; touch-action: manipulation; }
 #mobile-controls { position: fixed; inset: 0; pointer-events: none; z-index: 1000; }
@@ -13,8 +15,8 @@ button { min-height: 44px; touch-action: manipulation; }
 .sprint-button { position: absolute; bottom: calc(112px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); width: 84px; color: white; border: 1px solid #88ffe6; border-radius: 12px; background: #122a36cc; font-size: 11px; }
 #phone-ui { box-sizing: border-box; width: min(400px, calc(100vw - 32px)) !important; height: min(600px, calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom))) !important; }
 #phone-ui > div:first-child { min-height: 0; margin: 12px !important; }
-#phone-content { min-height: 0; overscroll-behavior: contain; touch-action: pan-y; }
-.game-prompt { box-sizing: border-box; max-width: calc(100vw - 24px); max-height: 45dvh; overflow-y: auto; pointer-events: auto; touch-action: pan-y; }
+#phone-content { min-height: 0; overscroll-behavior: contain; touch-action: pan-y; font-size: calc(12px * var(--game-text-scale)) !important; }
+.game-prompt { box-sizing: border-box; max-width: calc(100vw - 24px); max-height: 45dvh; overflow-y: auto; pointer-events: auto; touch-action: pan-y; font-size: calc(14px * var(--game-text-scale)) !important; }
 #startup { position: fixed; inset: 0; z-index: 3000; background: #071016; display: grid; place-content: center; padding: 24px; text-align: center; }
 #startup p { max-width: 440px; line-height: 1.6; }
 @media (max-height: 480px) { #phone-ui > div:last-child { padding: 6px !important; } .game-prompt { max-height: 35dvh; } }
@@ -26,3 +28,46 @@ button { min-height: 44px; touch-action: manipulation; }
 .song-row small { display: block; color: #9bbdb6; margin-top: 4px; }
 .song-row[aria-pressed="true"] { border-color: #88ffe6; background: #244c43; }
 .song-play-state { font-size: 11px; color: #88ffe6; }
+
+[hidden] { display: none !important; }
+button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid #ffe39d; outline-offset: 3px; }
+.phone-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); flex-shrink: 0; border-bottom: 1px solid #36524e; }
+.phone-tabs button { min-width: 0; min-height: 44px; padding: 6px 2px; border: 0; border-radius: 0; background: #10211f; color: #a7c9c3; font: bold 11px monospace; }
+.phone-tabs button[aria-selected="true"] { background: #244c43; color: #bffff1; box-shadow: inset 0 -3px #88ffe6; }
+#phone-content h3 { margin-top: 0; }
+#phone-content h4 { margin-bottom: 8px; }
+#phone-content h5 { font: inherit; font-weight: bold; margin: 0; }
+#phone-content p { margin: 8px 0 14px; }
+#phone-content ul, #phone-content ol { padding-left: 20px; }
+#phone-content li { margin: 8px 0; }
+#phone-content small { display: block; color: #a6c3bc; }
+#phone-content section > button { width: 100%; padding: 10px; border: 1px solid #6b9e94; border-radius: 6px; color: #ccffff; background: #16312d; font: inherit; }
+.phone-lead { padding: 12px; border-left: 3px solid #e8cc83; background: #1c302b; }
+.phone-lead h4 { margin-top: 0; }
+.phone-lead p { margin-bottom: 0 !important; }
+.journal-entry { padding: 12px 0; border-bottom: 1px solid #36524e; }
+.journal-entry p { margin-bottom: 0 !important; }
+#phone-content .discovery-map { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+#phone-content .discovery-map li { min-height: 66px; margin: 0; padding: 7px 4px; border: 1px dashed #3a5450; background: #10201e; text-align: center; display: flex; flex-direction: column; justify-content: center; font-size: .85em; overflow-wrap: anywhere; }
+#phone-content .discovery-map .visited { border-style: solid; background: #1b3731; }
+#phone-content .discovery-map .current-area { border: 2px solid #ffe39d; color: #ffe7ac; }
+.phone-setting { display: block; margin: 18px 0; }
+.phone-setting > span { display: flex; justify-content: space-between; gap: 8px; }
+.phone-setting output { color: #ffe39d; }
+.phone-setting input { display: block; width: 100%; min-height: 44px; margin: 4px 0; accent-color: #88ffe6; touch-action: pan-x; }
+.phone-check { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.phone-check input { width: 24px; height: 24px; flex-shrink: 0; accent-color: #88ffe6; }
+.phone-help { color: #a6c3bc; font-size: .9em; }
+.game-modal { position: fixed; inset: 0; z-index: 2400; box-sizing: border-box; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: #030c13db; font: calc(14px * var(--game-text-scale))/1.6 monospace; color: #ccffff; }
+.game-modal-card { box-sizing: border-box; width: min(100%, 520px); max-height: calc(100dvh - 40px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 20px; background: #10201e; border: 2px solid #88ffe6; border-radius: 8px; }
+.game-modal-card h2 { margin-top: 0; font-size: 1.2em; }
+.game-modal-card button { min-height: 48px; padding: 12px; font: inherit; color: #ccffff; background: #244c43; border: 1px solid #88ffe6; border-radius: 6px; }
+dialog[aria-label], dialog[aria-label] button { font-size: calc(16px * var(--game-text-scale)) !important; }
+dialog[aria-label] h2 { font-size: calc(22px * var(--game-text-scale)) !important; }
+dialog::backdrop { background: #030c13d9; }
+.transit-destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 18px 0; }
+.transit-destinations button { overflow-wrap: anywhere; }
+[data-transit-cancel] { width: 100%; background: #152926 !important; }
+@media (max-width: 360px) { .phone-tabs button { font-size: 10px; } .transit-destinations { grid-template-columns: 1fr; } }
+
+@media (max-width: 600px) { #phone-ui { height: min(760px, calc(100dvh - 32px)) !important; } }

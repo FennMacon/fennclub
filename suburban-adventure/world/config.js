@@ -59,10 +59,10 @@ export const RIVER_CONFIG = {
 export const PLAZA_SHOPS = [
     { name: 'Grumby\'s', width: 18, style: 'convenience', signColor: 0xFFFFFF },
     { name: 'Grohos', width: 16, style: 'pizza', signColor: 0xFFFFFF },
-    { name: 'Clothing Store', width: 14, style: 'clothing', signColor: 0xFFFFFF },
-    { name: 'Dry Cleaners', width: 12, style: 'drycleaner', signColor: 0x000000 },
+    { name: 'Hem & Haw Vintage', width: 14, style: 'clothing', signColor: 0xFFFFFF },
+    { name: 'Cloud Nine Cleaners', width: 12, style: 'drycleaner', signColor: 0x000000 },
     { name: 'Donut Galaxy', width: 15, style: 'coffee', signColor: 0xFFFFFF },
-    { name: 'Flower Shop', width: 13, style: 'flowers', signColor: 0x000000 }
+    { name: 'Wild Violet Flowers', width: 13, style: 'flowers', signColor: 0x000000 }
 ];
 
 /** City zone shop configs - unique establishments per street */
@@ -70,28 +70,28 @@ export const CITY_ZONE_SHOPS = {
     CITY_PLAZA: {
         centerBar: 'karaoke',
         shops: [
-            { name: 'Bodega', width: 14, style: 'bodega', signColor: 0xFF6600 },
-            { name: 'Pho House', width: 16, style: 'pho', signColor: 0xFFFFFF },
-            { name: 'Tattoo Parlor', width: 12, style: 'tattoo', signColor: 0x000000 },
+            { name: 'Little Orbit Market', width: 14, style: 'bodega', signColor: 0xFF6600 },
+            { name: 'Lucky Spoon Pho', width: 16, style: 'pho', signColor: 0xFFFFFF },
+            { name: 'Crooked Halo Tattoo', width: 12, style: 'tattoo', signColor: 0x000000 },
             { name: 'Vinyl & Coffee', width: 15, style: 'vinyl_coffee', signColor: 0x333333 }
         ]
     },
     CITY_N: {
         centerBar: 'dive_bar',
         shops: [
-            { name: 'Record Store', width: 14, style: 'record_store', signColor: 0xFF0000 },
-            { name: 'Laundromat', width: 16, style: 'laundromat', signColor: 0x00AAFF },
-            { name: 'Corner Cafe', width: 13, style: 'corner_cafe', signColor: 0xFFFFFF },
-            { name: 'Bookshop', width: 12, style: 'bookshop', signColor: 0x8B4513 }
+            { name: 'Needle Drop Records', width: 14, style: 'record_store', signColor: 0xFF0000 },
+            { name: 'Spin Cycle Laundry', width: 16, style: 'laundromat', signColor: 0x00AAFF },
+            { name: 'Kettle Bell Cafe', width: 13, style: 'corner_cafe', signColor: 0xFFFFFF },
+            { name: 'Dog Ear Books', width: 12, style: 'bookshop', signColor: 0x8B4513 }
         ]
     },
     CITY_S: {
         centerBar: 'arcade_bar',
         shops: [
-            { name: 'Sushi Spot', width: 14, style: 'sushi', signColor: 0xFF6666 },
+            { name: 'Paper Crane Sushi', width: 14, style: 'sushi', signColor: 0xFF6666 },
             { name: 'Vintage Threads', width: 15, style: 'vintage', signColor: 0x996633 },
-            { name: 'Bubble Tea', width: 12, style: 'bubble_tea', signColor: 0xFFB6C1 },
-            { name: 'Smoke Shop', width: 13, style: 'smoke_shop', signColor: 0x228B22 }
+            { name: 'Moon Rabbit Tea', width: 12, style: 'bubble_tea', signColor: 0xFFB6C1 },
+            { name: 'Velvet Ember Smoke', width: 13, style: 'smoke_shop', signColor: 0x228B22 }
         ]
     }
 };

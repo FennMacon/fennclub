@@ -2669,7 +2669,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
                 { x: -15, width: 9, height: 6.5, style: 'brick', name: 'Brick Building' },
                 { x: 0, width: 11, height: 7.5, style: 'hospital', name: 'Hospital' },
                 { x: 15, width: 10, height: 6, style: 'industrial', name: 'Industrial Building' },
-                { x: 30, width: 9, height: 6.5, style: 'shop', name: 'Shop Building' }
+                { x: 30, width: 9, height: 6.5, style: 'shop', name: ({CITY_PLAZA:'Odd Hours General',CITY_N:'Common Goods Market',CITY_S:'Nightjar General'})[zoneSceneKey] || 'Juniper General' }
             ];
         }
         

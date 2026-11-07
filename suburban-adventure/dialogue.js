@@ -1,3 +1,5 @@
+import {getStoryDialogue} from './adventure-story.js';
+import {resetAdventureProgress} from './adventure-state.js';
 import { storage } from './storage.js';
 // dialogue.js - NPC dialogue and conversation system
 import { getConversation, registerFallbackConversations } from './content-loader.js';
@@ -377,14 +379,52 @@ export let conversationAtEnd = false;
 // Track encountered items (items player has interacted with)
 export let encounteredItems = new Set(); // Set of item names
 
+// Keep older reward saves independent of the current catalog: new songs can be
+// added without invalidating progress. Bound their shape before UI or story code
+// reads metadata, while preserving healthy entries from a partly damaged save.
+const MAX_SAVED_SONGS = 256;
+const MAX_SAVED_ITEMS = 1000;
+const MAX_PROGRESS_TEXT = 160;
+const MAX_PROGRESS_SAVE_LENGTH = 512000;
+const validProgressText = value => typeof value === 'string' && value.trim().length > 0
+    && value.length <= MAX_PROGRESS_TEXT && !/[\u0000-\u001f\u007f]/.test(value);
+const readRewardSave = raw => {
+    if (typeof raw !== 'string' || raw.length > MAX_PROGRESS_SAVE_LENGTH) return [];
+    const value = JSON.parse(raw);
+    return Array.isArray(value) ? value : [];
+};
+const savedSongMap = values => {
+    const songs = new Map();
+    // The original Set-based version saved an array of song titles without artists.
+    const legacyTitles = values.length > 0 && values.every(value => typeof value === 'string');
+    for (const entry of values.slice(0, MAX_SAVED_SONGS * 4)) {
+        const pair = legacyTitles ? [entry, { unlockedBy: 'Unknown' }] : entry;
+        if (!Array.isArray(pair) || pair.length !== 2) continue;
+        const [title, metadata] = pair;
+        if (!validProgressText(title) || !metadata || typeof metadata !== 'object' || Array.isArray(metadata)
+            || !Object.hasOwn(metadata, 'unlockedBy') || !validProgressText(metadata.unlockedBy)) continue;
+        if (!songs.has(title) && songs.size >= MAX_SAVED_SONGS) break;
+        songs.set(title, { unlockedBy: metadata.unlockedBy });
+    }
+    return songs;
+};
+const savedItemSet = values => {
+    const items = new Set();
+    for (const item of values.slice(0, MAX_SAVED_ITEMS * 4)) {
+        if (!validProgressText(item)) continue;
+        items.add(item);
+        if (items.size >= MAX_SAVED_ITEMS) break;
+    }
+    return items;
+};
+
 // Load persisted state from localStorage
 const loadPersistedState = () => {
     // Load unlocked songs
     try {
         const savedSongs = storage.getItem('suburbanAdventureUnlockedSongs');
         if (savedSongs) {
-            const songsArray = JSON.parse(savedSongs);
-            unlockedSongs = new Map(songsArray);
+            unlockedSongs = savedSongMap(readRewardSave(savedSongs));
             console.log('Loaded unlocked songs from localStorage:', Array.from(unlockedSongs.keys()));
         }
     } catch (e) {
@@ -395,8 +435,7 @@ const loadPersistedState = () => {
     try {
         const savedItems = storage.getItem('suburbanAdventureEncounteredItems');
         if (savedItems) {
-            const itemsArray = JSON.parse(savedItems);
-            encounteredItems = new Set(itemsArray);
+            encounteredItems = savedItemSet(readRewardSave(savedItems));
             console.log('Loaded encountered items from localStorage:', Array.from(encounteredItems));
         }
     } catch (e) {
@@ -429,7 +468,7 @@ loadPersistedState();
 // Function to start a conversation with an NPC
 export const startConversation = (npcName, currentScene) => {
     // Check for group conversations first
-    const conversationData = getConversation(npcName, currentScene);
+    const conversationData = getStoryDialogue(npcName,currentScene)||getConversation(npcName, currentScene);
     if (conversationData) {
         currentConversation = conversationData;
         if (typeof document !== 'undefined') document.dispatchEvent(new Event('game-modal-change'));
@@ -475,7 +514,7 @@ export const isSongUnlocked = (songName) => {
 
 // Function to mark an item as encountered
 export const markItemEncountered = (itemName) => {
-    if (itemName) {
+    if (validProgressText(itemName) && (encounteredItems.has(itemName) || encounteredItems.size < MAX_SAVED_ITEMS)) {
         // Check if already encountered
         const wasAlreadyEncountered = encounteredItems.has(itemName);
         
@@ -498,24 +537,19 @@ export const getEncounteredItems = () => {
 // Now accepts optional npcName parameter to track who unlocked it
 export const unlockCurrentSong = (npcName = null) => {
     if (!currentConversation) return null;
-    
-    if (currentConversation.unlocks) {
-        const songName = currentConversation.unlocks;
-        // Check if already unlocked
-        const wasAlreadyUnlocked = unlockedSongs.has(songName);
-        
-        // Store song with metadata (NPC who unlocked it)
-        unlockedSongs.set(songName, { unlockedBy: npcName || 'Unknown' });
-        
-        // Persist to localStorage
-        savePersistedState();
-        
+    const result = unlockSong(currentConversation.unlocks, npcName || 'Unknown');
+    if (result) {
         console.log('Unlocked songs:', Array.from(unlockedSongs.keys()));
-        // Return the song name and whether it was newly unlocked
-        return { song: songName, newlyUnlocked: !wasAlreadyUnlocked };
     }
-    
-    return null;
+    return result;
+};
+
+// Shared reward entry point for performances, encounters and optional mysteries.
+export const unlockSong = (title,by='Neighborhood') => {
+    if(!validProgressText(title)||!validProgressText(by)||(!unlockedSongs.has(title)&&unlockedSongs.size>=MAX_SAVED_SONGS))return null;
+    const newlyUnlocked=!unlockedSongs.has(title);
+    unlockedSongs.set(title,{unlockedBy:by});savePersistedState();
+    return {song:title,newlyUnlocked};
 };
 
 // Function to end the current conversation
@@ -527,6 +561,7 @@ export const endConversation = () => {
 
 // Function to reset game progress (unlocked songs and items)
 export const resetGameProgress = () => {
+    resetAdventureProgress();
     // Clear unlocked songs
     unlockedSongs.clear();
     

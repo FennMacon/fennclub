@@ -1,3 +1,6 @@
+import {getAdventureState,subscribeAdventure} from './adventure-state.js';
+import {getStoryModalOpen} from './story-ui.js';
+import {resolveExteriorMovement} from './world/traversal.js';
 import { resolveInteriorMovement } from './buildings/mansion-layout.js';
 import { getPhoneOpenState } from './phone-ui.js';
 import { hasActiveConversation } from './dialogue.js';
@@ -5,6 +8,9 @@ import { hasActiveConversation } from './dialogue.js';
 // Mobile touch/joystick logic lives in mobile-controls.js
 import * as THREE from 'three';
 import { getMobileMovement, getMobileLook, getMobileSprint } from './mobile-controls.js';
+
+let playerSettings=getAdventureState().settings;
+subscribeAdventure(state=>{playerSettings=state.settings;});
 
 // Keyboard state
 export const keyboard = {
@@ -47,14 +53,14 @@ const setupKeyboardControls = () => {
     document.addEventListener('visibilitychange', resetControls);
     document.addEventListener('game-modal-change', resetControls);
     document.addEventListener('keydown', (e) => {
-        if (getPhoneOpenState() || hasActiveConversation() || e.target.closest?.('input, textarea, button, [contenteditable]')) return;
+        if (getPhoneOpenState() || getStoryModalOpen() || hasActiveConversation() || e.target.closest?.('input, textarea, button, [contenteditable]')) return;
         if (e.key === 'w' || e.key === 'W') keyboard.w = true;
         if (e.key === 'a' || e.key === 'A') keyboard.a = true;
         if (e.key === 's' || e.key === 'S') keyboard.s = true;
         if (e.key === 'd' || e.key === 'D') keyboard.d = true;
         if (e.key === 'Shift') keyboard.shift = true;
-        if (e.key === 'q' || e.key === 'Q') keyboard.q = true;
-        if (e.key === 'e' || e.key === 'E') keyboard.e = true;
+        if (playerSettings.developerMode && (e.key === 'q' || e.key === 'Q')) keyboard.q = true;
+        if (playerSettings.developerMode && (e.key === 'e' || e.key === 'E')) keyboard.e = true;
         if (e.key === 'ArrowUp') keyboard.up = true;
         if (e.key === 'ArrowDown') keyboard.down = true;
         if (e.key === 'ArrowLeft') keyboard.left = true;
@@ -81,9 +87,9 @@ const setupMouseControls = (canvas) => {
     let isDragging = false;
 
     const onMouseMove = (event) => {
-        if (!getPhoneOpenState() && !hasActiveConversation() && isDragging && (event.buttons & 1)) {
-            yaw -= event.movementX * mouseSensitivity;
-            pitch -= event.movementY * mouseSensitivity;
+        if (!getPhoneOpenState() && !getStoryModalOpen() && !hasActiveConversation() && isDragging && (event.buttons & 1)) {
+            yaw -= event.movementX * mouseSensitivity * playerSettings.sensitivity;
+            pitch -= event.movementY * mouseSensitivity * playerSettings.sensitivity;
             pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
         }
     };
@@ -101,6 +107,10 @@ const setupMouseControls = (canvas) => {
 
 // Apply collision and height clamp (shared)
 const applyCollisionAndBounds = (camera, PLAZA_CONFIG, streetElements, previousPosition) => {
+    if(!PLAZA_CONFIG?.IS_INTERIOR&&!playerSettings.developerMode) {
+        const resolved=resolveExteriorMovement(previousPosition,camera.position,streetElements?.exteriorCollisionRects);
+        camera.position.x=resolved.x;camera.position.z=resolved.z;camera.position.y=2;
+    }
     if (PLAZA_CONFIG?.IS_INTERIOR && streetElements?.interiorCollisionRects) {
         const resolved = resolveInteriorMovement(previousPosition, camera.position, streetElements.interiorCollisionRects);
         camera.position.x = resolved.x; camera.position.z = resolved.z;
@@ -151,7 +161,7 @@ export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetEl
     camera.position.addScaledVector(forward, move.y * speed);
     camera.position.addScaledVector(right, move.x * speed);
 
-    const lookSensitivity = 1.2 * deltaTime;
+    const lookSensitivity = 1.2 * deltaTime * playerSettings.sensitivity;
     yaw -= look.x * lookSensitivity;
     pitch -= look.y * lookSensitivity;
     pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
@@ -164,7 +174,7 @@ export const updateCameraPositionMobile = (camera, PLAZA_CONFIG = null, streetEl
 
 // Unified entry - branches based on isMobile
 export const updateCameraPosition = (camera, PLAZA_CONFIG = null, streetElements = null, deltaTime = 1 / 60) => {
-    if (document.getElementById('startup') || getPhoneOpenState() || hasActiveConversation()) return;
+    if (document.getElementById('startup') || getPhoneOpenState() || getStoryModalOpen() || hasActiveConversation()) return;
     if (isMobile) {
         updateCameraPositionMobile(camera, PLAZA_CONFIG, streetElements, deltaTime);
     } else {

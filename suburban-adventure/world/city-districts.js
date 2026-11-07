@@ -1,4 +1,5 @@
 import {createStoreSignFactory} from './city-signs.js';
+import {updateDetailVisibility} from './detail-visibility.js';
 import * as THREE from 'three';
 import { createCityPlan, CITY_DISTRICTS, CITY_HORIZONTAL_ROADS, CITY_VERTICAL_ROADS, CITY_ATMOSPHERE, cityVisibilityDistances } from './city-layout.js';
 
@@ -7,7 +8,17 @@ export const createCityDistricts = scene => {
     const plan=createCityPlan(),root=new THREE.Group();root.name='AllstonDistricts';
     const cube=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(.5,.5,1,7);
     const chunks=new Map(),materials=new Map(),labels=new Map();
-    const portals=[],items=[],makeSign=createStoreSignFactory();
+    const portals=[],items=[],details=[],entranceCues=[],makeSign=createStoreSignFactory();
+    const addDetail=object=>{root.add(object);details.push(object);return object;};
+    const cueMaterial=new THREE.LineBasicMaterial({color:0x9fdfd0,fog:true});
+    const entranceCue=(portal,z=portal.position.z,facing=portal.isFarBuilding?-1:1)=>{
+        const vertices=[-1.1,0,0,-1.1,2.3,0,-1.1,2.3,0,1.1,2.3,0,1.1,2.3,0,1.1,0,0,
+            -1.1,0,0,1.1,0,0,-1.1,0,0,-1.1,0,1.2,1.1,0,0,1.1,0,1.2,-1.1,0,1.2,1.1,0,1.2];
+        const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+        const cue=new THREE.LineSegments(geometry,cueMaterial);cue.name='CityEntranceCue:'+portal.name;
+        cue.position.set(portal.position.x,-.03,z);cue.rotation.y=facing>0?0:Math.PI;
+        cue.userData.portalName=portal.name;entranceCues.push(cue);addDetail(cue);
+    };
     const material=color=>{
         if(!materials.has(color))materials.set(color,new THREE.MeshBasicMaterial({color:new THREE.Color(color).multiplyScalar(1.5),wireframe:true}));
         return materials.get(color);
@@ -82,27 +93,34 @@ export const createCityDistricts = scene => {
         } else {
             for(const side of [-1,1])add(x+side*w*.27,1.9,front,5.3,2.8,.2,0x2f4541);
             add(x,3.6,front+f*.9,w*.95,.25,1.8,index%2?0x677b6b:0x8a7161);
-            const sign=makeSign(lot.name);sign.position.set(x,5.8,front+f*(sign.userData.mount==='blade'?1.9:.8));sign.rotation.y=(f>0?0:Math.PI)+(sign.userData.mount==='blade'?Math.PI/2:0);root.add(sign);
+            const sign=makeSign(lot.name);sign.position.set(x,5.8,front+f*(sign.userData.mount==='blade'?1.9:.8));sign.rotation.y=(f>0?0:Math.PI)+(sign.userData.mount==='blade'?Math.PI/2:0);addDetail(sign);
             // Narrow service alley fixtures behind the shop.
             add(x+6,.7,z-f*(d/2+2),2.2,1.4,1.4,0x40594a);
         }
         add(x,.9,front+.02*f,1.8,1.8,.23,0x554c3b);
         if(lot.enterable) {
             const style=housing?'groton_colonial':lot.style==='music'?'record_store':lot.style==='food'?'pho':lot.style==='nightlife'?'arcade_bar':lot.style==='station'?'bodega':'shop';
-            portals.push({style,name:lot.name,zoneKey:'CITY_PLAZA',position:new THREE.Vector3(x,2,front+f*1.2),returnPosition:new THREE.Vector3(x,2,front+f*5),returnYaw:f>0?Math.PI:0});
+            const portal={style,name:lot.name,zoneKey:'CITY_PLAZA',position:new THREE.Vector3(x,2,front+f*1.2),returnPosition:new THREE.Vector3(x,2,front+f*5),returnYaw:f>0?Math.PI:0};
+            portals.push(portal);entranceCue(portal,front+f*.2,f);
         }
     }
     const observation=(district,x,z,name,text)=>{
-        const item=new THREE.Group();item.name=name;item.position.set(x,0,z);item.userData={isInteractive:true,name,flavorText:text,district};root.add(item);items.push(item);
+        const item=new THREE.Group();item.name='CityDiscovery:'+district;item.position.set(x,0,z);item.userData={isInteractive:true,name,flavorText:text,district};
+        const frameMaterial=new THREE.MeshBasicMaterial({color:0xb2ae8e,wireframe:true,fog:true});
+        const post=new THREE.Mesh(new THREE.BoxGeometry(.14,2.8,.14),frameMaterial);post.position.y=1.4;item.add(post);
+        const board=new THREE.Mesh(new THREE.BoxGeometry(2.4,1.5,.14),frameMaterial);board.position.y=2.2;item.add(board);
+        for(let i=0;i<3;i++) {
+            const flyer=new THREE.Mesh(new THREE.PlaneGeometry(.5,.7),new THREE.MeshBasicMaterial({color:[0xb9dfce,0xe6bc98,0xc7b9e7][i],wireframe:true,side:THREE.DoubleSide,fog:true}));
+            flyer.position.set((i-1)*.65,2.2+(i%2)*.2,.09);flyer.rotation.z=(i-1)*.13;item.add(flyer);
+        }
+        addDetail(item);items.push(item);
     };
     // Local identity and street life, with usable paths through each destination.
     for(const district of CITY_DISTRICTS) {
         const x=district.x+117,z=district.z-56;
         add(x,.8,z,4,.4,1.2,0x766b59);add(x,1.4,z+.5,4,.9,.18,0x85765f);
         add(x-4,.8,z,1.1,1.6,1.1,0x4c6054);
-        add(x+4,1.8,z,.14,3.6,.14,0x4b554e);
-        add(x+4,2.7,z,1.4,.9,.08,'NO PARKING',0);
-        observation(district.key,x,z,district.name,{
+        observation(district.key,x+4,z,district.name,{
             porches:'Porches above porches. A couch waits by the curb beside moving boxes. Someone is rehearsing in a basement.',
             apartments:'Brick apartments line the avenue. Rails, a narrow platform, and rows of windows disappear into the haze.',
             music:'Flyers overlap on the rehearsal room doors. A loading alley leads behind the music hall and the record shops.',
@@ -155,14 +173,16 @@ export const createCityDistricts = scene => {
             const limit=chunk.group.visible?distances.keep:distances.load;
             chunk.group.visible=Math.hypot(dx,dz)<limit;
         }
+        updateDetailVisibility(details,camera,distances);
     };
     const signExistingBusinesses=existing=>{
         for(const portal of existing) {
+            entranceCue(portal);
             if(portal.isFarBuilding)continue;
-            const sign=makeSign(portal.name);sign.position.set(portal.position.x,5.7,portal.position.z+(sign.userData.mount==='blade'?1.9:.6));sign.rotation.y=sign.userData.mount==='blade'?Math.PI/2:0;root.add(sign);
+            const sign=makeSign(portal.name);sign.position.set(portal.position.x,5.7,portal.position.z+(sign.userData.mount==='blade'?1.9:.6));sign.rotation.y=sign.userData.mount==='blade'?Math.PI/2:0;addDetail(sign);
         }
     };
-    root.userData.plan=plan;root.userData.chunks=[...chunks.values()];
+    root.userData.plan=plan;root.userData.chunks=[...chunks.values()];root.userData.distanceDetails=details;root.userData.entranceCues=entranceCues;
     scene.add(root);
     return {group:root,update,buildingPortals:portals,interactiveItems:items,signExistingBusinesses,plan};
 };

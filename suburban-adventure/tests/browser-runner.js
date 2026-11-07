@@ -10,6 +10,7 @@ window.addEventListener('error', event => errors.push(event.message));
 window.addEventListener('unhandledrejection', event => errors.push(String(event.reason)));
 const saved = Object.fromEntries(Object.entries(localStorage));
 const lines = [];
+let game;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 const frame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 const check = async (name, run) => {
@@ -22,7 +23,7 @@ try {
     localStorage.setItem('suburbanAdventureScene', 'PLAZA');
     localStorage.setItem('suburbanAdventureMap', 'suburban');
     for (const key of ['busStopCameraPosition', 'interiorCameraPosition', 'buildingPortalPosition']) localStorage.removeItem(key);
-    const game = await import('../main.js');
+    game = await import('../main.js');
     document.getElementById('startup')?.remove();
     const THREE = await import('three');
     const controls = await import('../controls.js');
@@ -344,6 +345,7 @@ try {
         assert(game.getRuntimeState().streetElements.nearSidewalk.children.length===0&&game.getRuntimeState().streetElements.roadLines.children.length===0,'Legacy pavement layers disabled in city');
         for(const chunk of city.group.userData.chunks)for(const mesh of chunk.group.children)if(!mesh.material.map)assert(mesh.material.wireframe,'Building wireframe restored');
         const signs=city.group.children.filter(o=>o.name.startsWith('AbstractStoreSign:'));
+        assert(new Set(signs.map(sign=>sign.name.toLowerCase())).size===signs.length,'Every visible storefront has a unique identity');
         assert(signs.length>200&&new Set(signs.map(o=>o.userData.signStyle)).size>=6,'Varied abstract shop identities');
         assert(signs.every(o=>o.children.some(child=>child.isLineSegments)&&o.children.filter(child=>child.isMesh).every(child=>child.material.transparent)),'Signs use line art and transparent lettering');
 
@@ -364,6 +366,7 @@ try {
         game.getRuntimeState().camera.position.copy(door.position);
         document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',bubbles:true}));await frame();
         assert(game.getRuntimeState().config.IS_INTERIOR,'Outer business door enters an interior');
+        assert(game.getRuntimeState().config.name===door.name,'Business keeps its storefront name inside');
         const exit=game.getRuntimeState().streetElements.exitPortal.getWorldPosition(new THREE.Vector3());
         game.getRuntimeState().camera.position.set(exit.x,2,exit.z-1);
         document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',bubbles:true}));await frame();
@@ -402,9 +405,13 @@ try {
         close.click();
         assert(!dialogue.hasActiveConversation(), 'close did not end conversation');
     });
+    await (await import('./adventure-browser-checks.js')).runAdventureChecks({game,THREE,check,assert,frame,scenes,dialogue,npcs});
+    await (await import('./phone-adventure-checks.js')).runPhoneAdventureChecks({game,THREE,check,assert,frame,scenes,dialogue,npcs,phone,controls});
+    await (await import('./story-browser-checks.js')).runStoryActivityChecks({game,THREE,check,assert,frame,scenes,dialogue,npcs});
     await check('no asynchronous runtime errors', () => assert(errors.length === 0, errors.join('; ')));
 } catch (error) { lines.push(`FAIL setup: ${error.stack}`); }
 finally {
+    game?.setRuntimePersistenceEnabled(false);
     localStorage.clear();
     for (const [key, value] of Object.entries(saved)) localStorage.setItem(key, value);
     output.textContent = `${mobile ? 'MOBILE' : 'DESKTOP'}: ${lines.filter(line => line.startsWith('PASS')).length} passed; ${lines.filter(line => line.startsWith('FAIL')).length} failed\n\n${lines.join('\n')}`;
