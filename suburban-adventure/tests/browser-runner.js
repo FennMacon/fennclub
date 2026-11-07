@@ -336,6 +336,14 @@ try {
         assert(scenes.getCurrentMap() === 'city' && game.getRuntimeState().sceneKey === 'CITY_PLAZA', 'city arrival failed');
         const city=game.getRuntimeState().streetElements.cityDistricts;
         assert(city.plan.lots.length>=300&&city.interactiveItems.length===9,'All nine city districts populated');
+        const cityScene=game.getRuntimeState().scene;
+        assert(cityScene.getObjectByName('CityRoadNetwork')&&!cityScene.getObjectByName('CityConnectorRoads')&&!cityScene.getObjectByName('CityIntersection'),'Single shared road surface system');
+        assert(game.getRuntimeState().streetElements.nearSidewalk.children.length===0&&game.getRuntimeState().streetElements.roadLines.children.length===0,'Legacy pavement layers disabled in city');
+        for(const chunk of city.group.userData.chunks)for(const mesh of chunk.group.children)if(!mesh.material.map)assert(mesh.material.wireframe,'Building wireframe restored');
+        const signs=city.group.children.filter(o=>o.name.startsWith('AbstractStoreSign:'));
+        assert(signs.length>200&&new Set(signs.map(o=>o.userData.signStyle)).size>=6,'Varied abstract shop identities');
+        assert(signs.every(o=>o.children.some(child=>child.isLineSegments)&&o.children.filter(child=>child.isMesh).every(child=>child.material.transparent)),'Signs use line art and transparent lettering');
+
         const fogModule=await import('../fog.js');
         for(let number=1;number<=9;number++) {
             game.teleportToArea(number);await frame();

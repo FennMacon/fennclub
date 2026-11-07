@@ -56,3 +56,16 @@ export const cityVisibilityDistances = (aspect=16/9, fov=75) => {
     const load=Math.max(CITY_ATMOSPHERE.loadDistance,CITY_ATMOSPHERE.far*Math.hypot(1,Math.tan(fov*Math.PI/360)*aspect)+24);
     return {load,keep:Math.max(CITY_ATMOSPHERE.keepDistance,load+33)};
 };
+
+export const storeSignStyle=name=>{
+    const key=name.toLowerCase();
+    if(/record|tapes|sound|music|feedback|practice|karaoke|loading dock/.test(key))return 'orbit';
+    if(/pho|kitchen|dumpling|noodle|banh|pizza|diner|sushi|steam/.test(key))return 'steam';
+    if(/cafe|coffee|tea|bakery/.test(key))return 'cup';
+    if(/book|laundry|laundromat/.test(key))return 'fan';
+    if(/arcade|pixel|after hours/.test(key))return 'pixel';
+    if(/vintage|thread|clothing/.test(key))return 'hanger';
+    if(/repair|works|hardware|bike|auto|workshop/.test(key))return 'spark';
+    if(/tattoo|smoke|dive/.test(key))return 'bolt';
+    return 'constellation';
+};

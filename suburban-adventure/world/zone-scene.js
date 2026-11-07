@@ -525,13 +525,13 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
 
     const nearSidewalkContainer = new THREE.Group();
     nearSidewalkContainer.name = "NearSidewalk";
-    addSidewalkSegments(config.NEAR_SIDEWALK_Z, nearSidewalkContainer);
+    if (!isCityMap) addSidewalkSegments(config.NEAR_SIDEWALK_Z, nearSidewalkContainer);
     zoneRootGroup.add(nearSidewalkContainer);
     streetElements.nearSidewalk = nearSidewalkContainer;
 
     const farSidewalkContainer = new THREE.Group();
     farSidewalkContainer.name = "FarSidewalk";
-    addSidewalkSegments(config.FAR_SIDEWALK_Z, farSidewalkContainer);
+    if (!isCityMap) addSidewalkSegments(config.FAR_SIDEWALK_Z, farSidewalkContainer);
     zoneRootGroup.add(farSidewalkContainer);
     streetElements.farSidewalk = farSidewalkContainer;
     
@@ -573,6 +573,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     // Sidewalk lines for texture (every 6 units). City map: skip junction regions.
     const createSidewalkLines = () => {
         const lineGroup = new THREE.Group();
+        if (isCityMap) return lineGroup;
         const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
 
         const inJunctionClip = (x) => {
@@ -605,6 +606,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     // Road lines for texture
     const createRoadLines = () => {
         const lineGroup = new THREE.Group();
+        if (isCityMap) return lineGroup;
         const yellowMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 }); // Yellow center lines
         const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); // White lane dividers
         

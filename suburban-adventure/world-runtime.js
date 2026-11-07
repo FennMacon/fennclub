@@ -1,3 +1,4 @@
+import {createCityRoadNetwork} from './world/city-roads.js';
 import { createCityDistricts } from './world/city-districts.js';
 import * as THREE from 'three';
 import { createCar, getRandomCarColor } from './utils.js';
@@ -31,11 +32,12 @@ export function disposeWorld(scene) {
     scene.background = scene.environment = null;
     scene.userData = {};
 }
-export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
+export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG, mapOverride = null) {
+    const mapType = mapOverride || getCurrentMap();
     let streetElements = {}, interiorElements = {};
     if (PLAZA_CONFIG.IS_INTERIOR) scene.fog = null;
     else {
-        const config = getFogConfigForZone(getCurrentMap() === 'city' ? 'CITY_PLAZA' : CURRENT_SCENE, CURRENT_SCENE);
+        const config = getFogConfigForZone(mapType === 'city' ? 'CITY_PLAZA' : CURRENT_SCENE, CURRENT_SCENE);
         scene.fog = new THREE.Fog(config.color, config.near, config.far);
     }
     scene.add(new THREE.AmbientLight(0xffffff, PLAZA_CONFIG.HAUNTED_ATMOSPHERE ? 0.3 : 0.5));
@@ -81,47 +83,33 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
         streetElements.interactiveItems = interiorGroup.userData.interactiveItems || [];
     
         streetElements.npcs = createInteriorNPCs(CURRENT_SCENE, interiorGroup);
-    } else if (getCurrentMap() === 'city') {
+    } else if (mapType === 'city') {
         // City map (Allston-style) - 9 zones, 3 main street zones
         console.log('🗺️ Creating city map with 9-zone ground, connector roads, and CITY_PLAZA, CITY_N, CITY_S zones');
         createCityMapGround(scene);
-        createCityConnectorRoads(scene);
+        createCityRoadNetwork(scene);
         const cityDistricts = createCityDistricts(scene);
         cityDistricts.update(camera);
         const cityPlazaZone = createZoneScene(scene, SCENE_CONFIGS.CITY_PLAZA, CITY_MAP_ZONE_OFFSETS.CITY_PLAZA, 'CITY_PLAZA');
         const cityNorthZone = createZoneScene(scene, SCENE_CONFIGS.CITY_N, CITY_MAP_ZONE_OFFSETS.CITY_N, 'CITY_N');
         const citySouthZone = createZoneScene(scene, SCENE_CONFIGS.CITY_S, CITY_MAP_ZONE_OFFSETS.CITY_S, 'CITY_S');
-        const solidMaterials=new Map();
+        const exteriorMaterials=new Map();
         for(const zone of [cityPlazaZone,cityNorthZone,citySouthZone]) {
-            for(const group of [zone.frontShopsGroup,zone.farBuildingsGroup,zone.nearSidewalkElementsGroup,zone.farSidewalkElementsGroup,zone.streetElementsGroup].filter(Boolean)) group.traverse(object=>{
-                if(!object.isMesh||!object.material||Array.isArray(object.material)||object.material.opacity===0)return;
-                if(!solidMaterials.has(object.material)) {
-                    const mat=object.material.isShaderMaterial
-                        ? new THREE.MeshLambertMaterial({color:object.material.uniforms.baseColor?.value || 0xaaa38e,side:object.material.side})
-                        : object.material.clone();
-                    mat.wireframe=false;mat.fog=true;
-                    if(mat.color&&!mat.map) {
-                        const hsl={};mat.color.getHSL(hsl);
-                        mat.color.setHSL(hsl.l>.8?.12:hsl.h,hsl.l>.8?.12:Math.min(hsl.s*.22,.16),Math.max(.12,Math.min(hsl.l,.66)));
-                    }
-                    mat.needsUpdate=true;solidMaterials.set(object.material,mat);
-                }
-                object.material=solidMaterials.get(object.material);
+            for(const group of [zone.frontShopsGroup,zone.farBuildingsGroup,zone.nearSidewalkElementsGroup,zone.farSidewalkElementsGroup,zone.streetElementsGroup].filter(Boolean))group.traverse(object=>{
+                if(!object.isMesh||!object.material||Array.isArray(object.material))return;
+                if(object.geometry?.type==='PlaneGeometry'&&object.position.y>3&&!object.material.map)object.visible=false;
+                if(!object.material.isShaderMaterial)return;
+                if(!exteriorMaterials.has(object.material))exteriorMaterials.set(object.material,new THREE.MeshBasicMaterial({color:object.material.uniforms.baseColor?.value||0xb8ac95,wireframe:true,fog:true,side:object.material.side}));
+                object.material=exteriorMaterials.get(object.material);
             });
         }
 
-    
         cityDistricts.signExistingBusinesses([...cityPlazaZone.buildingPortals,...cityNorthZone.buildingPortals,...citySouthZone.buildingPortals]);
-        scene.userData.retiredMaterials=[...solidMaterials.keys()];
+        scene.userData.retiredMaterials=[...exteriorMaterials.keys()];
         const connectorVehiclesGroup = createCityConnectorVehicles(scene, createCar, getRandomCarColor);
         const connectorCars = connectorVehiclesGroup.children.filter(c => c.userData.roadType === 'vertical');
 
         const subwayStop = createSubwayStop(SUBWAY_POSITIONS.city.x, SUBWAY_POSITIONS.city.z);
-        subwayStop.traverse(object=>{
-            if(!object.isMesh||!object.material?.wireframe)return;
-            const original=object.material,mat=original.clone();mat.wireframe=false;mat.fog=true;mat.needsUpdate=true;
-            scene.userData.retiredMaterials.push(original);object.material=mat;
-        });
         scene.add(subwayStop);
     
         streetElements = {
@@ -207,8 +195,8 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG) {
     }
 
 
-    if (PLAZA_CONFIG.IS_INTERIOR || getCurrentMap() !== 'city') createNightSky(scene);
-    const type = PLAZA_CONFIG.IS_INTERIOR ? CURRENT_SCENE : (getCurrentMap() === 'city' ? 'CITY_MAP' : (UNIFIED_MAP ? 'UNIFIED_MAP' : CURRENT_SCENE));
+    if (PLAZA_CONFIG.IS_INTERIOR || mapType !== 'city') createNightSky(scene);
+    const type = PLAZA_CONFIG.IS_INTERIOR ? CURRENT_SCENE : (mapType === 'city' ? 'CITY_MAP' : (UNIFIED_MAP ? 'UNIFIED_MAP' : CURRENT_SCENE));
     createSkybox(scene, type, PLAZA_CONFIG.IS_INTERIOR ? streetElements.interiorDimensions : null);
     scene.userData.camera = camera;
     scene.userData.steamGroups = [];

@@ -1,14 +1,15 @@
+import {createStoreSignFactory} from './city-signs.js';
 import * as THREE from 'three';
 import { createCityPlan, CITY_DISTRICTS, CITY_HORIZONTAL_ROADS, CITY_VERTICAL_ROADS, CITY_ATMOSPHERE, cityVisibilityDistances } from './city-layout.js';
 
-// Batches of solid low-poly buildings: no per-frame creation or random building pop-in.
+// Batches of wireframe buildings: no per-frame creation or random building pop-in.
 export const createCityDistricts = scene => {
     const plan=createCityPlan(),root=new THREE.Group();root.name='AllstonDistricts';
     const cube=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(.5,.5,1,7);
     const chunks=new Map(),materials=new Map(),labels=new Map();
-    const portals=[],items=[];
+    const portals=[],items=[],makeSign=createStoreSignFactory();
     const material=color=>{
-        if(!materials.has(color))materials.set(color,new THREE.MeshLambertMaterial({color}));
+        if(!materials.has(color))materials.set(color,new THREE.MeshBasicMaterial({color:new THREE.Color(color).multiplyScalar(1.5),wireframe:true}));
         return materials.get(color);
     };
     const labelMaterial=text=>{
@@ -35,13 +36,6 @@ export const createCityDistricts = scene => {
     for(const road of plan.roads) {
         const horizontal=road.axis==='x',length=road.max-road.min;
         const x=horizontal?0:road.coordinate,z=horizontal?road.coordinate:0;
-        plane('LocalStreetSidewalk',x,z,horizontal?length:14,horizontal?14:length,0x6b6c64,-.18);
-        plane('LocalStreet',x,z,horizontal?length:road.width,horizontal?road.width:length,0x414945,-.115);
-        for(let p=-490;p<495;p+=13) {
-            const crossings=horizontal?CITY_VERTICAL_ROADS:CITY_HORIZONTAL_ROADS;
-            if(crossings.some(c=>Math.abs(p-c)<17))continue;
-            add(horizontal?p:x,-.09,horizontal?z:p,horizontal?5:.12,.015,horizontal?.12:5,0xa0a18b);
-        }
         for(let p=-465;p<480;p+=56) {
             const crossings=horizontal?CITY_VERTICAL_ROADS:CITY_HORIZONTAL_ROADS;
             if(crossings.some(c=>Math.abs(p-c)<20))continue;
@@ -52,14 +46,6 @@ export const createCityDistricts = scene => {
             add(cx,.6,cz,3.8,1.1,1.7,0x59645f,horizontal?0:Math.PI/2);
             add(cx,1.25,cz,2.1,.6,1.5,0x3c4b48,horizontal?0:Math.PI/2);
         }
-    }
-    // Resurface junctions above the older center lines so paint stops at intersections.
-    for(const x of CITY_VERTICAL_ROADS)for(const z of CITY_HORIZONTAL_ROADS) {
-        const width=Math.abs(x)===410?8:12;
-        const depth=[11,344,-322].includes(z)?22:[166,-166].includes(z)?12:8;
-        plane('CityIntersection',x,z,width,depth,0x444944,-.075);
-        if(Math.abs(x)===255&&[11,344,-322].includes(z))for(let stripe=0;stripe<5;stripe++)
-            add(x-4+stripe*2,-.055,z+depth/2+1,1,.015,2.5,0xb4b39f);
     }
     const palette=[0x785b4d,0x8d7362,0x695b50,0x8a7f69,0x5a6c66,0x7e8171];
     for(let index=0;index<plan.lots.length;index++) {
@@ -96,7 +82,7 @@ export const createCityDistricts = scene => {
         } else {
             for(const side of [-1,1])add(x+side*w*.27,1.9,front,5.3,2.8,.2,0x2f4541);
             add(x,3.6,front+f*.9,w*.95,.25,1.8,index%2?0x677b6b:0x8a7161);
-            add(x,4.6,front+f*.15,w*.92,1.25,.12,lot.name,f>0?0:Math.PI);
+            const sign=makeSign(lot.name);sign.position.set(x,5.8,front+f*(sign.userData.mount==='blade'?1.9:.8));sign.rotation.y=(f>0?0:Math.PI)+(sign.userData.mount==='blade'?Math.PI/2:0);root.add(sign);
             // Narrow service alley fixtures behind the shop.
             add(x+6,.7,z-f*(d/2+2),2.2,1.4,1.4,0x40594a);
         }
@@ -173,9 +159,7 @@ export const createCityDistricts = scene => {
     const signExistingBusinesses=existing=>{
         for(const portal of existing) {
             if(portal.isFarBuilding)continue;
-            const sign=new THREE.Mesh(cube,labelMaterial(portal.name));
-            sign.scale.set(9,.85,.12);sign.position.set(portal.position.x,4,portal.position.z+.28);
-            sign.name='VillageShopSign';root.add(sign);
+            const sign=makeSign(portal.name);sign.position.set(portal.position.x,5.7,portal.position.z+(sign.userData.mount==='blade'?1.9:.6));sign.rotation.y=sign.userData.mount==='blade'?Math.PI/2:0;root.add(sign);
         }
     };
     root.userData.plan=plan;root.userData.chunks=[...chunks.values()];
