@@ -1,0 +1,48 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Suburban sky and fog</title>
+<style>body{margin:0;background:#515c75;color:#f0eee5;font:14px Arial}canvas{display:block}header{position:absolute;top:16px;left:16px;padding:16px;background:#172329e8;border:1px solid #b7c1bd;max-width:85vw}label{display:block;margin-top:8px}select,input,button{min-height:36px;background:#34454c;color:white;border:1px solid #aab9b6}input[type=range]{width:240px;vertical-align:middle}output{display:block;margin-top:8px}</style></head>
+<body><header><b>SUBURBS · SKY & DISTANCE HAZE</b>
+<label>Area <select id="area"><option value="plaza">Main plaza</option><option value="pond">Pond road</option><option value="forest">North plaza</option><option value="mansion">Mansion approach</option></select></label>
+<label>Time <select id="phase"><option value="0.42">Morning</option><option value="0.255">Sunrise</option><option value="0.5">Noon</option><option value="0.73">Sunset</option><option value="0">Midnight</option></select></label>
+<label>Clock <input id="clock" type="range" min="0" max="1" step="0.001" value="0.42"></label>
+<label>View <select id="view"><option value="street">Along the road</option><option value="east">Eastern horizon</option><option value="west">Western horizon</option><option value="sky">Track sun / moon</option></select></label>
+<label><input id="play" type="checkbox"> Accelerate cycle (30 seconds)</label><output id="status"></output></header>
+<script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/":"../vendor/three/addons/","../adventure-state.js":"../adventure-state.js?v=7c1047513660","../adventure-story.js":"../adventure-story.js?v=7c1047513660","../animation.js":"../animation.js?v=7c1047513660","../bootstrap.js":"../bootstrap.js?v=7c1047513660","../buildings.js":"../buildings.js?v=7c1047513660","../buildings/brick-interior.js":"../buildings/brick-interior.js?v=7c1047513660","../buildings/church-interior.js":"../buildings/church-interior.js?v=7c1047513660","../buildings/cumbys-interior.js":"../buildings/cumbys-interior.js?v=7c1047513660","../buildings/floating-candles.js":"../buildings/floating-candles.js?v=7c1047513660","../buildings/graveyard-interior.js":"../buildings/graveyard-interior.js?v=7c1047513660","../buildings/hospital-interior.js":"../buildings/hospital-interior.js?v=7c1047513660","../buildings/house-interior.js":"../buildings/house-interior.js?v=7c1047513660","../buildings/industrial-interior.js":"../buildings/industrial-interior.js?v=7c1047513660","../buildings/interiors.js":"../buildings/interiors.js?v=7c1047513660","../buildings/mansion-interior.js":"../buildings/mansion-interior.js?v=7c1047513660","../buildings/mansion-layout.js":"../buildings/mansion-layout.js?v=7c1047513660","../buildings/modern-interior.js":"../buildings/modern-interior.js?v=7c1047513660","../buildings/shared.js":"../buildings/shared.js?v=7c1047513660","../buildings/shop-interior.js":"../buildings/shop-interior.js?v=7c1047513660","../buildings/town-hall-interior.js":"../buildings/town-hall-interior.js?v=7c1047513660","../content-loader.js":"../content-loader.js?v=7c1047513660","../controls.js":"../controls.js?v=7c1047513660","../dialogue.js":"../dialogue.js?v=7c1047513660","../fog.js":"../fog.js?v=7c1047513660","../interaction-targets.js":"../interaction-targets.js?v=7c1047513660","../landmark-audio.js":"../landmark-audio.js?v=7c1047513660","../main.js":"../main.js?v=7c1047513660","../mobile-controls.js":"../mobile-controls.js?v=7c1047513660","../music-library.js":"../music-library.js?v=7c1047513660","../nightsky.js":"../nightsky.js?v=7c1047513660","../npcs.js":"../npcs.js?v=7c1047513660","../phone-ui.js":"../phone-ui.js?v=7c1047513660","../renderer.js":"../renderer.js?v=7c1047513660","../roads.js":"../roads.js?v=7c1047513660","../scenes.js":"../scenes.js?v=7c1047513660","../skybox.js":"../skybox.js?v=7c1047513660","../storage.js":"../storage.js?v=7c1047513660","../story-activities.js":"../story-activities.js?v=7c1047513660","../story-ui.js":"../story-ui.js?v=7c1047513660","../utils.js":"../utils.js?v=7c1047513660","../vendor/three/addons/utils/BufferGeometryUtils.js":"../vendor/three/addons/utils/BufferGeometryUtils.js?v=7c1047513660","../vendor/three/three.module.js":"../vendor/three/three.module.js?v=7c1047513660","../world-runtime.js":"../world-runtime.js?v=7c1047513660","../world/carnival-builders.js":"../world/carnival-builders.js?v=7c1047513660","../world/carnival-midway-layout.js":"../world/carnival-midway-layout.js?v=7c1047513660","../world/carnival-midway.js":"../world/carnival-midway.js?v=7c1047513660","../world/carnival-motion.js":"../world/carnival-motion.js?v=7c1047513660","../world/carnival-rides.js":"../world/carnival-rides.js?v=7c1047513660","../world/city-districts.js":"../world/city-districts.js?v=7c1047513660","../world/city-layout.js":"../world/city-layout.js?v=7c1047513660","../world/city-road-layout.js":"../world/city-road-layout.js?v=7c1047513660","../world/city-roads.js":"../world/city-roads.js?v=7c1047513660","../world/city-signs.js":"../world/city-signs.js?v=7c1047513660","../world/config.js":"../world/config.js?v=7c1047513660","../world/constants.js":"../world/constants.js?v=7c1047513660","../world/detail-visibility.js":"../world/detail-visibility.js?v=7c1047513660","../world/ferris-layout.js":"../world/ferris-layout.js?v=7c1047513660","../world/ferris-wheel.js":"../world/ferris-wheel.js?v=7c1047513660","../world/fog-blending.js":"../world/fog-blending.js?v=7c1047513660","../world/forest-clearing-details.js":"../world/forest-clearing-details.js?v=7c1047513660","../world/landmarks.js":"../world/landmarks.js?v=7c1047513660","../world/navigation-cues.js":"../world/navigation-cues.js?v=7c1047513660","../world/navigation.js":"../world/navigation.js?v=7c1047513660","../world/resource-lifecycle.js":"../world/resource-lifecycle.js?v=7c1047513660","../world/road-surfaces.js":"../world/road-surfaces.js?v=7c1047513660","../world/store-names.js":"../world/store-names.js?v=7c1047513660","../world/streaming.js":"../world/streaming.js?v=7c1047513660","../world/suburban-atmosphere.js":"../world/suburban-atmosphere.js?v=7c1047513660","../world/suburban-road-layout.js":"../world/suburban-road-layout.js?v=7c1047513660","../world/suburban-roads.js":"../world/suburban-roads.js?v=7c1047513660","../world/suburban-sky.js":"../world/suburban-sky.js?v=7c1047513660","../world/teacups.js":"../world/teacups.js?v=7c1047513660","../world/traffic.js":"../world/traffic.js?v=7c1047513660","../world/trail-layout.js":"../world/trail-layout.js?v=7c1047513660","../world/trails.js":"../world/trails.js?v=7c1047513660","../world/transport.js":"../world/transport.js?v=7c1047513660","../world/traversal.js":"../world/traversal.js?v=7c1047513660","../world/tree-clearance.js":"../world/tree-clearance.js?v=7c1047513660","../world/zipper-motion.js":"../world/zipper-motion.js?v=7c1047513660","../world/zipper.js":"../world/zipper.js?v=7c1047513660","../world/zone-scene.js":"../world/zone-scene.js?v=7c1047513660"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {buildWorld} from '../world-runtime.js';
+import {SCENE_CONFIGS} from '../scenes.js';
+import {loadAllContent} from '../content-loader.js';
+import {updateNightSky} from '../nightsky.js';
+import {updateSkybox} from '../skybox.js';
+import {updateZoneFog,updateGroundFog} from '../fog.js';
+import {animateClouds} from '../animation.js';
+import {initializeRenderer,initializePostProcessing,renderScene,handleResize} from '../renderer.js';
+await loadAllContent();
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1000),scene=new THREE.Scene();
+const world=buildWorld(scene,camera,'PLAZA',SCENE_CONFIGS.PLAZA,'suburban');
+initializeRenderer();const {postMaterial}=initializePostProcessing();
+postMaterial.uniforms.suburbanAtmosphere.value=true;
+const area=document.querySelector('#area'),phase=document.querySelector('#phase'),clock=document.querySelector('#clock'),view=document.querySelector('#view'),play=document.querySelector('#play');
+phase.onchange=()=>{clock.value=phase.value;};
+const positions={plaza:[80,11],pond:[90,-322],forest:[65,344],mansion:[260,344]};
+let previous=performance.now();
+const frame=now=>{
+    const delta=Math.min(.05,(now-previous)/1000);previous=now;
+    if(play.checked)clock.value=(Number(clock.value)+delta/30)%1;
+    const progress=Number(clock.value),[x,z]=positions[area.value];
+    camera.position.set(x,2.5,z+8);
+    updateZoneFog(scene,camera,world,false,progress);updateSkybox(scene);updateNightSky(scene,now/1000,progress,camera);
+    const target=scene.userData.nightSky[scene.userData.atmosphere.sun.y>0?'sun':'moon'].position;
+    if(view.value==='sky')camera.lookAt(target);
+    else camera.lookAt(x+(view.value==='west'?-100:100),view.value==='street'?2.5:18,z+8);
+    world.unifiedMapTrees.update(camera);animateClouds(world,camera,scene);updateGroundFog(scene);
+    postMaterial.uniforms.atmosphereExposure.value=scene.userData.atmosphere.exposure;
+    renderScene(scene,camera);
+    const hours=progress*24;
+    document.querySelector('#status').textContent=`${String(Math.floor(hours)).padStart(2,'0')}:${String(Math.floor(hours%1*60)).padStart(2,'0')} · haze ${scene.fog.near.toFixed(0)}–${scene.fog.far.toFixed(0)} · east +X / west −X`;
+    requestAnimationFrame(frame);
+};
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();handleResize();});
+requestAnimationFrame(frame);
+</script></body></html>

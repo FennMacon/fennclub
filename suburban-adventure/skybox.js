@@ -1,102 +1,11 @@
 import { CITY_ATMOSPHERE } from './world/city-layout.js';
+import { createSuburbanSky, updateSuburbanSky } from './world/suburban-sky.js';
 // skybox.js - Deep blue-purple gradient skybox for the 3D scene
 
 import * as THREE from 'three';
 
 // Check for unified map mode (avoids circular dep - sceneType is passed as 'UNIFIED_MAP' from main.js)
 const isUnifiedMapScene = (sceneType) => sceneType === 'UNIFIED_MAP' || sceneType === 'CITY_MAP';
-
-// Daylight cycle keyframes: midnight (0), dawn (0.25), noon (0.5), dusk (0.75)
-const DAY_GRADIENT_KEYFRAMES = {
-    midnight: [
-        { stop: 0, color: '#0a0a1e' },
-        { stop: 0.2, color: '#0f0f2e' },
-        { stop: 0.4, color: '#1a1a3e' },
-        { stop: 0.6, color: '#2d1b4e' },
-        { stop: 0.8, color: '#3a2a5a' },
-        { stop: 1, color: '#4a3a6a' }
-    ],
-    dawn: [
-        { stop: 0, color: '#ff7b00' },
-        { stop: 0.3, color: '#ff9f4d' },
-        { stop: 0.5, color: '#ffb380' },
-        { stop: 0.7, color: '#ffccb3' },
-        { stop: 0.9, color: '#ffe6d9' },
-        { stop: 1, color: '#fff0eb' }
-    ],
-    noon: [
-        { stop: 0, color: '#87CEEB' },
-        { stop: 0.3, color: '#b0d9f0' },
-        { stop: 0.5, color: '#d4ecf7' },
-        { stop: 0.7, color: '#e8f4fa' },
-        { stop: 0.9, color: '#f0f8ff' },
-        { stop: 1, color: '#ffffff' }
-    ],
-    dusk: [
-        { stop: 0, color: '#2d1b69' },
-        { stop: 0.2, color: '#6b3a8a' },
-        { stop: 0.4, color: '#9a5a8a' },
-        { stop: 0.6, color: '#cc6b5a' },
-        { stop: 0.8, color: '#e88b6a' },
-        { stop: 1, color: '#ffaa80' }
-    ]
-};
-
-// Canonical stop positions - unified layout for all phases (fixes jump at boundaries)
-const CANONICAL_STOPS = [0, 0.2, 0.4, 0.5, 0.6, 0.8, 1];
-
-// Interpolate between two color stops
-const interpolateColor = (fromHex, toHex, t) => {
-    const fromR = parseInt(fromHex.slice(1, 3), 16) / 255;
-    const fromG = parseInt(fromHex.slice(3, 5), 16) / 255;
-    const fromB = parseInt(fromHex.slice(5, 7), 16) / 255;
-    const toR = parseInt(toHex.slice(1, 3), 16) / 255;
-    const toG = parseInt(toHex.slice(3, 5), 16) / 255;
-    const toB = parseInt(toHex.slice(5, 7), 16) / 255;
-    const r = Math.round((fromR + (toR - fromR) * t) * 255);
-    const g = Math.round((fromG + (toG - fromG) * t) * 255);
-    const b = Math.round((fromB + (toB - fromB) * t) * 255);
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
-
-// Sample color at any stop position by interpolating between keyframe's adjacent stops
-const sampleColorAtStop = (keyframeStops, stop) => {
-    if (keyframeStops.length === 0) return '#000000';
-    if (stop <= keyframeStops[0].stop) return keyframeStops[0].color;
-    if (stop >= keyframeStops[keyframeStops.length - 1].stop) return keyframeStops[keyframeStops.length - 1].color;
-    for (let i = 0; i < keyframeStops.length - 1; i++) {
-        const a = keyframeStops[i];
-        const b = keyframeStops[i + 1];
-        if (stop >= a.stop && stop <= b.stop) {
-            const t = (stop - a.stop) / (b.stop - a.stop);
-            return interpolateColor(a.color, b.color, t);
-        }
-    }
-    return keyframeStops[keyframeStops.length - 1].color;
-};
-
-// Get gradient colors for daylight cycle (UNIFIED_MAP only)
-// dayProgress: 0 = midnight, 0.25 = dawn, 0.5 = noon, 0.75 = dusk, 1 = midnight
-const getGradientColorsForTime = (dayProgress) => {
-    const keys = ['midnight', 'dawn', 'noon', 'dusk'];
-    const positions = [0, 0.25, 0.5, 0.75];
-    let idx = 0;
-    for (let i = 0; i < positions.length; i++) {
-        if (dayProgress >= positions[i]) idx = i;
-    }
-    const nextIdx = (idx + 1) % 4;
-    const fromStops = DAY_GRADIENT_KEYFRAMES[keys[idx]];
-    const toStops = DAY_GRADIENT_KEYFRAMES[keys[nextIdx]];
-    const span = 0.25;
-    const localProgress = nextIdx === 0 ? dayProgress - positions[idx] : (dayProgress - positions[idx]);
-    const t = Math.min(1, Math.max(0, localProgress / span));
-    const easedT = t * t * (3 - 2 * t); // smoothstep for softer fade
-
-    return CANONICAL_STOPS.map((stop) => ({
-        stop,
-        color: interpolateColor(sampleColorAtStop(fromStops, stop), sampleColorAtStop(toStops, stop), easedT)
-    }));
-};
 
 // Get gradient color stops based on scene type
 const getGradientColors = (sceneType) => {
@@ -351,6 +260,7 @@ const getGradientColors = (sceneType) => {
 
 // Create a deep blue-purple gradient skybox
 const createSkybox = (scene, sceneType = 'PLAZA', interiorDimensions = null) => {
+    if (sceneType === 'UNIFIED_MAP') return createSuburbanSky(scene);
     if(sceneType==='CITY_MAP') {
         scene.background=new THREE.Color(CITY_ATMOSPHERE.color);
         scene.userData.sceneType=sceneType;
@@ -444,31 +354,9 @@ const createSkybox = (scene, sceneType = 'PLAZA', interiorDimensions = null) => 
     return gradientTexture;
 };
 
-// Redraw gradient on canvas and mark texture for update
-const redrawGradientTexture = (canvas, colorStops) => {
-    const ctx = canvas.getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
-    colorStops.forEach(({ stop, color }) => gradient.addColorStop(stop, color));
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 256, 256);
+// Exterior suburbs use a horizon gradient in world space; interiors retain their palettes.
+const updateSkybox = scene => {
+    if (scene.userData?.sceneType === 'UNIFIED_MAP') updateSuburbanSky(scene);
 };
 
-// Function to update skybox if needed in animation loop
-const updateSkybox = (scene, time, dayProgress = 0) => {
-    const st = scene.userData?.sceneType;
-    if(st==='CITY_MAP')return;
-    if (st !== 'UNIFIED_MAP' && st !== 'CITY_MAP') return;
-    const texture = scene.userData.skybox;
-    const canvas = scene.userData.skyboxCanvas;
-    if (!texture || !canvas) return;
-    
-    const now = performance.now();
-    if (now - (scene.userData.lastSkyUpdate ?? -Infinity) < 100) return;
-    scene.userData.lastSkyUpdate = now;
-    
-    const colorStops = getGradientColorsForTime(dayProgress);
-    redrawGradientTexture(canvas, colorStops);
-    texture.needsUpdate = true;
-};
-
-export { createSkybox, updateSkybox }; 
+export { createSkybox, updateSkybox };

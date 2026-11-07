@@ -32,7 +32,9 @@ export const initializePostProcessing = () => {
         uniforms: {
             tDiffuse: { value: null },
             resolution: { value: new THREE.Vector2(renderTargetWidth, renderTargetHeight) },
-            pixelSize: { value: 1.0 }
+            pixelSize: { value: 1.0 },
+            atmosphereExposure: { value: 1.0 },
+            suburbanAtmosphere: { value: false }
         },
         vertexShader: `
             varying vec2 vUv;
@@ -45,12 +47,20 @@ export const initializePostProcessing = () => {
             uniform sampler2D tDiffuse;
             uniform vec2 resolution;
             uniform float pixelSize;
+            uniform float atmosphereExposure;
+            uniform bool suburbanAtmosphere;
             varying vec2 vUv;
             
             void main() {
                 vec2 dxy = pixelSize / resolution;
                 vec2 coord = dxy * floor(vUv / dxy);
                 gl_FragColor = texture2D(tDiffuse, coord);
+                gl_FragColor.rgb *= atmosphereExposure;
+                // The scene target contains linear colors. Preserve the suburban
+                // haze palette when presenting it on the sRGB display.
+                if (suburbanAtmosphere) {
+                    #include <colorspace_fragment>
+                }
             }
         `
     });

@@ -1,5 +1,6 @@
 import { CITY_ATMOSPHERE } from './world/city-layout.js';
 import { getBlendedZoneFog } from './world/fog-blending.js';
+import { getSuburbanAtmosphere } from './world/suburban-atmosphere.js';
 // fog.js - PS2-style zone-based area fog
 import * as THREE from 'three';
 import { SCENE_CONFIGS, FOG_PRESETS, UNIFIED_MAP_ZONES, UNIFIED_MAP, getCurrentMap } from './scenes.js';
@@ -27,9 +28,9 @@ export const getFogConfigForZone = (zoneKey, configKey) => {
 };
 
 /** Update scene fog based on camera position (unified map only). Blends between nearest zones. */
-export const updateZoneFog = (scene, camera, streetElements, isInterior) => {
+export const updateZoneFog = (scene, camera, streetElements, isInterior, dayProgress = scene.userData.dayProgress) => {
     if (isInterior || !streetElements?.zoneRootGroups) return;
-    const isCity = getCurrentMap() === 'city';
+    const isCity = (streetElements.mapType ?? getCurrentMap()) === 'city';
     if (!UNIFIED_MAP && !isCity) return;
     if (isCity) {
         if (!scene.fog) scene.fog=new THREE.Fog(CITY_ATMOSPHERE.color,CITY_ATMOSPHERE.near,CITY_ATMOSPHERE.far);
@@ -43,9 +44,12 @@ export const updateZoneFog = (scene, camera, streetElements, isInterior) => {
 
     const targetConfig = getBlendedZoneFog(UNIFIED_MAP_ZONES, camera.position.x, camera.position.z, getFogConfigForZone, BLEND_RADIUS);
 
-    scene.fog.color.setHex(targetConfig.color);
-    scene.fog.near = targetConfig.near;
-    scene.fog.far = targetConfig.far;
+    const atmosphere = getSuburbanAtmosphere(dayProgress, targetConfig);
+    scene.userData.atmosphere = atmosphere;
+    scene.userData.dayProgress = atmosphere.phase;
+    scene.fog.color.setHex(atmosphere.fogColor);
+    scene.fog.near = atmosphere.near;
+    scene.fog.far = atmosphere.far;
 };
 
 /** Sync ground fog plane color to current scene fog. */

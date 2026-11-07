@@ -5,13 +5,13 @@ import { updateNightSky } from './nightsky.js';
 import { updateSkybox } from './skybox.js';
 import { updateZoneFog, updateGroundFog } from './fog.js';
 import { updateTraffic } from './world/traffic.js';
+import { DAY_LENGTH, INITIAL_DAY_PROGRESS } from './world/suburban-atmosphere.js';
 
 // Animation variables
 export let time = 0;
 let lastTime = null;
 let frameScale = 1;
-let dayTime = 0;
-const DAY_LENGTH = 180; // seconds for full day/night cycle (~45 sec per phase)
+let dayTime = DAY_LENGTH * INITIAL_DAY_PROGRESS;
 
 // Get average frequency (simplified - no audio)
 const getAverageFrequency = (start, end) => {
@@ -312,10 +312,12 @@ export const animateCampsiteGlow = (streetElements) => {
 };
 
 // Animate clouds - similar to endless-road implementation
-export const animateClouds = (streetElements, camera) => {
+export const animateClouds = (streetElements, camera, scene) => {
     if (!streetElements.pondElements || !streetElements.pondElements.clouds) return;
     
     const clouds = streetElements.pondElements.clouds;
+    const atmosphere = scene?.userData.atmosphere;
+    const tint = new THREE.Color(atmosphere?.fogColor ?? 0xb0b8c0).lerp(new THREE.Color(0xffffff), 0.25);
     
     clouds.forEach(cloud => {
         if (!cloud || !cloud.userData) return;
@@ -325,7 +327,7 @@ export const animateClouds = (streetElements, camera) => {
         cloud.position.z += 0.01 * frameScale; // Slow forward movement
         
         // Gentle sideways drift using sine wave
-        cloud.position.x = cloud.userData.originalX + Math.sin(Date.now() * 0.0001) * 10;
+        cloud.position.x = cloud.userData.originalX + Math.sin(time * 0.02) * 10;
         
         // Check bounds BEFORE calculating opacity to prevent full-opacity flash
         let wasReset = false;
@@ -335,7 +337,7 @@ export const animateClouds = (streetElements, camera) => {
         if (relativeZ < -250 || relativeZ > 250) {
             // Reset to be ahead of camera but within bounds
             cloud.position.z = camera.position.z - 250 + Math.random() * 150;
-            cloud.userData.originalX = (Math.random() - 0.5) * 600; // Match spread
+            cloud.userData.originalX = camera.position.x + (Math.random() - 0.5) * 500; // Match spread
             cloud.position.x = cloud.userData.originalX;
             
             // Reset fade phase to start at 0 opacity (sin(-π/2) = -1, which gives fadeValue = 0)
@@ -368,6 +370,7 @@ export const animateClouds = (streetElements, camera) => {
         cloud.children.forEach(particle => {
             if (particle.material) {
                 particle.material.opacity = opacity;
+                particle.material.color.copy(tint);
             }
         });
     });
@@ -689,12 +692,14 @@ export const createAnimationLoop = (
         animateCampfire(streetElements);
         animatePondMist(streetElements);
         animateCampsiteGlow(streetElements);
-        animateClouds(streetElements, camera);
         animateCoffeeSteam(scene, deltaTime);
+        updateZoneFog(scene, camera, streetElements, typeof isInterior === 'function' ? isInterior() : isInterior, dayProgress);
         updateNightSky(scene, time, dayProgress);
         updateSkybox(scene, time, dayProgress);
-        updateZoneFog(scene, camera, streetElements, typeof isInterior === 'function' ? isInterior() : isInterior);
+        animateClouds(streetElements, camera, scene);
         updateGroundFog(scene);
+        postMaterial.uniforms.atmosphereExposure.value = scene.userData.sceneType === 'UNIFIED_MAP' ? scene.userData.atmosphere?.exposure ?? 1 : 1;
+        postMaterial.uniforms.suburbanAtmosphere.value = scene.userData.sceneType === 'UNIFIED_MAP';
         
         // Render with post-processing (simple pixelation effect)
         renderer.setRenderTarget(renderTarget);

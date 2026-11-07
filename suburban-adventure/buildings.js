@@ -1796,7 +1796,7 @@ const createClouds = (scene) => {
     const clouds = [];
     
     // Create several clouds at different positions
-    const cloudCount = 400;
+    const cloudCount = 80;
     for (let i = 0; i < cloudCount; i++) {
         const cloud = new THREE.Group();
         
@@ -1804,13 +1804,15 @@ const createClouds = (scene) => {
         const particleCount = Math.floor(Math.random() * 3) + 2; // 2-5 particles
         for (let j = 0; j < particleCount; j++) {
             const width = Math.random() * 20 + 15;  // 15-35
-            const height = Math.random() * 20 + 45;;    // 3-8
+            const height = Math.random() * 5 + 4; // Low, broad PS2-style cloud banks
             const depth = Math.random() * 10 + 8;    // 8-18
             const geometry = new THREE.BoxGeometry(width, height, depth);
             const material = new THREE.MeshBasicMaterial({
                 color: 0xBFBFBF,
                 transparent: true,
-                opacity: 0.0 // Start at 0, will fade in
+                opacity: 0.0, // Start hidden until the first atmosphere update
+                depthWrite: false,
+                fog: true
             });
             const particle = new THREE.Mesh(geometry, material);
             
@@ -1827,6 +1829,10 @@ const createClouds = (scene) => {
             cloud.add(particle);
         }
         
+        cloud.name = 'AtmosphereCloud';
+        // Apply ordering to meshes; a Group's order would override the shared sky layer.
+        cloud.children.forEach((particle, j) => { particle.renderOrder = -100 + i * 0.001 + j * 0.00001; });
+
         // Position cloud in sky - scaled for 1000x1000 unified map
         cloud.position.set(
             (Math.random() - 0.5) * 1000,  // Spread clouds (x: -500 to 500)
@@ -1838,9 +1844,9 @@ const createClouds = (scene) => {
         cloud.userData = {
             speed: 0.1 + Math.random() * 0.2,
             originalX: cloud.position.x,
-            fadePhase: -Math.PI / 2 + (Math.random() - 0.5) * 0.5, // Start at 0 opacity with slight random offset for staggered fade
+            fadePhase: Math.random() * Math.PI * 2, // Stagger clouds instead of fading the entire sky together
             fadeSpeed: 0.0001 + Math.random() * 0.0005, // Slower fade speeds (0.0001 to 0.0002) for longer fade cycles
-            maxOpacity: 0.6 + Math.random() * 0.2 // Maximum opacity (0.6 to 0.8) - fades from 0.0 to this and back
+            maxOpacity: 0.45 + Math.random() * 0.2 // Maximum opacity (0.6 to 0.8) - fades from 0.0 to this and back
         };
         
         scene.add(cloud);

@@ -8,9 +8,10 @@ import { createUnifiedMapGround, createCityMapGround, createConnectorRoads, crea
 import { createInteriorScene, createShopInterior, INTERIOR_REGISTRY, INTERIOR_TARGET_SIZE } from './buildings.js';
 import { createNPCs, createInteriorNPCs, createCityNPCs } from './npcs.js';
 import { SCENE_CONFIGS, UNIFIED_MAP, UNIFIED_MAP_ZONE_OFFSETS, getCurrentMap, SUBWAY_POSITIONS, CITY_MAP_ZONE_OFFSETS } from './scenes.js';
-import { createNightSky } from './nightsky.js';
-import { createSkybox } from './skybox.js';
-import { getFogConfigForZone } from './fog.js';
+import { createNightSky, updateNightSky } from './nightsky.js';
+import { INITIAL_DAY_PROGRESS } from './world/suburban-atmosphere.js';
+import { createSkybox, updateSkybox } from './skybox.js';
+import { getFogConfigForZone, updateZoneFog } from './fog.js';
 
 export function disposeWorld(scene) {
     const geometries = new Set(), materials = new Set(), textures = new Set();
@@ -42,10 +43,15 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG, mapOverri
         const config = getFogConfigForZone(mapType === 'city' ? 'CITY_PLAZA' : CURRENT_SCENE, CURRENT_SCENE);
         scene.fog = new THREE.Fog(config.color, config.near, config.far);
     }
-    scene.add(new THREE.AmbientLight(0xffffff, PLAZA_CONFIG.HAUNTED_ATMOSPHERE ? 0.3 : 0.5));
+    const ambient = new THREE.AmbientLight(0xffffff, PLAZA_CONFIG.HAUNTED_ATMOSPHERE ? 0.3 : 0.5);
+    scene.add(ambient);
     const light = new THREE.DirectionalLight(0xffffff, PLAZA_CONFIG.HAUNTED_ATMOSPHERE ? 0.5 : 0.8);
     light.position.set(10, 10, 5);
     scene.add(light);
+    if (!PLAZA_CONFIG.IS_INTERIOR && mapType !== 'city') {
+        scene.userData.daylight = { ambient, directional: light };
+        scene.add(light.target);
+    }
     // Check if we're in an interior scene
     if (PLAZA_CONFIG.IS_INTERIOR) {
         // Create interior scene based on interior type
@@ -234,10 +240,15 @@ export function buildWorld(scene, camera, CURRENT_SCENE, PLAZA_CONFIG, mapOverri
         }
     }
 
-    if (PLAZA_CONFIG.IS_INTERIOR || mapType !== 'city') createNightSky(scene);
+    if (!PLAZA_CONFIG.IS_INTERIOR && mapType !== 'city') createNightSky(scene);
     const type = PLAZA_CONFIG.IS_INTERIOR ? CURRENT_SCENE : (mapType === 'city' ? 'CITY_MAP' : (UNIFIED_MAP ? 'UNIFIED_MAP' : CURRENT_SCENE));
     createSkybox(scene, type, PLAZA_CONFIG.IS_INTERIOR ? streetElements.interiorDimensions : null);
     scene.userData.camera = camera;
+    if (type === 'UNIFIED_MAP') {
+        updateZoneFog(scene, camera, streetElements, false, INITIAL_DAY_PROGRESS);
+        updateSkybox(scene, 0, INITIAL_DAY_PROGRESS);
+        updateNightSky(scene, 0, INITIAL_DAY_PROGRESS, camera);
+    }
     scene.userData.steamGroups = [];
     scene.traverse(object => { if (object.userData.steamParticles) scene.userData.steamGroups.push(object); });
     return streetElements;

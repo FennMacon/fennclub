@@ -179,7 +179,7 @@ export const createGroundFog = (scene) => {
     const fogMaterial = new THREE.MeshBasicMaterial({
         color: fogColor,
         transparent: true,
-        opacity: 0.35,
+        opacity: 0.06,
         side: THREE.DoubleSide,
         depthWrite: false
     });

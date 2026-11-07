@@ -1,6 +1,7 @@
 // nightsky.js - Night sky with stars and moon
 
 import * as THREE from 'three';
+import { getSuburbanAtmosphere } from './world/suburban-atmosphere.js';
 
 // Create a starry night sky with a large yellow moon
 const createNightSky = (scene) => {
@@ -68,6 +69,7 @@ const createNightSky = (scene) => {
     const starsMaterial = new THREE.ShaderMaterial({
         uniforms: {
             time: { value: 0 },
+            nightOpacity: { value: 1 },
             pixelRatio: { value: window.devicePixelRatio }
         },
         vertexShader: `
@@ -97,6 +99,7 @@ const createNightSky = (scene) => {
         `,
         fragmentShader: `
             varying float vAlpha;
+            uniform float nightOpacity;
             
             void main() {
                 // Calculate distance from center for a circular point
@@ -104,7 +107,7 @@ const createNightSky = (scene) => {
                 float dist = length(center);
                 
                 // Create a soft circular star with feathered edges
-                float alpha = vAlpha * smoothstep(0.5, 0.3, dist);
+                float alpha = vAlpha * (1.0 - smoothstep(0.3, 0.5, dist)) * nightOpacity;
                 
                 // Star color - slightly warm white for sunset sky
                 gl_FragColor = vec4(1.0, 0.95, 0.9, alpha);
@@ -117,6 +120,7 @@ const createNightSky = (scene) => {
     
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     stars.name = "stars";
+    stars.renderOrder = -400;
     scene.add(stars);
     
     // Create sun (opposite phase to moon - visible during day)
@@ -131,6 +135,19 @@ const createNightSky = (scene) => {
     sun.name = 'sun';
     scene.add(sun);
     
+    // Draw the entire celestial layer before clouds, without punching holes in
+    // the depth buffer. Ground and buildings still occlude it through depthTest.
+    for (const [root, order] of [[moonGlow, -310], [moon, -300], [sun, -300]]) {
+        root.traverse(object => {
+            // Keep groupOrder neutral so every sky mesh shares the same sort layer.
+            object.renderOrder = object.isGroup ? 0 : order;
+            if (!object.material) return;
+            object.material.transparent = true;
+            object.material.depthWrite = false;
+            object.material.userData.baseOpacity = object.material.opacity;
+        });
+    }
+
     // Store references to night sky elements for animation
     scene.userData.nightSky = {
         moon: moon,
@@ -360,66 +377,35 @@ const createMoonGlow = (opacity = 0.3) => {
     return glowGroup;
 };
 
-// Moon arc: dayProgress 0 = east/horizon, 0.5 = zenith, 1 = west/horizon
-// Sun: opposite phase (dayProgress 0.5 = sun at zenith)
-// Extended arc: bodies dip below horizon at rise/set instead of popping in/out
-const updateNightSky = (scene, time, dayProgress = 0) => {
-    if (!scene.userData.nightSky) return;
-    
-    const { moon, moonGlow, sun, stars } = scene.userData.nightSky;
-    if (!moon) return;
-    
-    // Extended arc: -DIP to (PI + DIP), so bodies dip below horizon at rise/set
-    // Arc goes from NE corner to SW corner of sky - rise/set at map corners (1000x1000)
-    const DIP = Math.PI / 6;
-    const angleSpan = Math.PI + 2 * DIP;
-    const arcRadius = 200;
-    const horizonY = 50;
-    const mapHalf = 500; // Map is 1000x1000; corners at (±500, ±500)
-    const moonRadius = 20; // base 5 * scale 4
-    const moonGlowRadius = 28; // outer glow sphere 7 * scale 4
-    const sunRadius = 25;
-    
-    // Moon: dayProgress 0→1 maps to -DIP → (PI + DIP)
-    const moonAngle = -DIP + dayProgress * angleSpan;
-    const moonElevation = Math.sin(moonAngle);
-    
-    // Sun: same range, phase shifted by 0.5
-    const sunAngle = -DIP + ((dayProgress + 0.5) % 1) * angleSpan;
-    const sunElevation = Math.sin(sunAngle);
-    
-    // Update star twinkling; dim stars during daytime
-    if (stars?.material?.uniforms) {
-        stars.material.uniforms.time.value = time * 500;
-        stars.visible = sunElevation <= 0.15; // Hide stars when sun is up
+// A continuous, camera-centered orbit avoids map-dependent horizons and wrap jumps.
+const updateNightSky = (scene, time, dayProgress, camera = scene.userData.camera) => {
+    const sky = scene.userData.nightSky;
+    if (!sky || scene.userData.sceneType?.includes('INTERIOR')) return;
+    const atmosphere = getSuburbanAtmosphere(dayProgress);
+    const origin = camera?.position ?? { x: 0, y: 2, z: 0 };
+    const place = (root, direction, opacity) => {
+        root.position.set(origin.x + direction.x * 450, origin.y + direction.y * 450, origin.z + direction.z * 450);
+        root.visible = opacity > 0.001;
+        root.traverse(object => {
+            if (object.material) object.material.opacity = object.material.userData.baseOpacity * opacity;
+        });
+    };
+    place(sky.sun, atmosphere.sun, atmosphere.sunOpacity);
+    place(sky.moon, atmosphere.moon, atmosphere.moonOpacity);
+    place(sky.moonGlow, atmosphere.moon, atmosphere.moonOpacity);
+    // Face the phase and crater details toward the player, with no frame-rate-dependent spin.
+    sky.moon.lookAt(origin.x, origin.y, origin.z);
+    sky.stars.position.copy(origin);
+    sky.stars.visible = atmosphere.starOpacity > 0.001;
+    sky.stars.material.uniforms.time.value = time * 500;
+    sky.stars.material.uniforms.nightOpacity.value = atmosphere.starOpacity;
+    const lighting = scene.userData.daylight;
+    if (lighting) {
+        lighting.ambient.intensity = 0.4 + atmosphere.daylight * 0.2;
+        lighting.directional.intensity = 0.2 + atmosphere.daylight * 0.6;
+        lighting.directional.position.copy(atmosphere.sun.y > 0 ? sky.sun.position : sky.moon.position);
+        lighting.directional.target.position.set(origin.x, origin.y, origin.z);
     }
-    
-    // X/Z: NE corner (500, 500) to SW corner (-500, -500) - map corners
-    const moonZProgress = (moonAngle + DIP) / angleSpan; // 0 at rise, 1 at set
-    const moonX = mapHalf - moonZProgress * (2 * mapHalf); // 500 → -500
-    const moonY = horizonY + arcRadius * Math.sin(moonAngle);
-    const moonZ = mapHalf - moonZProgress * (2 * mapHalf); // 500 → -500
-    
-    moon.position.set(moonX, moonY, moonZ);
-    moonGlow.position.copy(moon.position);
-    
-    // Hide when top edge passes below horizon (Y=0)
-    moon.visible = moonY > -moonRadius;
-    moonGlow.visible = moonY > -moonGlowRadius;
-    
-    const sunZProgress = (sunAngle + DIP) / angleSpan;
-    const sunX = mapHalf - sunZProgress * (2 * mapHalf);
-    const sunY = horizonY + arcRadius * Math.sin(sunAngle);
-    const sunZ = mapHalf - sunZProgress * (2 * mapHalf);
-    
-    if (sun) {
-        sun.position.set(sunX, sunY, sunZ);
-        sun.visible = sunY > -sunRadius;
-    }
-    
-    // Slight rotation of moon
-    moon.rotation.y += 0.001;
-    moonGlow.rotation.y += 0.001;
 };
 
-export { createNightSky, updateNightSky }; 
+export { createNightSky, updateNightSky };

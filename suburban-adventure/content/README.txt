@@ -39,3 +39,26 @@ Example:
   This shelf holds convenience store essentials. Popular items are at eye level.
 
 See content/IDS.md for a list of all IDs and where they appear.
+
+STORY-SPECIFIC TEXT (outside this folder)
+---------------------------------------
+adventure-story.js: the Allston neighbors and story-aware conversations,
+including Maya, Rex and Theo. These can override the ordinary .txt dialogue
+depending on location and story progress. If editing a .txt line does not
+change that conversation, check getStoryDialogue in this file.
+
+story-activities.js: woodland clues, mansion piano, compilation performance,
+ring-toss instructions and journal descriptions awarded by those activities.
+These files are JavaScript: change quoted text carefully and preserve syntax.
+
+EDITING TIPS
+------------
+Keep existing === IDs/scene names ===, filenames and metadata keys intact.
+UNLOCKS titles are also keys in music/catalog.json; renaming one requires
+updating that catalog so the recording can still play. Ordinary spoken lines
+and flavor paragraphs can be edited freely. Existing .txt files need only a
+page reload; use a hard refresh if the browser shows cached text.
+
+Adding a new .txt file also requires registering it in content-loader.js.
+After JavaScript edits, run npm run check to refresh runtime versions.
+Run npm test to check content parsing and the dialogue location references.

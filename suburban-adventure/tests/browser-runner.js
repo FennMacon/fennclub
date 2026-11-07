@@ -112,6 +112,45 @@ try {
         });
         assert(parkTrees > 40, 'Curated park trees checked in world coordinates');
     });
+    await check('suburban sky, clock, fog and cloud layers stay synchronized across the map', async () => {
+        const { scene, streetElements, camera } = game.getRuntimeState();
+        const { updateNightSky } = await import('../nightsky.js');
+        const { updateSkybox } = await import('../skybox.js');
+        const { updateZoneFog } = await import('../fog.js');
+        const savedPosition = camera.position.clone(), savedPhase = scene.userData.dayProgress;
+        const sky = scene.userData.nightSky, dome = scene.getObjectByName('SuburbanSky');
+        assert(dome && !dome.material.depthWrite, 'World-space horizon dome');
+        try {
+            for (const phase of [0, .25, .5, .75, .999999]) {
+                let relativeSun;
+                for (const position of [[-333,333],[0,0],[333,-333]]) {
+                    camera.position.set(position[0],2.5,position[1]);
+                    updateZoneFog(scene,camera,streetElements,false,phase);
+                    updateSkybox(scene);updateNightSky(scene,1,phase,camera);
+                    const relative=sky.sun.position.clone().sub(camera.position);
+                    if(relativeSun)assert(relative.distanceTo(relativeSun)<1e-8,'Sun direction must not depend on map section');
+                    relativeSun=relative;
+                    assert(dome.position.distanceTo(camera.position)<1e-8,'Sky follows player');
+                    assert(dome.material.uniforms.horizon.value.equals(scene.fog.color),'Fog matches horizon');
+                    assert(scene.fog.far<=115&&scene.fog.near>=10,'Readable close range and hidden draw distance');
+                    assert(sky.sun.visible===(scene.userData.atmosphere.sunOpacity>.001),'Sun follows daylight');
+                    assert(Math.abs(scene.userData.daylight.directional.intensity-(.2+scene.userData.atmosphere.daylight*.6))<1e-8,'Lighting follows the same clock');
+                }
+            }
+            const clouds=streetElements.pondElements.clouds;
+            assert(clouds.length===80,'Cloud draw calls reduced');
+            for(const cloud of clouds)for(const particle of cloud.children) {
+                assert(particle.material.transparent&&!particle.material.depthWrite,'Transparent clouds must not block depth');
+                assert(cloud.renderOrder===0&&sky.moonGlow.renderOrder===0&&sky.moon.renderOrder===0,'Neutral groups keep sky meshes in one sort layer');
+                assert(particle.renderOrder>sky.sun.renderOrder&&particle.renderOrder>sky.moonGlow.children[0].renderOrder,'Clouds draw over celestial layer');
+            }
+            for(const root of [sky.sun,sky.moon,sky.moonGlow]) root.traverse(object=>{
+                if(object.material)assert(object.material.transparent&&!object.material.depthWrite,'Celestial fades leave depth intact');
+            });
+        } finally {
+            camera.position.copy(savedPosition);updateZoneFog(scene,camera,streetElements,false,savedPhase);updateSkybox(scene);updateNightSky(scene,1,savedPhase,camera);
+        }
+    });
     await check('woodland settings and smooth pond trails are connected and discoverable', () => {
         const { scene,streetElements }=game.getRuntimeState();
         const clearings=scene.getObjectByName('ForestClearings');
