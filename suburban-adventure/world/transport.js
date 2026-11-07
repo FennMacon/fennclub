@@ -1,3 +1,4 @@
+import {getCarLaneOffset} from '../roads.js';
 import {createSuburbanRoadNetwork} from './suburban-roads.js';
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
@@ -205,8 +206,8 @@ export const createConnectorVehicles = (scene, createCarFn, getRandomCarColor) =
     ];
     
     roads.forEach((road, i) => {
-        const car = createCarFn(road.x, getRandomCarColor(), road.direction, { vertical: true });
-        car.position.set(road.x, 0, -300 + i * 150); // Spread along Z
+        const car = createCarFn(road.x + getCarLaneOffset(road.direction), getRandomCarColor(), road.direction, { vertical: true });
+        car.position.set(road.x + getCarLaneOffset(road.direction), 0, -300 + i * 150); // Spread along Z
         car.userData.roadType = 'vertical';
         car.userData.bounds = { ...VERTICAL_BOUNDS };
         car.userData.connectorX = road.x;
@@ -229,8 +230,8 @@ export const createCityConnectorVehicles = (scene, createCarFn, getRandomCarColo
     });
 
     roads.forEach((road, i) => {
-        const car = createCarFn(road.x, getRandomCarColor(), road.direction, { vertical: true });
-        car.position.set(road.x, 0, -350 + (i % 8) * 90);
+        const car = createCarFn(road.x + getCarLaneOffset(road.direction), getRandomCarColor(), road.direction, { vertical: true });
+        car.position.set(road.x + getCarLaneOffset(road.direction), 0, -350 + (i % 8) * 90);
         car.userData.roadType = 'vertical';
         car.userData.bounds = { ...VERTICAL_BOUNDS };
         car.userData.connectorX = road.x;

@@ -17,6 +17,22 @@ const fakeGroup = zoneKey => ({
     remove(car) { this.children.splice(this.children.indexOf(car), 1); car.parent = null; }
 });
 
+test('replacement traffic uses right-hand lane centers in both axes and directions',()=>{
+    const originalRandom=Math.random;
+    try {
+        for(const reverse of [false,true]) {
+            Math.random=()=>reverse ? .75 : .25;
+            const horizontal=fakeGroup('PLAZA'),vertical=fakeGroup();
+            const state={cars:[],mapType:'suburban',streetElementsGroup:horizontal,connectorVehiclesGroup:vertical,lastSpawnedLeft:reverse};
+            updateTraffic(state,(x,color,direction,options)=>fakeCar(options?.vertical?'vertical':'horizontal',direction,x,0),()=>0,1,30);
+            const car=state.cars.find(car=>car.userData.roadType==='horizontal');
+            assert.equal(car.position.z,reverse?3:-3,'Westbound cars are north of the divider; eastbound cars are south');
+            const connector=state.cars.find(car=>car.userData.roadType==='vertical');
+            assert.equal(connector.position.x-connector.userData.connectorX,reverse?3:-3,'Southbound cars are west of the divider; northbound cars are east');
+        }
+    } finally { Math.random=originalRandom; }
+});
+
 test('traffic retires cars crossing either end of horizontal and vertical streets', () => {
     for (const [axis, direction, edge] of [['horizontal', 'left', 500], ['horizontal', 'right', -165.05], ['vertical', 'left', -500], ['vertical', 'right', 500]]) {
         let disposed = 0;

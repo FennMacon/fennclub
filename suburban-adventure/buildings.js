@@ -1015,7 +1015,9 @@ export const createParkElements = (frontGroup) => {
     ];
     
     treePositions.forEach(([x, z]) => {
-        const tree = createParkTree(x, z, 0.8 + Math.random() * 0.4);
+        // Keep even the largest canopy behind the near sidewalk in both parks.
+        const tree = createParkTree(x, Math.min(z, -4), 0.8 + Math.random() * 0.4);
+        tree.name = 'ParkTree';
         frontGroup.add(tree);
         trees.push(tree);
     });

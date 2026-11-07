@@ -93,6 +93,10 @@ The city now has nine Allston-inspired districts, with deterministic frontage lo
 
 City fog uses a muted gray-green sky that matches the distance haze (16–118 units). Instanced block geometry is ready before travel, with visibility bounded beyond the fog and adjusted for widescreen view angles. There are no random skyline towers or delayed building spawns in the rebuilt city. The suburban fog remains unchanged. Design references: [Boston neighborhood overview](https://www.boston.gov/neighborhood/allston), [Allston-Brighton planning overview](https://www.bostonplans.org/neighborhoods/allston-brighton/at-a-glance).
 
-City roads and sidewalks now come from a single disjoint surface layout; lane paint stops before crossings. Building wireframes are retained. Storefronts use colored abstract line symbols and transparent lettering, with brand-specific colors and wall/blade mounts rather than uniform signboards. The city preview includes walking controls and a sign close-up for inspection.
+City roads and sidewalks now come from a single disjoint surface layout; lane paint stops before crossings. Building wireframes are retained. Storefronts use colored abstract line symbols and transparent lettering, with brand-specific colors and mounts parallel to each storefront rather than uniform signboards. The city preview includes walking controls and a sign close-up for inspection.
 
 Suburban pavement now uses one joined surface layout for the three main streets and two connectors. The six crossings retain their existing positions; west-side junctions remain T junctions beside the river. Center lines, edge lines and pavement seams are clipped around crossings, and connector lamps are preserved. Inspect them at `/tests/suburban-roads-preview.html`.
+
+Moving vehicles use separate right-hand lanes in both road axes. Car lane centers sit three units from the divider, including replacement traffic; the storefront buses travel east beside their stops. City icons and lettering sit parallel to the store facades.
+
+Suburban trees reserve room for each species' widest canopy plus a small buffer beyond the full sidewalk width. This covers all three streets, both connectors, and road ends; curated park trees also sit back from the pavement.

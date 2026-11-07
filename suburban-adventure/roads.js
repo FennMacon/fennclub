@@ -23,6 +23,11 @@ export const getHorizontalBounds = (mapType) =>
 export const VERTICAL_BOUNDS = { zMin: -500, zMax: 500 };
 export const CONNECTOR_X = { LEFT: -170, RIGHT: 170 };
 
+// Roads are 12 units wide: each six-unit lane has its center three units from the divider.
+// Legacy car directions: left = east/south; right = west/north, with world north at +z.
+export const CAR_LANE_OFFSET = 3;
+export const getCarLaneOffset = direction => direction === 'right' ? CAR_LANE_OFFSET : -CAR_LANE_OFFSET;
+
 // City map: 2x road density - 4 vertical connectors
 export const CITY_CONNECTOR_X = [-255, -85, 85, 255];
 // City horizontal cross-streets (between main zone streets at 11, 344, -322)
@@ -36,7 +41,7 @@ export const ROAD_SEGMENTS = {
         bounds: { xMin: ZONE_STREET_X_MIN, xMax: ZONE_STREET_X_MAX },
         z: 11,
         zoneOffset: { x: 0, z: 0 },
-        laneOffset: 2
+        laneOffset: CAR_LANE_OFFSET
     },
     FOREST_STREET: {
         id: 'FOREST_STREET',
@@ -44,7 +49,7 @@ export const ROAD_SEGMENTS = {
         bounds: { xMin: ZONE_STREET_X_MIN, xMax: ZONE_STREET_X_MAX },
         z: 11,
         zoneOffset: { x: 0, z: 333 },
-        laneOffset: 2
+        laneOffset: CAR_LANE_OFFSET
     },
     POND_STREET: {
         id: 'POND_STREET',
@@ -52,7 +57,7 @@ export const ROAD_SEGMENTS = {
         bounds: { xMin: ZONE_STREET_X_MIN, xMax: ZONE_STREET_X_MAX },
         z: 11,
         zoneOffset: { x: 0, z: -333 },
-        laneOffset: 2
+        laneOffset: CAR_LANE_OFFSET
     },
     // Vertical connector roads
     LEFT_CONNECTOR: {
@@ -60,13 +65,13 @@ export const ROAD_SEGMENTS = {
         type: 'vertical',
         x: -170,
         bounds: { zMin: -450, zMax: 450 },
-        laneOffset: 2
+        laneOffset: CAR_LANE_OFFSET
     },
     RIGHT_CONNECTOR: {
         id: 'RIGHT_CONNECTOR',
         type: 'vertical',
         x: 170,
         bounds: { zMin: -450, zMax: 450 },
-        laneOffset: 2
+        laneOffset: CAR_LANE_OFFSET
     }
 };

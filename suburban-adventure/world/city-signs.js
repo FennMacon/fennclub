@@ -7,7 +7,7 @@ export const createStoreSignFactory=()=>{
     return name=>{
         if(cache.has(name))return cache.get(name).clone(true);
         const group=new THREE.Group(),style=storeSignStyle(name),seed=hash(name);
-        group.name='AbstractStoreSign:'+name;group.userData.signStyle=style;group.userData.mount=seed%3===0?'blade':'wall';
+        group.name='AbstractStoreSign:'+name;group.userData.signStyle=style;group.userData.mount='wall';
         const colors=[0xffb897,0x99ddd4,0xd9a9e9,0xc6d98d,0xe8cc83],color=colors[seed%colors.length];
         const vertices=[];
         const line=(a,b)=>vertices.push(...a,...b);

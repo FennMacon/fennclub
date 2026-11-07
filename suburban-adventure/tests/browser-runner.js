@@ -67,6 +67,50 @@ try {
         assert(horizontal.length===3&&horizontal.every(r=>r.min===bounds.xMin&&r.max===bounds.xMax),'Suburban road limits preserved');
         assert(streetElements.nearSidewalk.children.length===0&&streetElements.roadLines.children.length===0,'Legacy suburban pavement disabled');
         assert(streetElements.cars.filter(car => car.userData.roadType === 'horizontal').every(car => car.userData.bounds.xMin === bounds.xMin && car.userData.bounds.xMax === bounds.xMax), 'Traffic bounds moved');
+        for(const car of streetElements.cars) {
+            const expected=car.userData.direction==='right'?3:-3;
+            if(car.userData.roadType==='vertical')assert(Math.abs(car.position.x-car.userData.connectorX-expected)<1e-8,'Connector car must stay in its right-hand lane');
+            else assert(car.position.z===expected,'East/west traffic must stay in separate right-hand lanes');
+        }
+        for(const bus of streetElements.buses) {
+            assert(bus.userData.direction==='left'&&bus.position.z<0,'Storefront bus must travel east beside its stop');
+            assert(new THREE.Vector3(-1,0,0).applyQuaternion(bus.quaternion).x>.99,'Bus nose must face its movement');
+        }
+    });
+    await check('suburban tree canopies and park trees leave every sidewalk clear', async () => {
+        const { scene, streetElements } = game.getRuntimeState();
+        const { treeCanopyHalfWidth } = await import('../world/tree-clearance.js');
+        const { createTree } = await import('../utils.js');
+        const { disposeObjectResources } = await import('../world/resource-lifecycle.js');
+        const pavement = scene.getObjectByName('SuburbanRoadNetwork').userData.surfacePlan.rectangles;
+        const clearsPavement = (left, right, front, back) => pavement.every(r =>
+            right + .74 < r.left || left - .74 > r.right || back + .74 < r.front || front - .74 > r.back);
+        const registry = streetElements.unifiedMapTrees.registry;
+        assert(registry.length > 1000, 'Woodland remains populated');
+        for (const tree of registry) {
+            const reach = treeCanopyHalfWidth(tree.species, tree.scale);
+            assert(clearsPavement(tree.x - reach, tree.x + reach, tree.z - reach, tree.z + reach), 'Streamed canopy overlaps pavement');
+        }
+        // Check actual geometry at random extremes, so mesh changes cannot silently outgrow the placement envelope.
+        const random = Math.random;
+        try {
+            for (const species of new Set(registry.map(tree => tree.species))) for (const scale of [.6, 1]) for (const value of [0, .5, .999999]) {
+                Math.random = () => value;
+                const tree = createTree(0, 0, scale, species);
+                const box = new THREE.Box3().setFromObject(tree), reach = treeCanopyHalfWidth(species, scale) + .00001;
+                assert(Math.max(Math.abs(box.min.x), Math.abs(box.max.x), Math.abs(box.min.z), Math.abs(box.max.z)) <= reach, `${species} canopy outgrew placement envelope`);
+                disposeObjectResources(tree);
+            }
+        } finally { Math.random = random; }
+        let parkTrees = 0;
+        scene.updateMatrixWorld(true);
+        scene.traverse(tree => {
+            if (tree.name !== 'ParkTree') return;
+            parkTrees++;
+            const box = new THREE.Box3().setFromObject(tree);
+            assert(clearsPavement(box.min.x, box.max.x, box.min.z, box.max.z), 'Curated park tree overlaps sidewalk');
+        });
+        assert(parkTrees > 40, 'Curated park trees checked in world coordinates');
     });
     await check('woodland settings and smooth pond trails are connected and discoverable', () => {
         const { scene,streetElements }=game.getRuntimeState();
@@ -347,6 +391,7 @@ try {
         const signs=city.group.children.filter(o=>o.name.startsWith('AbstractStoreSign:'));
         assert(new Set(signs.map(sign=>sign.name.toLowerCase())).size===signs.length,'Every visible storefront has a unique identity');
         assert(signs.length>200&&new Set(signs.map(o=>o.userData.signStyle)).size>=6,'Varied abstract shop identities');
+        assert(signs.every(sign=>Math.abs(new THREE.Vector3(0,0,1).applyQuaternion(sign.quaternion).z)>.999),'Every city sign must be parallel to its storefront');
         assert(signs.every(o=>o.children.some(child=>child.isLineSegments)&&o.children.filter(child=>child.isMesh).every(child=>child.material.transparent)),'Signs use line art and transparent lettering');
 
         const fogModule=await import('../fog.js');

@@ -4,7 +4,7 @@ import { createWireframeMaterial, createCar, getRandomCarColor, createTree } fro
 import { createBuildingFacade, createParkElements, createPondElements } from '../buildings.js';
 import { createNPCs } from '../npcs.js';
 import { UNIFIED_MAP_ZONES, UNIFIED_MAP, CITY_MAP_ZONES } from '../scenes.js';
-import { HORIZONTAL_BOUNDS, CONNECTOR_X, ZONE_STREET_WIDTH, ZONE_STREET_X_MIN, ZONE_STREET_X_MAX, SUBURBAN_ZONE_STREET_WIDTH, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, SUBURBAN_RIGHT_CORNER_X, SUBURBAN_RIGHT_OUTER_CORNER_X, SUBURBAN_HORIZONTAL_BOUNDS, CITY_CONNECTOR_X } from '../roads.js';
+import { getCarLaneOffset, HORIZONTAL_BOUNDS, CONNECTOR_X, ZONE_STREET_WIDTH, ZONE_STREET_X_MIN, ZONE_STREET_X_MAX, SUBURBAN_ZONE_STREET_WIDTH, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, SUBURBAN_RIGHT_CORNER_X, SUBURBAN_RIGHT_OUTER_CORNER_X, SUBURBAN_HORIZONTAL_BOUNDS, CITY_CONNECTOR_X } from '../roads.js';
 import { GROUND_COLORS, ZONE_SIZE, GROUND_LAYERS, SIDEWALK_DEPTH } from './constants.js';
 
 import { getShopsForZone } from './config.js';
@@ -781,13 +781,8 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
         
         // Position and rotate based on direction
         busGroup.position.set(x, 0, 0); // Z is handled by the group that contains it
-        if (direction === 'left') {
-            // Buses going left should point in the -x direction (looking from +z to -z)
-            busGroup.rotation.y = 0;
-        } else {
-            // Buses going right should point in the +x direction (looking from +z to -z)
-            busGroup.rotation.y = Math.PI; // 180 degrees to face the opposite direction
-        }
+        // The model's nose is -x; rotate it toward its actual direction of travel.
+        busGroup.rotation.y = direction === 'left' ? Math.PI : 0;
         
         busGroup.userData.direction = direction; // Store direction for animation
         busGroup.userData.speed = 0.03; // Buses move slower than cars
@@ -2566,13 +2561,13 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     const horizontalBounds = isCityMap ? HORIZONTAL_BOUNDS : SUBURBAN_HORIZONTAL_BOUNDS;
     let car1, car2, car3, car4;
     car1 = createCar(-120, getRandomCarColor(), 'left');   // Car on left lane, far left
-    car1.position.z = 2; car1.userData.roadType = 'horizontal'; car1.userData.zoneKey = zoneSceneKey; car1.userData.bounds = { ...horizontalBounds };
+    car1.position.z = getCarLaneOffset('left'); car1.userData.roadType = 'horizontal'; car1.userData.zoneKey = zoneSceneKey; car1.userData.bounds = { ...horizontalBounds };
     car2 = createCar(120, getRandomCarColor(), 'right');   // Car on right lane, far right
-    car2.position.z = -2; car2.userData.roadType = 'horizontal'; car2.userData.zoneKey = zoneSceneKey; car2.userData.bounds = { ...horizontalBounds };
+    car2.position.z = getCarLaneOffset('right'); car2.userData.roadType = 'horizontal'; car2.userData.zoneKey = zoneSceneKey; car2.userData.bounds = { ...horizontalBounds };
     car3 = createCar(-60, getRandomCarColor(), 'left');   // Car on left lane, mid-left
-    car3.position.z = 2; car3.userData.roadType = 'horizontal'; car3.userData.zoneKey = zoneSceneKey; car3.userData.bounds = { ...horizontalBounds };
+    car3.position.z = getCarLaneOffset('left'); car3.userData.roadType = 'horizontal'; car3.userData.zoneKey = zoneSceneKey; car3.userData.bounds = { ...horizontalBounds };
     car4 = createCar(60, getRandomCarColor(), 'right');   // Car on right lane, mid-right
-    car4.position.z = -2; car4.userData.roadType = 'horizontal'; car4.userData.zoneKey = zoneSceneKey; car4.userData.bounds = { ...horizontalBounds };
+    car4.position.z = getCarLaneOffset('right'); car4.userData.roadType = 'horizontal'; car4.userData.zoneKey = zoneSceneKey; car4.userData.bounds = { ...horizontalBounds };
     
     // Add cars to street group
     streetElementsGroup.add(car1);
@@ -2587,7 +2582,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     
     // Add a bus to the street group with proper lane positioning
     const busStopX = config.ROAD_POSITION_X ? config.ROAD_POSITION_X + 3 : -15;
-    const bus = createBus(-140, 0xFFFFFF, 'right'); // White MBTA bus, start at far left
+    const bus = createBus(-140, -3.75, 0xFFFFFF, 'left'); // Eastbound beside the storefront bus stop
     bus.position.z = -3.75; bus.userData.roadType = 'horizontal'; bus.userData.zoneKey = zoneSceneKey; bus.userData.bounds = { ...horizontalBounds }; bus.userData.busStopX = busStopX;
     streetElementsGroup.add(bus);
     streetElements.bus = bus;

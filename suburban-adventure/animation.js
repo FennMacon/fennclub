@@ -600,20 +600,11 @@ export const animateBus = (streetElements) => {
         const direction = bus.userData.direction;
         const bounds = bus.userData.bounds || { xMin: -140, xMax: 140 };
         
-        if (direction === 'left') {
-            bus.position.x += speed;
-            if (bus.position.x > bounds.xMax) bus.position.x = bounds.xMin;
-        } else {
-            bus.position.x -= speed;
-            if (bus.position.x < bounds.xMin) bus.position.x = bounds.xMax;
-            
-            const busStopX = bus.userData.busStopX ?? -15;
-            if (Math.abs(bus.position.x - busStopX) < 1) {
-                bus.userData.speed = 0.005;
-            } else {
-                bus.userData.speed = 0.03;
-            }
-        }
+        bus.position.x += direction === 'left' ? speed : -speed;
+        if (bus.position.x > bounds.xMax) bus.position.x = bounds.xMin;
+        if (bus.position.x < bounds.xMin) bus.position.x = bounds.xMax;
+        const busStopX = bus.userData.busStopX ?? -15;
+        bus.userData.speed = Math.abs(bus.position.x - busStopX) < 1 ? .005 : .03;
     });
 };
 

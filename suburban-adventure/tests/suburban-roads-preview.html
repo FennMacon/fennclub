@@ -9,7 +9,7 @@ const world=buildWorld(scene,camera,'PLAZA',SCENE_CONFIGS.PLAZA,'suburban');
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);document.body.append(renderer.domElement);
 const views=[['Plaza · west T junction',-170,11],['Plaza · east crossing',170,11],['North plaza · west T junction',-170,344],['North plaza · east crossing',170,344],['Pond · west T junction',-170,-322],['Pond · east crossing',170,-322],['Carnival through-road',333,11],['Mansion trail turnoff',250,344],['Pond trail entrance',-15,-322]];
 const select=document.querySelector('select');views.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v[0];select.append(o);});
-const paint=()=>{world.unifiedMapTrees?.update(camera);renderer.render(scene,camera);};
+const paint=()=>{for(let i=0;i<20;i++)world.unifiedMapTrees?.update(camera);renderer.render(scene,camera);};
 const frame=()=>{const [name,x,z]=views[select.value];camera.position.set(x+(x<0?30:-30),2.5,z+2);camera.lookAt(x,2.5,z+2);scene.fog=new THREE.Fog(0x1a2520,35,200);paint();};
 select.onchange=frame;document.getElementById('forward').onclick=()=>{camera.translateZ(-5);paint();};document.getElementById('back').onclick=()=>{camera.translateZ(5);paint();};
 for(const [id,angle] of [['left',.18],['right',-.18]])document.getElementById(id).onclick=()=>{camera.rotateY(angle);paint();};

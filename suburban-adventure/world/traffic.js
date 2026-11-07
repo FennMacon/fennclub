@@ -1,4 +1,4 @@
-import { VERTICAL_BOUNDS, CONNECTOR_X, CITY_CONNECTOR_X, getHorizontalBounds } from '../roads.js';
+import { getCarLaneOffset, VERTICAL_BOUNDS, CONNECTOR_X, CITY_CONNECTOR_X, getHorizontalBounds } from '../roads.js';
 import { disposeObjectResources } from './resource-lifecycle.js';
 
 export const updateTraffic = (streetElements, createCar, getRandomCarColor, frameScale = 1, time = 0) => {
@@ -80,7 +80,7 @@ export const updateTraffic = (streetElements, createCar, getRandomCarColor, fram
         const spawnLeft = !streetElements.lastSpawnedLeft;
         streetElements.lastSpawnedLeft = spawnLeft;
         const spawnX = spawnLeft ? horizBounds.xMin : horizBounds.xMax;
-        const spawnZ = spawnLeft ? 2 : -2;
+        const spawnZ = getCarLaneOffset(spawnLeft?'left':'right');
         const canSpawn = !Object.values(carPositions).some(o => o.zoneKey === primaryZone && Math.abs(o.z - spawnZ) < 1 && Math.abs(o.x - spawnX) < 10);
         if (canSpawn) {
             const newCar = createCar(spawnX, getRandomCarColor(), spawnLeft ? 'left' : 'right');
@@ -99,8 +99,8 @@ export const updateTraffic = (streetElements, createCar, getRandomCarColor, fram
         const connectorPositions = streetElements.mapType === 'city' ? CITY_CONNECTOR_X : [CONNECTOR_X.LEFT, CONNECTOR_X.RIGHT];
         const spawnX = connectorPositions[Math.floor(Math.random() * connectorPositions.length)];
         const direction = spawnZ < 0 ? 'right' : 'left';
-        const newCar = createCar(spawnX, getRandomCarColor(), direction, { vertical: true });
-        newCar.position.set(spawnX, 0, spawnZ);
+        const newCar = createCar(spawnX + getCarLaneOffset(direction), getRandomCarColor(), direction, { vertical: true });
+        newCar.position.set(spawnX + getCarLaneOffset(direction), 0, spawnZ);
         newCar.userData.roadType = 'vertical';
         newCar.userData.bounds = { ...VERTICAL_BOUNDS };
         newCar.userData.connectorX = spawnX;

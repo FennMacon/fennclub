@@ -3,6 +3,7 @@ import { SCENE_CONFIGS } from '../scenes.js';
 // world/zone-scene.js - Zone and world creation
 import * as THREE from 'three';
 import { createTree } from '../utils.js';
+import { treeCanopyHalfWidth, treeClearsSuburbanSidewalks } from './tree-clearance.js';
 import { createParkElements, createTripleDeckerBuilding, createSimpleTower } from '../buildings.js';
 import { UNIFIED_MAP_ZONES, UNIFIED_MAP_ZONE_OFFSETS, SUBWAY_POSITIONS } from '../scenes.js';
 import { VERTICAL_BOUNDS, SUBURBAN_ZONE_STREET_X_MIN, SUBURBAN_ZONE_STREET_X_MAX, CITY_CONNECTOR_X } from '../roads.js';
@@ -414,6 +415,7 @@ export const createUnifiedMapTrees = (scene) => {
 
             const scale = 0.6 + Math.random() * 0.4;
             const species = selectTreeType();
+            if (!treeClearsSuburbanSidewalks(treeX, treeZ, treeCanopyHalfWidth(species, scale))) continue;
             registry.push({ x: treeX, z: treeZ, scale, species, mesh: null });
         }
     }
@@ -471,7 +473,7 @@ export const createUnifiedMapTrees = (scene) => {
 
     console.log(`🌲 Tree registry: ${registry.length} positions (direction-aware spawn: core=${CORE_RADIUS}, forward=${FORWARD_RADIUS}, batch=${SPAWN_BATCH})`);
     scene.add(treeGroup);
-    return { treeGroup, update };
+    return { treeGroup, update, registry };
 };
 
 // Forest elements for suburban scenes (with buildings, roads, etc.)

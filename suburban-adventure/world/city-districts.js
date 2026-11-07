@@ -93,7 +93,7 @@ export const createCityDistricts = scene => {
         } else {
             for(const side of [-1,1])add(x+side*w*.27,1.9,front,5.3,2.8,.2,0x2f4541);
             add(x,3.6,front+f*.9,w*.95,.25,1.8,index%2?0x677b6b:0x8a7161);
-            const sign=makeSign(lot.name);sign.position.set(x,5.8,front+f*(sign.userData.mount==='blade'?1.9:.8));sign.rotation.y=(f>0?0:Math.PI)+(sign.userData.mount==='blade'?Math.PI/2:0);addDetail(sign);
+            const sign=makeSign(lot.name);sign.position.set(x,5.8,front+f*.8);sign.rotation.y=(f>0?0:Math.PI);addDetail(sign);
             // Narrow service alley fixtures behind the shop.
             add(x+6,.7,z-f*(d/2+2),2.2,1.4,1.4,0x40594a);
         }
@@ -179,7 +179,7 @@ export const createCityDistricts = scene => {
         for(const portal of existing) {
             entranceCue(portal);
             if(portal.isFarBuilding)continue;
-            const sign=makeSign(portal.name);sign.position.set(portal.position.x,5.7,portal.position.z+(sign.userData.mount==='blade'?1.9:.6));sign.rotation.y=sign.userData.mount==='blade'?Math.PI/2:0;addDetail(sign);
+            const sign=makeSign(portal.name);sign.position.set(portal.position.x,5.7,portal.position.z+.6);sign.rotation.y=0;addDetail(sign);
         }
     };
     root.userData.plan=plan;root.userData.chunks=[...chunks.values()];root.userData.distanceDetails=details;root.userData.entranceCues=entranceCues;
