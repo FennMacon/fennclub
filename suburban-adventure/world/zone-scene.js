@@ -462,13 +462,14 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     
     // Create a proper street layout
     const isCityMap = zoneSceneKey.startsWith('CITY_');
+    const sharedRoadNetwork = isCityMap || UNIFIED_MAP;
 
     // Main street (where cars drive). City map: connector roads provide asphalt; only suburbs draw zone street.
     // Suburban: street stops at the west connector and extends through the east carnival.
     const streetCenterX = isCityMap ? 0 : (SUBURBAN_ZONE_STREET_X_MIN + SUBURBAN_ZONE_STREET_X_MAX) / 2;
     const streetWidth = isCityMap ? ZONE_STREET_WIDTH : SUBURBAN_ZONE_STREET_WIDTH;
     let street = null;
-    if (!isCityMap) {
+    if (!sharedRoadNetwork) {
         const streetGeometry = new THREE.PlaneGeometry(streetWidth, 12, 20, 3);
         const streetMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
         street = new THREE.Mesh(streetGeometry, streetMaterial);
@@ -525,13 +526,13 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
 
     const nearSidewalkContainer = new THREE.Group();
     nearSidewalkContainer.name = "NearSidewalk";
-    if (!isCityMap) addSidewalkSegments(config.NEAR_SIDEWALK_Z, nearSidewalkContainer);
+    if (!sharedRoadNetwork) addSidewalkSegments(config.NEAR_SIDEWALK_Z, nearSidewalkContainer);
     zoneRootGroup.add(nearSidewalkContainer);
     streetElements.nearSidewalk = nearSidewalkContainer;
 
     const farSidewalkContainer = new THREE.Group();
     farSidewalkContainer.name = "FarSidewalk";
-    if (!isCityMap) addSidewalkSegments(config.FAR_SIDEWALK_Z, farSidewalkContainer);
+    if (!sharedRoadNetwork) addSidewalkSegments(config.FAR_SIDEWALK_Z, farSidewalkContainer);
     zoneRootGroup.add(farSidewalkContainer);
     streetElements.farSidewalk = farSidewalkContainer;
     
@@ -573,7 +574,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     // Sidewalk lines for texture (every 6 units). City map: skip junction regions.
     const createSidewalkLines = () => {
         const lineGroup = new THREE.Group();
-        if (isCityMap) return lineGroup;
+        if (sharedRoadNetwork) return lineGroup;
         const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
 
         const inJunctionClip = (x) => {
@@ -606,7 +607,7 @@ export const createZoneScene = (scene, zoneConfig, zoneOffset, zoneKey) => {
     // Road lines for texture
     const createRoadLines = () => {
         const lineGroup = new THREE.Group();
-        if (isCityMap) return lineGroup;
+        if (sharedRoadNetwork) return lineGroup;
         const yellowMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 }); // Yellow center lines
         const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); // White lane dividers
         

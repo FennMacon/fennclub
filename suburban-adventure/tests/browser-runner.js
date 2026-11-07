@@ -59,9 +59,12 @@ try {
             assert(FOREST_CLEARINGS.some(config => Math.abs(config.x - prop.getWorldPosition(new THREE.Vector3()).x) < 1e-9), 'Clearing moved');
         const subway = scene.getObjectByName('SubwayStop').getWorldPosition(new THREE.Vector3());
         assert(subway.x === -290 && subway.z === -333, 'Subway southwest');
-        const street = streetElements.street, bounds = getHorizontalBounds('suburban');
-        assert(Math.abs(street.position.x - street.geometry.parameters.width / 2 - bounds.xMin) < 1e-9, 'West road end');
-        assert(Math.abs(street.position.x + street.geometry.parameters.width / 2 - bounds.xMax) < 1e-9, 'East road end');
+        const bounds=getHorizontalBounds('suburban');
+        const network=scene.getObjectByName('SuburbanRoadNetwork');
+        assert(network&&!scene.getObjectByName('ConnectorRoads'),'One shared suburban road network');
+        const horizontal=network.userData.surfacePlan.roads.filter(r=>r.axis==='x');
+        assert(horizontal.length===3&&horizontal.every(r=>r.min===bounds.xMin&&r.max===bounds.xMax),'Suburban road limits preserved');
+        assert(streetElements.nearSidewalk.children.length===0&&streetElements.roadLines.children.length===0,'Legacy suburban pavement disabled');
         assert(streetElements.cars.filter(car => car.userData.roadType === 'horizontal').every(car => car.userData.bounds.xMin === bounds.xMin && car.userData.bounds.xMax === bounds.xMax), 'Traffic bounds moved');
     });
     await check('woodland settings and smooth pond trails are connected and discoverable', () => {

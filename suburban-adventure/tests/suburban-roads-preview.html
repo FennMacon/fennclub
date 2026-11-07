@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Suburban road inspection</title><style>body{margin:0;font:14px Arial;background:#172321;color:#eaf1df}canvas{display:block}header{position:absolute;top:16px;left:16px;max-width:88vw;padding:14px;background:#1c302cdd;border:1px solid #9cad91}select,button{min-height:40px;padding:8px;background:#30493d;color:#fff;border:1px solid #93a887;margin-top:8px}</style></head><body><header><b>SUBURBAN ROADS · JUNCTION INSPECTION</b><br><select aria-label="Suburban junction"></select><div><button id="forward">Step forward</button><button id="back">Step back</button><button id="left">Turn left</button><button id="right">Turn right</button><button id="overhead">Overhead</button></div></header><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><script type="module">
+import * as THREE from 'three';
+import {buildWorld} from '../world-runtime.js';
+import {SCENE_CONFIGS} from '../scenes.js';
+import {loadAllContent} from '../content-loader.js';
+await loadAllContent();
+const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,1300),scene=new THREE.Scene();
+const world=buildWorld(scene,camera,'PLAZA',SCENE_CONFIGS.PLAZA,'suburban');
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);document.body.append(renderer.domElement);
+const views=[['Plaza · west T junction',-170,11],['Plaza · east crossing',170,11],['North plaza · west T junction',-170,344],['North plaza · east crossing',170,344],['Pond · west T junction',-170,-322],['Pond · east crossing',170,-322],['Carnival through-road',333,11],['Mansion trail turnoff',250,344],['Pond trail entrance',-15,-322]];
+const select=document.querySelector('select');views.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v[0];select.append(o);});
+const paint=()=>{world.unifiedMapTrees?.update(camera);renderer.render(scene,camera);};
+const frame=()=>{const [name,x,z]=views[select.value];camera.position.set(x+(x<0?30:-30),2.5,z+2);camera.lookAt(x,2.5,z+2);scene.fog=new THREE.Fog(0x1a2520,35,200);paint();};
+select.onchange=frame;document.getElementById('forward').onclick=()=>{camera.translateZ(-5);paint();};document.getElementById('back').onclick=()=>{camera.translateZ(5);paint();};
+for(const [id,angle] of [['left',.18],['right',-.18]])document.getElementById(id).onclick=()=>{camera.rotateY(angle);paint();};
+document.getElementById('overhead').onclick=()=>{const [name,x,z]=views[select.value];camera.position.set(x+42,90,z+50);camera.lookAt(x,0,z);scene.fog=null;paint();};frame();
+</script></body></html>
