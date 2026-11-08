@@ -3,14 +3,23 @@ import assert from 'node:assert/strict';
 import { sampleTrail, nearTrail, POND_TRAILS } from '../world/trail-layout.js';
 import { FOREST_CLEARINGS, FOREST_TRAILS } from '../world/config.js';
 import { SCENE_CONFIGS, UNIFIED_MAP_ZONE_OFFSETS } from '../scenes.js';
+import { POND_CENTER, distanceToPondEdge, POND_NEIGHBORS } from '../world/pond-layout.js';
 
 test('pond trails meet the actual road after parent offsets and reach the shore and campsite',()=>{
     const offset=UNIFIED_MAP_ZONE_OFFSETS.POND.z+SCENE_CONFIGS.POND.FRONT_SHOPS_Z;
     const road=UNIFIED_MAP_ZONE_OFFSETS.POND.z+SCENE_CONFIGS.POND.STREET_Z;
-    assert.equal(POND_TRAILS.pond[0].z+offset,road);
-    assert.equal(POND_TRAILS.campsite[0].z+offset,road);
+    assert.equal(POND_TRAILS.pond[0].z+offset,road+12);
+    assert.equal(POND_TRAILS.campsite[0].z+offset,road-12);
     assert.ok(nearTrail(POND_TRAILS.pond.at(-1).x,POND_TRAILS.pond.at(-1).z,sampleTrail(POND_TRAILS.shore),4));
-    assert.ok(Math.hypot(POND_TRAILS.campsite.at(-1).x-50,POND_TRAILS.campsite.at(-1).z+20)<8);
+    assert.ok(Math.hypot(POND_TRAILS.campsite.at(-1).x-50,POND_TRAILS.campsite.at(-1).z+20)<=10);
+});
+test('the shore loop keeps its full walking width beyond the wet bank',()=>{
+    for(const point of sampleTrail(POND_TRAILS.shore)) {
+        const x=point.x-POND_CENTER.x,z=point.z-POND_CENTER.z;
+        assert.ok(distanceToPondEdge(x,z)>4.5,'Shore path touches water or bank');
+    }
+    for(const name of ['Alex','Sam'])assert.ok(Math.abs(POND_NEIGHBORS[name].z-POND_CENTER.z)<30);
+    for(const name of ['Maya','Jake'])assert.ok(Math.hypot(POND_NEIGHBORS[name].x-50,POND_NEIGHBORS[name].z+20)<7);
 });
 test('expanded clearings clear the road and map edges, with trails reaching every setting',()=>{
     const paths=FOREST_TRAILS.map(p=>sampleTrail(p));

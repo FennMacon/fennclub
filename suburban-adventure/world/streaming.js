@@ -416,6 +416,7 @@ export const createUnifiedMapTrees = (scene) => {
             const scale = 0.6 + Math.random() * 0.4;
             const species = selectTreeType();
             if (!treeClearsSuburbanSidewalks(treeX, treeZ, treeCanopyHalfWidth(species, scale))) continue;
+            if (zone.config === 'POND' && pondTrails.some(samples => nearTrail(treeX, treeZ, samples, treeCanopyHalfWidth(species, scale) + 3.5))) continue;
             registry.push({ x: treeX, z: treeZ, scale, species, mesh: null });
         }
     }

@@ -181,6 +181,35 @@ try {
             target.dispose();door.geometry.dispose();material.dispose();
         }
     });
+    await check('pond paths clear campsite furniture and trees; neighbors match the shore and fire', async () => {
+        const {scene,streetElements}=game.getRuntimeState(),pond=streetElements.pondElements;
+        const {POND_TRAILS,sampleTrail,nearTrail}=await import('../world/trail-layout.js');
+        const {treeCanopyHalfWidth}=await import('../world/tree-clearance.js');
+        const {GROUND_LAYERS}=await import('../world/constants.js');
+        scene.updateMatrixWorld(true);
+        const origin=pond.leftPath.parent.getWorldPosition(new THREE.Vector3());
+        const campPath=sampleTrail(POND_TRAILS.campsite).map(p=>({x:p.x+origin.x,z:p.z+origin.z}));
+        for(const object of [pond.tent1,pond.tent2,pond.picnicTable,pond.picnicTable2,...pond.logBenches,...pond.stumps]) {
+            const box=new THREE.Box3().setFromObject(object);
+            for(const p of campPath)assert(Math.hypot(Math.max(box.min.x-p.x,0,p.x-box.max.x),Math.max(box.min.z-p.z,0,p.z-box.max.z))>.8,'Campsite furniture blocks the walking route');
+        }
+        for(const tent of [pond.tent1,pond.tent2])assert(Math.abs(new THREE.Box3().setFromObject(tent).min.y-GROUND_LAYERS.base)<.0001,'Tent rests on ground');
+        const paths=Object.values(POND_TRAILS).map(points=>sampleTrail(points).map(p=>({x:p.x+origin.x,z:p.z+origin.z})));
+        for(const tree of streetElements.unifiedMapTrees.registry)assert(!paths.some(samples=>nearTrail(tree.x,tree.z,samples,treeCanopyHalfWidth(tree.species,tree.scale)+3.49)),'Tree canopy blocks pond trail');
+        const water=pond.pond.getWorldPosition(new THREE.Vector3());
+        assert(water.x===0&&water.z===-233,'Pond and steam center retained');
+        assert(pond.pond.children.filter(child=>child.userData.isMist).length===30,'All original mist particles retained');
+        assert(pond.pond.getObjectByName('PondSurface')&&pond.pond.getObjectByName('PondBank'),'Continuous water and readable shore');
+        const fire=pond.campfire.getWorldPosition(new THREE.Vector3());
+        for(const name of ['Maya','Jake']) {
+            const npc=streetElements.npcs.find(npc=>npc.userData.name===name&&npc.userData.zoneKey==='POND');
+            assert(npc&&npc.getWorldPosition(new THREE.Vector3()).distanceTo(fire)<8,`${name} stands by fire`);
+        }
+        for(const name of ['Alex','Sam']) {
+            const npc=streetElements.npcs.find(npc=>npc.userData.name===name&&npc.userData.zoneKey==='POND');
+            assert(npc&&npc.getWorldPosition(new THREE.Vector3()).distanceTo(water)<32,`${name} stands by pond`);
+        }
+    });
     await check('woodland settings and smooth pond trails are connected and discoverable', () => {
         const { scene,streetElements }=game.getRuntimeState();
         const clearings=scene.getObjectByName('ForestClearings');
@@ -197,8 +226,8 @@ try {
         const settings=scene.getObjectByName('ForestClearings').children.filter(o=>o.name.startsWith('ClearingSetting:'));
         assert(settings.every(setting=>!setting.children.some(o=>o.geometry?.type==='ShapeGeometry')),'Clearing ground patches remain');
         const pond=streetElements.pond;
-        const surfaces=pond.children.filter(o=>o.isMesh&&!o.userData.isMist);
-        assert(surfaces.length===5 && surfaces.every(o=>!o.material.wireframe&&o.material.color.getHex()===0x1a3a52),'Solid unified water surface');
+        const surface=pond.getObjectByName('PondSurface');
+        assert(surface&&!surface.material.wireframe&&surface.material.color.getHex()===0x1a3a52,'Solid unified water surface');
         assert(pond.children.filter(o=>o.userData.isMist).length===30,'Pond steam changed');
     });
     await check('number keys teleport across areas, respect editing and modals, and leave interiors', async () => {

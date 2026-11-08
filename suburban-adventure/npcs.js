@@ -1,3 +1,4 @@
+import { POND_NEIGHBORS } from './world/pond-layout.js';
 import {getAreaInfo} from './world/navigation.js';
 import {selectInteractionTarget} from './interaction-targets.js';
 import {getStoryModalOpen} from './story-ui.js';
@@ -112,17 +113,10 @@ export const createNPCs = (PLAZA_CONFIG, CURRENT_SCENE, scene) => {
         npcs.push(attachNPC(scene, 'Jordan', 10, wallZ + 2, 0xFFFF6B, 0, { zoneKey })); // Yellow
         npcs.push(attachNPC(scene, 'Riley', 12, wallZ + 2, 0xFF9D6B, 0, { zoneKey })); // Orange
     } else if (CURRENT_SCENE === 'POND') {
-        // Pond scene - post-party campfire vibes
-        // Around the campfire
-        npcs.push(attachNPC(scene, 'Maya', 12, -32, 0xFF6B9D, 0, { zoneKey })); // By fire
-        npcs.push(attachNPC(scene, 'Jake', 18, -28, 0x9D6BFF, 0, { zoneKey })); // On log
-        
-        // By the pond
-        npcs.push(attachNPC(scene, 'Alex', -15, -55, 0x6BFF9D, 0, { zoneKey })); // Pond edge
-        npcs.push(attachNPC(scene, 'Sam', -12, -55, 0x6BFFFF, 0, { zoneKey })); // Next to Alex
-        
-        // Ghost story teller (new NPC) - near tent
-        npcs.push(attachNPC(scene, 'Casey', 20, 110, 0xA2ABBB, 0, { zoneKey })); // In tent area
+        // Share the pond's actual front-group coordinates instead of obsolete zone positions.
+        const colors={Maya:0xFF6B9D,Jake:0x9D6BFF,Alex:0x6BFF9D,Sam:0x6BFFFF,Casey:0xA2ABBB};
+        for(const [name,position] of Object.entries(POND_NEIGHBORS))
+            npcs.push(attachNPC(scene,name,position.x,position.z+PLAZA_CONFIG.FRONT_SHOPS_Z,colors[name],0,{zoneKey}));
     }
     
     return npcs;

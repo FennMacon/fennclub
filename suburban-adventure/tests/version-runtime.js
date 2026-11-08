@@ -29,6 +29,8 @@ for(const file of files)browserImports['../'+file]='../'+file+'?v='+revision;
 const browserUpdated=browserSource.replace(/<script type="importmap">[\s\S]*?<\/script>/,`<script type="importmap">${JSON.stringify({imports:browserImports})}</script>`)
     .replace(/src="browser-runner\.js(?:\?v=[^"]*)?"/,`src="browser-runner.js?v=${revision}"`);
 if(browserUpdated!==browserSource)await writeFile(browserPath,browserUpdated);
-const atmospherePath='tests/suburban-atmosphere-preview.html',atmosphereSource=await readFile(atmospherePath,'utf8');
-const atmosphereUpdated=atmosphereSource.replace(/<script type="importmap">[\s\S]*?<\/script>/,`<script type="importmap">${JSON.stringify({imports:browserImports})}</script>`);
-if(atmosphereUpdated!==atmosphereSource)await writeFile(atmospherePath,atmosphereUpdated);
+for(const previewPath of ['tests/suburban-atmosphere-preview.html','tests/pond-layout-preview.html']) {
+    const source=await readFile(previewPath,'utf8');
+    const updated=source.replace(/<script type="importmap">[\s\S]*?<\/script>/,`<script type="importmap">${JSON.stringify({imports:browserImports})}</script>`);
+    if(updated!==source)await writeFile(previewPath,updated);
+}

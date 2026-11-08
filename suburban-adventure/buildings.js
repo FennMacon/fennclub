@@ -1,5 +1,7 @@
 import { createWoodlandTrail } from './world/trails.js';
 import { POND_TRAILS } from './world/trail-layout.js';
+import { POND_CENTER, pondOutline } from './world/pond-layout.js';
+import { GROUND_LAYERS } from './world/constants.js';
 // buildings.js - Building creation and management
 import * as THREE from 'three';
 import { createFoggedBuildingMaterial } from './world/building-material.js';
@@ -1457,61 +1459,22 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     pondGroup.name = "PondWater";
     const waterMaterial = new THREE.MeshBasicMaterial({ color: 0x1a3a52, side: THREE.DoubleSide });
     
-    // Create organic pond shape with multiple segments
-    const pondSegments = [];
-    
-    // Main pond body (irregular oval)
-    const mainPondGeometry = new THREE.CircleGeometry(18, 32);
-    mainPondGeometry.scale(1.2, 0.7, 1); // More elongated
-    const mainPondMaterial = waterMaterial;
-    const mainPond = new THREE.Mesh(mainPondGeometry, mainPondMaterial);
-    mainPond.rotation.x = -Math.PI / 2;
-    mainPond.position.y = -0.15;
-    mainPond.position.x = 2; // Offset slightly
-    pondGroup.add(mainPond);
-    pondSegments.push({x: 2, z: 0, radius: 18, scaleX: 1.2, scaleZ: 0.7});
-    
-    // Jutting out sections
-    const jut1Geometry = new THREE.CircleGeometry(8, 16);
-    jut1Geometry.scale(0.8, 1.2, 1);
-    const jut1Material = waterMaterial;
-    const jut1 = new THREE.Mesh(jut1Geometry, jut1Material);
-    jut1.rotation.x = -Math.PI / 2;
-    jut1.position.y = -0.15;
-    jut1.position.set(-12, -0.15, 8); // Jut out to the left
-    pondGroup.add(jut1);
-    pondSegments.push({x: -12, z: 8, radius: 8, scaleX: 0.8, scaleZ: 1.2});
-    
-    const jut2Geometry = new THREE.CircleGeometry(6, 16);
-    jut2Geometry.scale(1.3, 0.6, 1);
-    const jut2Material = waterMaterial;
-    const jut2 = new THREE.Mesh(jut2Geometry, jut2Material);
-    jut2.rotation.x = -Math.PI / 2;
-    jut2.position.y = -0.15;
-    jut2.position.set(15, -0.15, -5); // Jut out to the right
-    pondGroup.add(jut2);
-    pondSegments.push({x: 15, z: -5, radius: 6, scaleX: 1.3, scaleZ: 0.6});
-    
-    const jut3Geometry = new THREE.CircleGeometry(5, 16);
-    jut3Geometry.scale(0.9, 1.1, 1);
-    const jut3Material = waterMaterial;
-    const jut3 = new THREE.Mesh(jut3Geometry, jut3Material);
-    jut3.rotation.x = -Math.PI / 2;
-    jut3.position.y = -0.15;
-    jut3.position.set(-8, -0.15, -12); // Jut out to the back-left
-    pondGroup.add(jut3);
-    pondSegments.push({x: -8, z: -12, radius: 5, scaleX: 0.9, scaleZ: 1.1});
-    
-    // Pond depth effect (follows main shape)
-    const pondDepthGeometry = new THREE.CircleGeometry(16, 32);
-    pondDepthGeometry.scale(1.2, 0.7, 1);
-    const pondDepthMaterial = waterMaterial;
-    const pondDepth = new THREE.Mesh(pondDepthGeometry, pondDepthMaterial);
-    pondDepth.rotation.x = -Math.PI / 2;
-    pondDepth.position.y = -0.2;
-    pondDepth.position.x = 2;
-    pondGroup.add(pondDepth);
-    
+    // One continuous surface avoids the overlapping coplanar water patches.
+    const makeShoreShape = padding => {
+        const points=pondOutline(padding);
+        const shape=new THREE.Shape(points.map(p=>new THREE.Vector2(p.x,-p.z)));
+        shape.closePath();return shape;
+    };
+    const water=new THREE.Mesh(new THREE.ShapeGeometry(makeShoreShape(0)),waterMaterial);
+    water.name='PondSurface';water.rotation.x=-Math.PI/2;water.position.y=-.15;
+    pondGroup.add(water);
+    // A narrow wet bank makes the edge readable, without changing the water or steam height.
+    const bankShape=makeShoreShape(1.1);
+    bankShape.holes.push(new THREE.Path(pondOutline().map(p=>new THREE.Vector2(p.x,-p.z))));
+    const bank=new THREE.Mesh(new THREE.ShapeGeometry(bankShape),new THREE.MeshBasicMaterial({color:0x625e43,side:THREE.DoubleSide}));
+    bank.name='PondBank';bank.rotation.x=-Math.PI/2;bank.position.y=-.21;
+    pondGroup.add(bank);
+
     // Mist particles above pond
     for (let i = 0; i < 30; i++) {
         const angle = (i / 30) * Math.PI * 2;
@@ -1528,7 +1491,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
         pondGroup.add(mist);
     }
     
-    pondGroup.position.set(0, 0, 150);
+    pondGroup.position.set(POND_CENTER.x, 0, POND_CENTER.z);
     frontGroup.add(pondGroup);
     pondElements.pond = pondGroup;
     
@@ -1602,8 +1565,9 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     tent1.position.y = 1.25;
     tent1.rotation.y = Math.PI / 4;
     tent1.scale.set(1.5, 1.5, 1.5);
+    tent1.position.y = GROUND_LAYERS.base + 2.5 * 1.5 / 2;
     tent1Group.add(tent1);
-    tent1Group.position.set(54, .5, -39);
+    tent1Group.position.set(54, 0, -39);
     frontGroup.add(tent1Group);
     pondElements.tent1 = tent1Group;
     
@@ -1614,7 +1578,8 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     const tent2 = new THREE.Mesh(tent2Geometry, tent2Material);
     tent2.position.y = 1.4;
     tent2.rotation.y = -Math.PI / 6;
-    tent1.scale.set(1.6, 1.6, 1.6);
+    tent2.scale.set(1.6, 1.6, 1.6);
+    tent2.position.y = GROUND_LAYERS.base + 2.8 * 1.6 / 2;
     tent2Group.add(tent2);
     tent2Group.position.set(70, 0, -32);
     frontGroup.add(tent2Group);
@@ -1680,7 +1645,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     // Blankets
     const blankets = [];
     const blanketPositions = [
-        {x: 41.5, z: -23, color: 0x8B0000, rotation: 0.3},   // Campsite area
+        {x: 36, z: -30, color: 0x8B0000, rotation: 0.3},   // Campsite area
         {x: 47, z: -12, color: 0x4169E1, rotation: -0.5},  // Campsite area
         {x: 58, z: -18, color: 0x9932CC, rotation: 0.8},   // Campsite area
         {x: 38, z: -25, color: 0xFF6347, rotation: -0.2}   // Campsite area
@@ -1702,7 +1667,7 @@ export const createPondElements = (frontGroup, PLAZA_CONFIG, scene) => {
     const stumps = [];
     const stumpPositions = [
         {x: 53, z: -12}, {x: 44, z: -28}, {x: 55, z: -22},  // Campsite area
-        {x: 41, z: -15}, {x: 50, z: -26}, {x: 46, z: -32}   // Campsite area
+        {x: 37, z: -33}, {x: 50, z: -26}, {x: 46, z: -32}   // Campsite area
     ];
     
     stumpPositions.forEach(({x, z}) => {
